@@ -1,0 +1,8 @@
+@echo off
+
+set ANTHROPIC_BASE_URL=https://llmrouter.gft.com
+set ANTHROPIC_API_KEY=sk-DriwFmRbpMncXn3-Cc9Tnw
+set CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1
+set ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4-5
+set ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4-5
+set ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4-6
