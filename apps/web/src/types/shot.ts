@@ -14,7 +14,7 @@ export type Shot = {
     roaster?: string;
     roastLevel?: RoastLevel;
   };
-  location?: Location;
+  location?: ShotLocation;
   recipe?: {
     doseIn?: number;
     doseOut?: number;
@@ -28,7 +28,7 @@ export type Shot = {
   createdAt: string; // fecha de publicación ISO
 };
 
-export type Location = {
+export type ShotLocation = {
   name: string;
   city?: string;
   country?: string;

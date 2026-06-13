@@ -1,4 +1,5 @@
 import { RoastLevelLabel } from '../../domain/coffee/roastLevel';
+import { formatLocation } from '../../domain/premises/premises';
 import type { Shot } from '../../types/shot';
 import { formatDate } from '../../utils/util';
 import { RecipeStat } from './RecipeStat';
@@ -43,6 +44,9 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         <div>
           <p className='text-xs font-bold uppercase text-[#7a4d2a]'>{shot.coffee.roaster}</p>
           <h3 className='mt-1 text-xl font-black'>{shot.coffee.origin}</h3>
+          {shot.location && (
+            <p className='text-xs text-[#6f5b50]'>{formatLocation(shot.location)}</p>
+          )}
           <p className='text-sm text-[#6f5b50]'>
             {shot.coffee.roastLevel ? RoastLevelLabel[shot.coffee.roastLevel] : ''}
           </p>
