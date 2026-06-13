@@ -8,6 +8,9 @@
 - The frontend is built with Vite, React, TypeScript, and Tailwind CSS.
 - React Router is installed and configured for basic client-side navigation.
 - The Home page renders a local mock feed using a reusable `ShotCard` component.
+- The app shell has responsive navigation:
+  - desktop top navigation
+  - mobile bottom navigation with `lucide-react` icons
 - Tailwind is configured through the official Vite plugin: `@tailwindcss/vite`.
 - The frontend development server uses Vite's default port: `5173`.
 - The backend has not been created yet.
@@ -77,9 +80,8 @@ http://127.0.0.1:5173
 
 Improve the mobile app shell and start shaping the real creation flow:
 
-- Add a mobile bottom navigation.
-- Make the current top navigation more responsive.
 - Start the `CreateShot` page as a static form with no backend.
+- Then improve `ShotCard` interaction states such as like/comment buttons.
 
 Do this before adding backend, authentication, Effector, or PWA features.
 
