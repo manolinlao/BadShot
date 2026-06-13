@@ -18,7 +18,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   const comments = shot.commentsCount ?? 0;
 
   return (
-    <article className='overflow-hidden rounded-lg border border-[#e2d6ca] bg-[#fffaf5] shadow-sm'>
+    <article className='overflow-hidden rounded-xl border border-[#e2d6ca] bg-[#fffaf5] shadow-sm'>
+      {/* HEADER */}
       <header className='flex items-center justify-between px-4 py-3'>
         <div className='flex items-center gap-3'>
           <img
@@ -26,43 +27,64 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
             alt={`${shot.user.displayName} avatar`}
             className='h-10 w-10 rounded-full object-cover'
           />
+
           <div>
             <h2 className='text-sm font-bold'>{shot.user.displayName}</h2>
             <p className='text-xs text-[#6f5b50]'>@{shot.user.username}</p>
           </div>
         </div>
+
         <time className='text-xs font-semibold text-[#7a4d2a]'>{formatDate(shot.brewedAt)}</time>
       </header>
 
+      {/* IMAGE */}
       <img
         src={shot.imageUrl}
-        alt={`Espresso shot brewed with ${shot.coffee.origin}`}
+        alt={`Espresso shot`}
         className='aspect-square w-full object-cover'
       />
 
-      <div className='space-y-4 p-4'>
+      {/* CONTENT */}
+      <div className='space-y-5 p-4'>
+        {/* COFFEE BLOCK (IMPORTANT) */}
         <div>
-          <p className='text-xs font-bold uppercase text-[#7a4d2a]'>{shot.coffee.roaster}</p>
-          <h3 className='mt-1 text-xl font-black'>{shot.coffee.origin}</h3>
-          {shot.location && (
-            <p className='text-xs text-[#6f5b50]'>{formatLocation(shot.location)}</p>
-          )}
-          <p className='text-sm text-[#6f5b50]'>
-            {shot.coffee.roastLevel ? RoastLevelLabel[shot.coffee.roastLevel] : ''}
-          </p>
+          <h3 className='text-xl font-black leading-tight'>
+            {shot.coffee.name ?? shot.coffee.origin}
+          </h3>
+
+          <p className='text-sm text-[#6f5b50]'>{shot.coffee.origin}</p>
+
+          <div className='flex items-center justify-between text-xs text-[#6f5b50] mt-1'>
+            <span className='font-semibold text-[#7a4d2a] uppercase'>{shot.coffee.roaster}</span>
+
+            <span>{shot.coffee.roastLevel ? RoastLevelLabel[shot.coffee.roastLevel] : ''}</span>
+          </div>
         </div>
 
-        <dl className='grid grid-cols-4 gap-2 text-center'>
-          {shot.recipe?.doseIn && <RecipeStat label='In' value={`${shot.recipe.doseIn}g`} />}
-          {shot.recipe?.doseOut && <RecipeStat label='Out' value={`${shot.recipe.doseOut}g`} />}
-          {shot.recipe?.time && <RecipeStat label='Time' value={`${shot.recipe.time}s`} />}
-          {ratio && <RecipeStat label='Ratio' value={`1:${ratio}`} />}
-        </dl>
+        {/* LOCATION */}
+        {shot.location && (
+          <p className='text-xs text-[#6f5b50]'>📍 {formatLocation(shot.location)}</p>
+        )}
 
-        <p className='text-sm leading-6 text-[#4a3a31]'>{shot.tastingNotes}</p>
+        {/* RECIPE */}
+        {recipe && (
+          <dl className='grid grid-cols-4 gap-2 text-center'>
+            {recipe.doseIn && <RecipeStat label='In' value={`${recipe.doseIn}g`} />}
+            {recipe.doseOut && <RecipeStat label='Out' value={`${recipe.doseOut}g`} />}
+            {recipe.time && <RecipeStat label='Time' value={`${recipe.time}s`} />}
+            {ratio && <RecipeStat label='Ratio' value={`1:${ratio}`} />}
+          </dl>
+        )}
 
+        {/* NOTES */}
+        {shot.tastingNotes && (
+          <p className='text-sm leading-6 text-[#4a3a31]'>{shot.tastingNotes}</p>
+        )}
+
+        {/* FOOTER */}
         <footer className='flex items-center justify-between border-t border-[#eadfd6] pt-4 text-sm font-semibold text-[#5f4a3f]'>
-          {shot.rating && <span>{'★'.repeat(shot.rating)}</span>}
+          {shot.rating && <span className='text-[#7a4d2a]'>{'★'.repeat(shot.rating)}</span>}
+
           {(likes > 0 || comments > 0) && (
             <span>
               {likes} likes · {comments} comments

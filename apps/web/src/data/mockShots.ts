@@ -121,7 +121,7 @@ export const mockShots: Shot[] = [
     createdAt: '2026-06-12T11:10:00.000Z'
   },
 
-  // 🟡 CASO REAL: sin receta (café de cafetería)
+  // CASO REAL: sin receta (café de cafetería)
   {
     id: 'shot-004',
     user: {
