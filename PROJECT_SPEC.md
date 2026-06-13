@@ -142,6 +142,13 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
   }
   extractionMethod: string (espresso, moka, aeropress, etc)
   tastingNotes: string
+  flavorProfile?: {
+    // Rueda de sabores - Feature futura
+    // Basada en SCA Coffee Taster's Flavor Wheel
+    primaryFlavors: string[] // Categorías principales
+    secondaryFlavors: string[] // Descriptores específicos
+    intensity: number[] // Intensidad de cada sabor (1-10)
+  }
   rating: number (1-5)
   createdAt: DateTime
   updatedAt: DateTime
@@ -183,6 +190,14 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ## Features Post-MVP (Roadmap)
 
 ### Fase 2
+- **Rueda de Sabores Interactiva**
+  - Basada en SCA Coffee Taster's Flavor Wheel
+  - Selector visual para categorizar sabores del espresso
+  - Categorías principales: Frutal, Floral, Dulce, Nueces/Cacao, Especiado, Vegetal
+  - Subcategorías con descriptores específicos (ej: cítrico → limón, naranja, bergamota)
+  - Intensidad ajustable por sabor
+  - Visualización gráfica del perfil de sabor en cada shot
+  - Búsqueda y filtrado por perfiles de sabor similares
 - Notificaciones push (Web Push API)
 - Guardados/Bookmarks
 - Hashtags para categorizar
@@ -190,6 +205,10 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 - Instalación como app (Add to Home Screen optimizado)
 
 ### Fase 3
+- **Análisis avanzado de perfiles de sabor**
+  - Comparación de perfiles entre diferentes shots
+  - Sugerencias de cafés basadas en preferencias de sabor del usuario
+  - Estadísticas de sabores favoritos y tendencias
 - Mensajería directa
 - Historias/Stories (shots temporales)
 - Recomendaciones de cafés/tostadores
