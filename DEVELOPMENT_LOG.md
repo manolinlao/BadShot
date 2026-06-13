@@ -7,6 +7,7 @@
 - `apps/web` contains the frontend.
 - The frontend is built with Vite, React, TypeScript, and Tailwind CSS.
 - React Router is installed and configured for basic client-side navigation.
+- The Home page renders a local mock feed using a reusable `ShotCard` component.
 - Tailwind is configured through the official Vite plugin: `@tailwindcss/vite`.
 - The frontend development server uses Vite's default port: `5173`.
 - The backend has not been created yet.
@@ -37,6 +38,9 @@
 - `apps/web/src/App.tsx` - Frontend app entry component.
 - `apps/web/src/routes.tsx` - Frontend route map.
 - `apps/web/src/components/layout/AppLayout.tsx` - Shared app layout and navigation.
+- `apps/web/src/components/shot/ShotCard.tsx` - First reusable shot card.
+- `apps/web/src/data/mockShots.ts` - Temporary local feed data.
+- `apps/web/src/types/shot.ts` - Frontend `Shot` type.
 - `apps/web/vite.config.ts` - Vite plugins for React and Tailwind.
 - `apps/web/package.json` - Frontend dependencies and scripts.
 
@@ -71,12 +75,11 @@ http://127.0.0.1:5173
 
 ## Recommended Next Step
 
-Create the first reusable UI components and a fake feed using local mock data:
+Improve the mobile app shell and start shaping the real creation flow:
 
-- `ShotCard`
-- `BottomNavigation` or improved responsive navigation
-- `mockShots`
-- A simple Home feed rendering 2-3 espresso shots
+- Add a mobile bottom navigation.
+- Make the current top navigation more responsive.
+- Start the `CreateShot` page as a static form with no backend.
 
 Do this before adding backend, authentication, Effector, or PWA features.
 
