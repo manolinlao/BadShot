@@ -1,3 +1,5 @@
+import { Flame, Frown, Laugh, Meh, Smile, type LucideIcon } from 'lucide-react';
+
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
 export const ratingOptions: Array<{
@@ -18,3 +20,22 @@ export const ratingLabel: Record<number, string> = {
   4: 'Good',
   5: 'Super!'
 };
+
+export function isRating(value: number | undefined): value is Rating {
+  return value === 1 || value === 2 || value === 3 || value === 4 || value === 5;
+}
+
+export const ratingIcon = {
+  1: { icon: Frown, color: 'text-red-500', activeBg: 'bg-red-50' },
+  2: { icon: Meh, color: 'text-amber-500', activeBg: 'bg-amber-50' },
+  3: { icon: Smile, color: 'text-sky-500', activeBg: 'bg-sky-50' },
+  4: { icon: Laugh, color: 'text-emerald-500', activeBg: 'bg-emerald-50' },
+  5: { icon: Flame, color: 'text-orange-500', activeBg: 'bg-orange-50' }
+} satisfies Record<
+  Rating,
+  {
+    icon: LucideIcon;
+    color: string;
+    activeBg: string;
+  }
+>;

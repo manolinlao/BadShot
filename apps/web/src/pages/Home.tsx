@@ -9,7 +9,7 @@ type HomeLocationState = {
 };
 
 export function Home() {
-  const { feed } = useLocalShots();
+  const { feed, deleteShot, isCreatedShot } = useLocalShots();
   const location = useLocation();
   const navigate = useNavigate();
   const flash = (location.state as HomeLocationState | null)?.flash;
@@ -45,7 +45,11 @@ export function Home() {
       <section className='grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]'>
         <div className='space-y-5'>
           {feed.map((shot) => (
-            <ShotCard key={shot.id} shot={shot} />
+            <ShotCard
+              key={shot.id}
+              shot={shot}
+              onDelete={isCreatedShot(shot.id) ? () => deleteShot(shot.id) : undefined}
+            />
           ))}
         </div>
 

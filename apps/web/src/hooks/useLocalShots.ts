@@ -45,9 +45,21 @@ export const useLocalShots = () => {
     saveShots(next);
   };
 
+  const deleteShot = (shotId: string) => {
+    const next = createdShots.filter((shot) => shot.id !== shotId);
+    setCreatedShots(next);
+    saveShots(next);
+  };
+
+  const isCreatedShot = (shotId: string) => {
+    return createdShots.some((shot) => shot.id === shotId);
+  };
+
   return {
     feed,
     createdShots,
-    addShot
+    addShot,
+    deleteShot,
+    isCreatedShot
   };
 };

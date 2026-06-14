@@ -18,6 +18,10 @@ export const RecipeEditor = ({
   setTime
 }: RecipeEditorProps) => {
   const [editing, setEditing] = useState<'in' | 'out' | 'time' | null>(null);
+  const ratio =
+    typeof doseIn === 'number' && doseIn > 0 && typeof doseOut === 'number' && doseOut > 0
+      ? (doseOut / doseIn).toFixed(2)
+      : null;
 
   return (
     <section className='rounded-2xl bg-zinc-900 text-white p-4 space-y-3'>
@@ -54,6 +58,12 @@ export const RecipeEditor = ({
           onBlur={() => setEditing(null)}
           className='mt-2 px-3 py-2 rounded-xl bg-white/10 outline-none w-28 text-center'
         />
+      )}
+
+      {ratio && (
+        <p className='text-sm font-semibold text-zinc-200'>
+          Ratio <span className='text-white'>1:{ratio}</span>
+        </p>
       )}
     </section>
   );

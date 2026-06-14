@@ -1,4 +1,6 @@
-import { ratingLabel } from '../../domain/coffee/rating';
+import { Trash2 } from 'lucide-react';
+
+import { isRating, ratingIcon, ratingLabel } from '../../domain/coffee/rating';
 import { RoastLevelLabel } from '../../domain/coffee/roastLevel';
 import { formatLocation } from '../../domain/premises/premises';
 import type { Shot } from '../../types/shot';
@@ -7,9 +9,10 @@ import { RecipeStat } from './RecipeStat';
 
 interface ShotCardProps {
   shot: Shot;
+  onDelete?: () => void;
 }
 
-export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
+export const ShotCard: React.FC<ShotCardProps> = ({ shot, onDelete }) => {
   const recipe = shot.recipe;
 
   const ratio =
@@ -17,6 +20,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   const likes = shot.likesCount ?? 0;
   const comments = shot.commentsCount ?? 0;
+  const rating = isRating(shot.rating) ? shot.rating : null;
+  const RatingIcon = rating ? ratingIcon[rating].icon : null;
   const displayName = shot.user.displayName?.trim() || 'BadShot user';
   const username = shot.user.username?.trim();
   const avatarInitial = displayName.charAt(0).toUpperCase();
@@ -25,7 +30,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     shot.coffee.origin?.trim() || shot.coffee.roaster?.trim() || shot.coffee.roastLevel
   );
   const hasRecipeStats = Boolean(recipe?.doseIn || recipe?.doseOut || recipe?.time || ratio);
-  const hasFooter = Boolean(shot.rating || likes > 0 || comments > 0);
+  const hasFooter = Boolean(rating || likes > 0 || comments > 0 || onDelete);
 
   return (
     <article className='overflow-hidden rounded-xl border border-[#e2d6ca] bg-[#fffaf5] shadow-sm'>
@@ -111,12 +116,34 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         {/* FOOTER */}
         {hasFooter && (
           <footer className='flex items-center justify-between border-t border-[#eadfd6] pt-4 text-sm font-semibold text-[#5f4a3f]'>
-            {shot.rating && <span className='text-[#7a4d2a]'>{ratingLabel[shot.rating]}</span>}
-            {(likes > 0 || comments > 0) && (
-              <span>
-                {likes} likes - {comments} comments
+            {rating && RatingIcon && (
+              <span className='inline-flex items-center gap-1.5 text-[#7a4d2a]'>
+                <RatingIcon
+                  className={`h-4 w-4 ${ratingIcon[rating].color}`}
+                  aria-hidden='true'
+                />
+                {ratingLabel[rating]}
               </span>
             )}
+            <div className='ml-auto flex items-center gap-3'>
+              {(likes > 0 || comments > 0) && (
+                <span>
+                  {likes} likes - {comments} comments
+                </span>
+              )}
+
+              {onDelete && (
+                <button
+                  type='button'
+                  onClick={onDelete}
+                  aria-label='Delete shot'
+                  title='Delete shot'
+                  className='rounded p-1 text-red-700 transition hover:bg-red-50 hover:text-red-900'
+                >
+                  <Trash2 className='h-4 w-4' aria-hidden='true' />
+                </button>
+              )}
+            </div>
           </footer>
         )}
       </div>

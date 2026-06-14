@@ -58,6 +58,13 @@
 - Added optional `Roast level` to the create-shot details flow.
 - `Not sure` is the default roast-level state and saves no `coffee.roastLevel` value.
 - Created shots save `coffee.roastLevel` only when the user chooses a roast level, and `ShotCard` can display it.
+- `RecipeEditor` now shows a live calculated ratio when `doseIn` and `doseOut` are both set.
+- Local shots can now be deleted from the feed.
+- Delete is only shown for shots created in the browser; mock feed shots cannot be deleted.
+- `useLocalShots` now exposes `deleteShot` and `isCreatedShot`.
+- `RatingQuick` now uses colored `lucide-react` icons instead of emoji text, avoiding encoding issues while keeping an emotive UI.
+- `ShotCard` now displays the rating with the same colored icon plus the rating text.
+- Rating icon metadata is shared from the coffee rating domain helper.
 
 ## Product Direction
 
@@ -95,11 +102,19 @@
 
 ## Verified Commands
 
+For small development steps, prefer:
+
+```bash
+npm run typecheck -w apps/web
+```
+
+This checks TypeScript without loading Vite/Tailwind native dependencies, avoiding the recurring sandbox `EPERM` issue.
+
 ```bash
 npm run build -w apps/web
 ```
 
-This currently compiles successfully.
+This currently compiles successfully when run outside the sandbox if Tailwind/Vite native dependency loading hits `EPERM`.
 
 To run the frontend:
 
@@ -127,7 +142,7 @@ http://127.0.0.1:5173
 Continue slowly with one small frontend improvement at a time. Good next options:
 
 - Then improve `ShotCard` interaction states such as like/comment buttons.
-- Next non-social creation-flow improvements can focus on a visible recipe ratio or more espresso-specific fields.
+- Next non-social creation-flow improvements can focus on editing local shots or adding more espresso-specific fields.
 
 Do this before adding backend, authentication, Effector, or PWA features.
 
