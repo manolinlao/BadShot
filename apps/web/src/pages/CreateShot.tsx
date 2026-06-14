@@ -1,17 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RatingQuick } from '../components/RatingQuick';
-import { RecipeEditor } from '../components/RecipeEditor';
+import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
+import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
+import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
 
 export function CreateShot() {
   const navigate = useNavigate();
   const { addShot } = useLocalShots();
-
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -26,24 +23,10 @@ export function CreateShot() {
   const [doseOut, setDoseOut] = useState<number | ''>('');
   const [time, setTime] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
+  const canSave = Boolean(imageUrl);
 
-  /* ---------------- LOCK SCROLL ---------------- */
-  useEffect(() => {
-    document.body.style.overflow = sheetOpen ? 'hidden' : '';
-  }, [sheetOpen]);
-
-  /* ---------------- CAMERA ---------------- */
-  const openCamera = () => fileRef.current?.click();
-
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageUrl(URL.createObjectURL(file));
-  };
-
-  /* ---------------- SAVE ---------------- */
   const handleSave = () => {
-    if (!imageUrl) return;
+    if (!canSave) return;
 
     const shot: Shot = {
       id: `shot-${Date.now()}`,
@@ -75,35 +58,15 @@ export function CreateShot() {
     };
 
     addShot(shot);
-    navigate('/');
+    navigate('/', { state: { flash: 'Shot saved' } });
   };
 
   return (
     <div className='max-w-md mx-auto space-y-5'>
       <h1 className='text-xl font-bold text-center'>New shot</h1>
 
-      {/* PHOTO */}
-      <div onClick={openCamera} className='cursor-pointer'>
-        {imageUrl ? (
-          <img src={imageUrl} className='rounded-2xl w-full' />
-        ) : (
-          <div className='h-64 border-dashed border-2 flex flex-col items-center justify-center gap-2 rounded-2xl text-zinc-400'>
-            <Camera size={28} aria-hidden='true' />
-            <span>Tap to take photo</span>
-          </div>
-        )}
+      <PhotoPicker imageUrl={imageUrl} onImageSelected={setImageUrl} />
 
-        <input
-          ref={fileRef}
-          type='file'
-          accept='image/*'
-          capture='environment'
-          className='hidden'
-          onChange={handleImage}
-        />
-      </div>
-
-      {/* QUICK */}
       <input
         placeholder='Location'
         value={location}
@@ -113,130 +76,30 @@ export function CreateShot() {
 
       <RatingQuick value={rating} onChange={setRating} />
 
-      {/* OPEN SHEET BUTTON */}
-      <button
-        onClick={() => setSheetOpen(true)}
-        className='group flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition'
-      >
-        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-white group-hover:scale-110 transition'>
-          <Sparkles size={13} />
-        </div>
-        Add details
-      </button>
+      <DetailsSheet
+        open={sheetOpen}
+        onOpen={() => setSheetOpen(true)}
+        onClose={() => setSheetOpen(false)}
+        coffeeName={coffeeName}
+        setCoffeeName={setCoffeeName}
+        origin={origin}
+        setOrigin={setOrigin}
+        roaster={roaster}
+        setRoaster={setRoaster}
+        doseIn={doseIn}
+        setDoseIn={setDoseIn}
+        doseOut={doseOut}
+        setDoseOut={setDoseOut}
+        time={time}
+        setTime={setTime}
+        notes={notes}
+        setNotes={setNotes}
+      />
 
-      {/* SHEET */}
-      <AnimatePresence>
-        {sheetOpen && (
-          <div className='fixed inset-0 z-50 flex items-end'>
-            {/* OVERLAY */}
-
-            <motion.div
-              className='absolute inset-0 bg-black/40 backdrop-blur-sm'
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{
-                opacity: sheetOpen ? 1 : 0
-              }}
-              onClick={() => setSheetOpen(false)}
-            />
-
-            {/* SHEET */}
-            <motion.div
-              className='relative w-full bg-white rounded-t-3xl shadow-2xl max-h-[88vh] flex flex-col'
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{
-                type: 'spring',
-                stiffness: 320,
-                damping: 30
-              }}
-              drag='y'
-              dragConstraints={{ top: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(_, info) => {
-                if (info.offset.y > 150) {
-                  setSheetOpen(false);
-                }
-              }}
-            >
-              {/* HANDLE */}
-              <div className='py-3'>
-                <div className='w-12 h-1.5 bg-zinc-300 rounded-full mx-auto' />
-              </div>
-
-              {/* HEADER */}
-              <div className='px-5 pb-3 flex justify-between items-center border-b border-zinc-100'>
-                <h2 className='font-semibold'>Details</h2>
-
-                <button
-                  onClick={() => setSheetOpen(false)}
-                  className='text-sm text-zinc-500 hover:text-zinc-900'
-                >
-                  Close
-                </button>
-              </div>
-
-              {/* CONTENT */}
-              <div className='flex-1 overflow-y-auto px-5 py-4 space-y-5'>
-                {/* Coffee */}
-                <section className='rounded-2xl bg-zinc-50 p-4 space-y-3 border border-zinc-100'>
-                  <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Coffee</p>
-                  <input
-                    placeholder='Name'
-                    value={coffeeName}
-                    onChange={(e) => setCoffeeName(e.target.value)}
-                    className='w-full border rounded-xl px-3 py-2'
-                  />
-
-                  <div className='grid grid-cols-2 gap-2'>
-                    <input
-                      placeholder='Origin'
-                      value={origin}
-                      onChange={(e) => setOrigin(e.target.value)}
-                      className='border rounded-xl px-3 py-2'
-                    />
-
-                    <input
-                      placeholder='Roaster'
-                      value={roaster}
-                      onChange={(e) => setRoaster(e.target.value)}
-                      className='border rounded-xl px-3 py-2'
-                    />
-                  </div>
-                </section>
-
-                {/* Recipe */}
-                <RecipeEditor
-                  doseIn={doseIn}
-                  doseOut={doseOut}
-                  time={time}
-                  setDoseIn={setDoseIn}
-                  setDoseOut={setDoseOut}
-                  setTime={setTime}
-                />
-
-                {/* Notes */}
-                <section className='rounded-2xl bg-zinc-50 p-4 space-y-3 border border-zinc-100'>
-                  <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Notes</p>
-                  <textarea
-                    placeholder='Tasting notes...'
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className='w-full border rounded-xl px-3 py-2 h-28'
-                  />
-                </section>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* SAVE */}
       <button
         onClick={handleSave}
-        className='w-full bg-black text-white py-3 rounded-xl hover:bg-zinc-800 transition'
+        disabled={!canSave}
+        className='w-full rounded-xl bg-black py-3 text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
       >
         Save shot
       </button>

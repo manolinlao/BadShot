@@ -17,21 +17,39 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   const likes = shot.likesCount ?? 0;
   const comments = shot.commentsCount ?? 0;
+  const displayName = shot.user.displayName?.trim() || 'BadShot user';
+  const username = shot.user.username?.trim();
+  const avatarInitial = displayName.charAt(0).toUpperCase();
+  const coffeeTitle = shot.coffee.name?.trim() || shot.coffee.origin?.trim() || 'Untitled shot';
+  const hasCoffeeMeta = Boolean(
+    shot.coffee.origin?.trim() || shot.coffee.roaster?.trim() || shot.coffee.roastLevel
+  );
+  const hasRecipeStats = Boolean(recipe?.doseIn || recipe?.doseOut || recipe?.time || ratio);
+  const hasFooter = Boolean(shot.rating || likes > 0 || comments > 0);
 
   return (
     <article className='overflow-hidden rounded-xl border border-[#e2d6ca] bg-[#fffaf5] shadow-sm'>
       {/* HEADER */}
       <header className='flex items-center justify-between px-4 py-3'>
         <div className='flex items-center gap-3'>
-          <img
-            src={shot.user.avatarUrl}
-            alt={`${shot.user.displayName} avatar`}
-            className='h-10 w-10 rounded-full object-cover'
-          />
+          {shot.user.avatarUrl ? (
+            <img
+              src={shot.user.avatarUrl}
+              alt={`${displayName} avatar`}
+              className='h-10 w-10 rounded-full object-cover'
+            />
+          ) : (
+            <div
+              aria-label={`${displayName} avatar`}
+              className='flex h-10 w-10 items-center justify-center rounded-full bg-[#211a16] text-sm font-black text-white'
+            >
+              {avatarInitial}
+            </div>
+          )}
 
           <div>
-            <h2 className='text-sm font-bold'>{shot.user.displayName}</h2>
-            <p className='text-xs text-[#6f5b50]'>@{shot.user.username}</p>
+            <h2 className='text-sm font-bold'>{displayName}</h2>
+            {username && <p className='text-xs text-[#6f5b50]'>@{username}</p>}
           </div>
         </div>
 
@@ -39,27 +57,35 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
       </header>
 
       {/* IMAGE */}
-      <img
-        src={shot.imageUrl}
-        alt={`Espresso shot`}
-        className='aspect-square w-full object-cover'
-      />
+      {shot.imageUrl ? (
+        <img src={shot.imageUrl} alt='Espresso shot' className='aspect-square w-full object-cover' />
+      ) : (
+        <div className='flex aspect-square w-full items-center justify-center bg-[#f3ebe3] text-sm font-bold text-[#7a4d2a]'>
+          No photo
+        </div>
+      )}
 
       {/* CONTENT */}
       <div className='space-y-5 p-4'>
         {/* COFFEE BLOCK (IMPORTANT) */}
         <div>
-          <h3 className='text-xl font-black leading-tight'>
-            {shot.coffee.name ?? shot.coffee.origin}
-          </h3>
+          <h3 className='text-xl font-black leading-tight'>{coffeeTitle}</h3>
 
-          <p className='text-sm text-[#6f5b50]'>{shot.coffee.origin}</p>
+          {shot.coffee.origin && shot.coffee.name && (
+            <p className='text-sm text-[#6f5b50]'>{shot.coffee.origin}</p>
+          )}
 
-          <div className='flex items-center justify-between text-xs text-[#6f5b50] mt-1'>
-            <span className='font-semibold text-[#7a4d2a] uppercase'>{shot.coffee.roaster}</span>
+          {hasCoffeeMeta && (
+            <div className='mt-1 flex items-center justify-between gap-3 text-xs text-[#6f5b50]'>
+              {shot.coffee.roaster && (
+                <span className='font-semibold uppercase text-[#7a4d2a]'>
+                  {shot.coffee.roaster}
+                </span>
+              )}
 
-            <span>{shot.coffee.roastLevel ? RoastLevelLabel[shot.coffee.roastLevel] : ''}</span>
-          </div>
+              {shot.coffee.roastLevel && <span>{RoastLevelLabel[shot.coffee.roastLevel]}</span>}
+            </div>
+          )}
         </div>
 
         {/* LOCATION */}
@@ -68,11 +94,11 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         )}
 
         {/* RECIPE */}
-        {recipe && (
+        {hasRecipeStats && (
           <dl className='grid grid-cols-4 gap-2 text-center'>
-            {recipe.doseIn && <RecipeStat label='In' value={`${recipe.doseIn}g`} />}
-            {recipe.doseOut && <RecipeStat label='Out' value={`${recipe.doseOut}g`} />}
-            {recipe.time && <RecipeStat label='Time' value={`${recipe.time}s`} />}
+            {recipe?.doseIn && <RecipeStat label='In' value={`${recipe.doseIn}g`} />}
+            {recipe?.doseOut && <RecipeStat label='Out' value={`${recipe.doseOut}g`} />}
+            {recipe?.time && <RecipeStat label='Time' value={`${recipe.time}s`} />}
             {ratio && <RecipeStat label='Ratio' value={`1:${ratio}`} />}
           </dl>
         )}
@@ -83,14 +109,16 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         )}
 
         {/* FOOTER */}
-        <footer className='flex items-center justify-between border-t border-[#eadfd6] pt-4 text-sm font-semibold text-[#5f4a3f]'>
-          {shot.rating && <span className='text-[#7a4d2a]'>{ratingLabel[shot.rating]}</span>}
-          {(likes > 0 || comments > 0) && (
-            <span>
-              {likes} likes - {comments} comments
-            </span>
-          )}
-        </footer>
+        {hasFooter && (
+          <footer className='flex items-center justify-between border-t border-[#eadfd6] pt-4 text-sm font-semibold text-[#5f4a3f]'>
+            {shot.rating && <span className='text-[#7a4d2a]'>{ratingLabel[shot.rating]}</span>}
+            {(likes > 0 || comments > 0) && (
+              <span>
+                {likes} likes - {comments} comments
+              </span>
+            )}
+          </footer>
+        )}
       </div>
     </article>
   );

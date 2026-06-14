@@ -43,6 +43,18 @@
 - Replaced non-ASCII separators in location and engagement text with ASCII separators.
 - Cleaned mock shot names/cities and internal comments to avoid encoding artifacts.
 - Verified the frontend build successfully after these changes.
+- Added the first minimal validation to `CreateShot`: `Save shot` is now disabled until a photo exists.
+- Made `ShotCard` more tolerant of incomplete shot data:
+  - shows an initial avatar fallback when no avatar URL exists
+  - uses `Untitled shot` when coffee name/origin are missing
+  - hides empty username, coffee metadata, recipe stats, and footer sections
+  - shows a simple `No photo` placeholder if a shot has no image
+- Added a temporary fixed `Shot saved` toast after creating a shot, so it stays visible even when the feed is scrolled.
+- The flash message uses React Router navigation state instead of global state.
+- Refactored `CreateShot` into smaller pieces without changing behavior:
+  - `PhotoPicker` handles photo selection and preview
+  - `DetailsSheet` handles the details bottom sheet and scroll lock
+  - `CreateShot` now mainly coordinates form state and saving
 
 ## Product Direction
 
@@ -111,9 +123,8 @@ http://127.0.0.1:5173
 
 Continue slowly with one small frontend improvement at a time. Good next options:
 
-- Add minimal validation to `CreateShot`, starting with disabling `Save shot` until a photo exists.
-- Improve `ShotCard` fallback states for incomplete local shots, especially missing avatar, image, or coffee name.
 - Then improve `ShotCard` interaction states such as like/comment buttons.
+- Next non-social creation-flow improvements can focus on useful espresso fields, such as roast level or a visible recipe ratio.
 
 Do this before adding backend, authentication, Effector, or PWA features.
 
