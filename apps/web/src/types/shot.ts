@@ -15,11 +15,7 @@ export type Shot = {
     roastLevel?: RoastLevel;
   };
   location?: ShotLocation;
-  recipe?: {
-    doseIn?: number;
-    doseOut?: number;
-    time?: number;
-  };
+  recipe?: Recipe;
   tastingNotes?: string;
   rating?: number;
   likesCount?: number;
@@ -35,3 +31,9 @@ export type ShotLocation = {
   lat?: number;
   lng?: number;
 };
+
+export interface Recipe {
+  doseIn?: number;
+  doseOut?: number;
+  time?: number;
+}

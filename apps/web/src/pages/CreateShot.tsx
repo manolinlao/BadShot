@@ -18,12 +18,14 @@ export function CreateShot() {
   const [rating, setRating] = useState(3);
   const [location, setLocation] = useState('');
 
+  const [editing, setEditing] = useState<'in' | 'out' | 'time' | null>(null);
+
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
   const [roaster, setRoaster] = useState('');
-  const [doseIn, setDoseIn] = useState('');
-  const [doseOut, setDoseOut] = useState('');
-  const [time, setTime] = useState('');
+  const [doseIn, setDoseIn] = useState<number | ''>('');
+  const [doseOut, setDoseOut] = useState<number | ''>('');
+  const [time, setTime] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
 
   const touchStartY = useRef<number | null>(null);
@@ -231,19 +233,52 @@ export function CreateShot() {
                 <section className='rounded-2xl bg-zinc-900 text-white p-4 space-y-3'>
                   <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Recipe</p>
 
-                  <div className='grid grid-cols-3 gap-2'>
-                    <input
-                      className='bg-white/10 rounded-xl px-3 py-2 text-center'
-                      placeholder='18g'
-                    />
-                    <input
-                      className='bg-white/10 rounded-xl px-3 py-2 text-center'
-                      placeholder='42g'
-                    />
-                    <input
-                      className='bg-white/10 rounded-xl px-3 py-2 text-center'
-                      placeholder='31s'
-                    />
+                  <div className='flex flex-wrap gap-2'>
+                    {/* IN */}
+                    <button
+                      onClick={() => setEditing('in')}
+                      className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
+                    >
+                      <span>{doseIn !== '' ? doseIn : ''}</span>
+                      <span className='text-zinc-400 text-xs'>g in</span>
+                    </button>
+
+                    {/* OUT */}
+                    <button
+                      onClick={() => setEditing('out')}
+                      className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
+                    >
+                      <span>{doseOut !== '' ? doseOut : ''}</span>
+                      <span className='text-zinc-400 text-xs'>g out</span>
+                    </button>
+
+                    {/* TIME */}
+                    <button
+                      onClick={() => setEditing('time')}
+                      className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
+                    >
+                      <span>{time !== '' ? time : ''}</span>
+                      <span className='text-zinc-400 text-xs'>s</span>
+                    </button>
+
+                    {/* INLINE EDITOR (single) */}
+                    {editing && (
+                      <input
+                        autoFocus
+                        type='number'
+                        inputMode='numeric'
+                        value={editing === 'in' ? doseIn : editing === 'out' ? doseOut : time}
+                        onChange={(e) => {
+                          const v = e.target.value;
+
+                          if (editing === 'in') setDoseIn(v);
+                          if (editing === 'out') setDoseOut(v);
+                          if (editing === 'time') setTime(v);
+                        }}
+                        onBlur={() => setEditing(null)}
+                        className='px-3 py-1 rounded-full bg-white/20 outline-none w-24 text-center'
+                      />
+                    )}
                   </div>
                 </section>
 
