@@ -31,8 +31,6 @@ export function CreateShot() {
 
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [expanded, setExpanded] = useState(false);
-
   const [sheetOpen, setSheetOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -111,7 +109,7 @@ export function CreateShot() {
 
       location: location ? { name: location } : { name: 'Home' },
 
-      coffee: expanded
+      coffee: sheetOpen
         ? {
             name: coffeeName,
             origin,
@@ -119,7 +117,7 @@ export function CreateShot() {
           }
         : {},
 
-      recipe: expanded
+      recipe: sheetOpen
         ? {
             doseIn: doseIn ? Number(doseIn) : undefined,
             doseOut: doseOut ? Number(doseOut) : undefined,
@@ -127,7 +125,7 @@ export function CreateShot() {
           }
         : {},
 
-      tastingNotes: expanded ? notes : undefined,
+      tastingNotes: sheetOpen ? notes : undefined,
 
       likesCount: 0,
       commentsCount: 0,
@@ -181,62 +179,6 @@ export function CreateShot() {
         <span className='text-lg'>+</span>
         <span>Add details</span>
       </button>
-
-      {/* EXPANDED SECTION */}
-      {expanded && (
-        <div className='space-y-3 border rounded-xl p-3'>
-          <input
-            placeholder='Coffee name'
-            value={coffeeName}
-            onChange={(e) => setCoffeeName(e.target.value)}
-            className='input'
-          />
-
-          <input
-            placeholder='Origin'
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-            className='input'
-          />
-
-          <input
-            placeholder='Roaster'
-            value={roaster}
-            onChange={(e) => setRoaster(e.target.value)}
-            className='input'
-          />
-
-          <div className='grid grid-cols-3 gap-2'>
-            <input
-              placeholder='In'
-              value={doseIn}
-              onChange={(e) => setDoseIn(e.target.value)}
-              className='input'
-            />
-
-            <input
-              placeholder='Out'
-              value={doseOut}
-              onChange={(e) => setDoseOut(e.target.value)}
-              className='input'
-            />
-
-            <input
-              placeholder='Time'
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className='input'
-            />
-          </div>
-
-          <textarea
-            placeholder='Tasting notes'
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className='input h-20'
-          />
-        </div>
-      )}
 
       {sheetOpen && (
         <div className='fixed inset-0 z-50'>
