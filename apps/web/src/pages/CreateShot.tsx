@@ -1,48 +1,20 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalShots } from '../hooks/useLocalShots';
-import type { RoastLevel } from '../domain/coffee/roastLevel';
 import type { Shot } from '../types/shot';
 
-const roastOptions: RoastLevel[] = ['light', 'medium-light', 'medium', 'dark'];
-
-const initial = {
-  coffeeName: '',
-  coffeeOrigin: '',
-  coffeeRoaster: '',
-  roastLevel: 'medium' as RoastLevel,
-
-  imageUrl: '',
-
-  doseIn: '',
-  doseOut: '',
-  time: '',
-
-  tastingNotes: '',
-  rating: 3
-};
-
-function RatingPills({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const labels = ['Bad', 'Ok', 'Good', 'Great', 'God shot'];
-
+function RatingQuick({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
-    <div className='flex flex-wrap gap-2'>
-      {labels.map((l, i) => {
-        const active = i + 1 === value;
-
-        return (
-          <button
-            key={l}
-            type='button'
-            onClick={() => onChange(i + 1)}
-            className={`px-3 py-1 rounded-full border text-sm transition ${
-              active ? 'bg-black text-white border-black' : 'bg-white text-black border-gray-300'
-            }`}
-          >
-            {l}
-          </button>
-        );
-      })}
+    <div className='flex justify-center gap-2 text-3xl'>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          onClick={() => onChange(n)}
+          className={n <= value ? 'text-yellow-500' : 'text-gray-300'}
+        >
+          ★
+        </button>
+      ))}
     </div>
   );
 }
@@ -51,48 +23,108 @@ export function CreateShot() {
   const navigate = useNavigate();
   const { addShot } = useLocalShots();
 
-  const [form, setForm] = useState(initial);
-  const [error, setError] = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const set = (k: string, v: any) => setForm((p) => ({ ...p, [k]: v }));
+  const [expanded, setExpanded] = useState(false);
 
-  const ratio =
-    form.doseIn && form.doseOut ? (Number(form.doseOut) / Number(form.doseIn)).toFixed(2) : null;
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = () => {
-    if (!form.coffeeName || !form.coffeeOrigin) {
-      setError('Coffee name and origin are required');
-      return;
+  const touchStartY = useRef<number | null>(null);
+
+  const [imageUrl, setImageUrl] = useState('');
+  const [rating, setRating] = useState(3);
+  const [location, setLocation] = useState('');
+
+  // extra fields (optional)
+  const [coffeeName, setCoffeeName] = useState('');
+  const [origin, setOrigin] = useState('');
+  const [roaster, setRoaster] = useState('');
+  const [doseIn, setDoseIn] = useState('');
+  const [doseOut, setDoseOut] = useState('');
+  const [time, setTime] = useState('');
+  const [notes, setNotes] = useState('');
+
+  // autofocus al abrir
+  useEffect(() => {
+    if (sheetOpen) {
+      const firstInput = sheetRef.current?.querySelector('input') as HTMLInputElement | null;
+
+      firstInput?.focus();
     }
+  }, [sheetOpen]);
+
+  // bloqueo del scroll del fondo
+  useEffect(() => {
+    if (sheetOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [sheetOpen]);
+
+  const openCamera = () => fileRef.current?.click();
+
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageUrl(URL.createObjectURL(file));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const start = touchStartY.current;
+    if (!start) return;
+
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - start;
+
+    // si arrastras hacia abajo mucho → cerrar
+    if (diff > 120) {
+      setSheetOpen(false);
+      touchStartY.current = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartY.current = null;
+  };
+
+  const handleSave = () => {
+    if (!imageUrl) return;
 
     const shot: Shot = {
       id: `shot-${Date.now()}`,
-      user: {
-        displayName: 'You',
-        username: 'localuser'
-      },
+      user: { displayName: 'You', username: 'local' },
 
-      imageUrl: form.imageUrl,
+      imageUrl,
+      rating,
 
-      coffee: {
-        name: form.coffeeName,
-        origin: form.coffeeOrigin,
-        roaster: form.coffeeRoaster,
-        roastLevel: form.roastLevel
-      },
+      location: location ? { name: location } : { name: 'Home' },
 
-      recipe: {
-        doseIn: form.doseIn ? Number(form.doseIn) : undefined,
-        doseOut: form.doseOut ? Number(form.doseOut) : undefined,
-        time: form.time ? Number(form.time) : undefined
-      },
+      coffee: expanded
+        ? {
+            name: coffeeName,
+            origin,
+            roaster
+          }
+        : {},
 
-      tastingNotes: form.tastingNotes,
-      rating: form.rating,
+      recipe: expanded
+        ? {
+            doseIn: doseIn ? Number(doseIn) : undefined,
+            doseOut: doseOut ? Number(doseOut) : undefined,
+            time: time ? Number(time) : undefined
+          }
+        : {},
+
+      tastingNotes: expanded ? notes : undefined,
 
       likesCount: 0,
       commentsCount: 0,
-
       brewedAt: new Date().toISOString(),
       createdAt: new Date().toISOString()
     };
@@ -102,117 +134,193 @@ export function CreateShot() {
   };
 
   return (
-    <div className='max-w-3xl mx-auto space-y-8'>
-      {/* HEADER */}
-      <header className='space-y-1'>
-        <h1 className='text-3xl font-bold'>Log your shot</h1>
-        <p className='text-gray-600'>How did your espresso turn out?</p>
-      </header>
+    <div className='max-w-md mx-auto space-y-5'>
+      <h1 className='text-xl font-bold text-center'>New shot</h1>
 
-      {error && <div className='bg-red-100 text-red-700 p-3 rounded'>{error}</div>}
+      {/* PHOTO */}
+      <div onClick={openCamera} className='cursor-pointer'>
+        {imageUrl ? (
+          <img src={imageUrl} className='rounded-xl w-full' />
+        ) : (
+          <div className='h-64 border-dashed border-2 flex items-center justify-center rounded-xl'>
+            📸 Tap to take photo
+          </div>
+        )}
 
-      {/* CARD */}
-      <div className='bg-white border rounded-xl p-6 space-y-8'>
-        {/* COFFEE */}
-        <section className='space-y-3'>
-          <p className='text-xs uppercase tracking-wide text-gray-500'>Coffee</p>
+        <input
+          ref={fileRef}
+          type='file'
+          accept='image/*'
+          capture='environment'
+          className='hidden'
+          onChange={handleImage}
+        />
+      </div>
 
+      {/* QUICK FIELDS */}
+      <input
+        placeholder='Location (optional)'
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        className='w-full border rounded px-3 py-2'
+      />
+
+      <RatingQuick value={rating} onChange={setRating} />
+
+      {/* EXPAND BUTTON */}
+      <button
+        onClick={() => setSheetOpen(true)}
+        className='flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-black transition w-full'
+      >
+        <span className='text-lg'>+</span>
+        <span>Add details</span>
+      </button>
+
+      {/* EXPANDED SECTION */}
+      {expanded && (
+        <div className='space-y-3 border rounded-xl p-3'>
           <input
             placeholder='Coffee name'
-            value={form.coffeeName}
-            onChange={(e) => set('coffeeName', e.target.value)}
+            value={coffeeName}
+            onChange={(e) => setCoffeeName(e.target.value)}
             className='input'
           />
-
-          <div className='grid grid-cols-2 gap-3'>
-            <input
-              placeholder='Origin'
-              value={form.coffeeOrigin}
-              onChange={(e) => set('coffeeOrigin', e.target.value)}
-              className='input'
-            />
-
-            <input
-              placeholder='Roaster'
-              value={form.coffeeRoaster}
-              onChange={(e) => set('coffeeRoaster', e.target.value)}
-              className='input'
-            />
-          </div>
-
-          <select
-            value={form.roastLevel}
-            onChange={(e) => set('roastLevel', e.target.value)}
-            className='input'
-          >
-            {roastOptions.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
 
           <input
-            placeholder='Image URL (optional)'
-            value={form.imageUrl}
-            onChange={(e) => set('imageUrl', e.target.value)}
+            placeholder='Origin'
+            value={origin}
+            onChange={(e) => setOrigin(e.target.value)}
             className='input'
           />
-        </section>
 
-        {/* SHOT CORE (IMPORTANTE) */}
-        <section className='space-y-3'>
-          <p className='text-xs uppercase tracking-wide text-gray-500'>Extraction</p>
+          <input
+            placeholder='Roaster'
+            value={roaster}
+            onChange={(e) => setRoaster(e.target.value)}
+            className='input'
+          />
 
-          <div className='grid grid-cols-3 gap-3'>
+          <div className='grid grid-cols-3 gap-2'>
             <input
-              placeholder='In (g)'
-              value={form.doseIn}
-              onChange={(e) => set('doseIn', e.target.value)}
+              placeholder='In'
+              value={doseIn}
+              onChange={(e) => setDoseIn(e.target.value)}
               className='input'
             />
 
             <input
-              placeholder='Out (g)'
-              value={form.doseOut}
-              onChange={(e) => set('doseOut', e.target.value)}
+              placeholder='Out'
+              value={doseOut}
+              onChange={(e) => setDoseOut(e.target.value)}
               className='input'
             />
 
             <input
-              placeholder='Time (s)'
-              value={form.time}
-              onChange={(e) => set('time', e.target.value)}
+              placeholder='Time'
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
               className='input'
             />
           </div>
 
-          {ratio && (
-            <div className='text-sm text-gray-600'>
-              Ratio: <b>1:{ratio}</b>
-            </div>
-          )}
-        </section>
-
-        {/* TASTE */}
-        <section className='space-y-3'>
-          <p className='text-xs uppercase tracking-wide text-gray-500'>Taste</p>
-
           <textarea
-            placeholder='What do you taste? (floral, fruity, chocolate...)'
-            value={form.tastingNotes}
-            onChange={(e) => set('tastingNotes', e.target.value)}
-            className='input h-24'
+            placeholder='Tasting notes'
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className='input h-20'
+          />
+        </div>
+      )}
+
+      {sheetOpen && (
+        <div className='fixed inset-0 z-50'>
+          {/* overlay con blur */}
+          <div
+            className='absolute inset-0 bg-black/40 backdrop-blur-sm'
+            onClick={() => setSheetOpen(false)}
           />
 
-          <RatingPills value={form.rating} onChange={(v) => set('rating', v)} />
-        </section>
+          {/* sheet */}
+          <div
+            ref={sheetRef}
+            className='absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto animate-slideUp shadow-2xl'
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* handle */}
+            <div className='w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-3' />
 
-        {/* ACTION */}
-        <button onClick={handleSubmit} className='w-full bg-black text-white py-3 rounded-lg'>
-          Save shot
-        </button>
-      </div>
+            {/* header */}
+            <div className='flex justify-between items-center mb-4'>
+              <h2 className='font-semibold'>Details</h2>
+
+              <button onClick={() => setSheetOpen(false)} className='text-sm text-gray-500'>
+                Close
+              </button>
+            </div>
+
+            {/* inputs */}
+            <div className='space-y-3'>
+              <input
+                placeholder='Coffee name'
+                value={coffeeName}
+                onChange={(e) => setCoffeeName(e.target.value)}
+                className='input'
+              />
+
+              <input
+                placeholder='Origin'
+                value={origin}
+                onChange={(e) => setOrigin(e.target.value)}
+                className='input'
+              />
+
+              <input
+                placeholder='Roaster'
+                value={roaster}
+                onChange={(e) => setRoaster(e.target.value)}
+                className='input'
+              />
+
+              <div className='grid grid-cols-3 gap-2'>
+                <input
+                  placeholder='In'
+                  value={doseIn}
+                  onChange={(e) => setDoseIn(e.target.value)}
+                  className='input'
+                />
+
+                <input
+                  placeholder='Out'
+                  value={doseOut}
+                  onChange={(e) => setDoseOut(e.target.value)}
+                  className='input'
+                />
+
+                <input
+                  placeholder='Time'
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className='input'
+                />
+              </div>
+
+              <textarea
+                placeholder='Tasting notes'
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className='input h-24'
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SAVE */}
+      <button onClick={handleSave} className='w-full bg-black text-white py-3 rounded-xl'>
+        Save shot
+      </button>
     </div>
   );
 }
