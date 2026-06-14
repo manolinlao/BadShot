@@ -2,9 +2,13 @@ import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
+import { RoastLevelLabel, type RoastLevel } from '../../domain/coffee/roastLevel';
 import { RecipeEditor } from './RecipeEditor';
 
 type NumberInputValue = number | '';
+type RoastLevelInputValue = RoastLevel | '';
+
+const roastLevelOptions: RoastLevel[] = ['light', 'medium-light', 'medium', 'dark'];
 
 interface DetailsSheetProps {
   open: boolean;
@@ -16,6 +20,8 @@ interface DetailsSheetProps {
   setOrigin: (value: string) => void;
   roaster: string;
   setRoaster: (value: string) => void;
+  roastLevel: RoastLevelInputValue;
+  setRoastLevel: (value: RoastLevelInputValue) => void;
   doseIn: NumberInputValue;
   setDoseIn: (value: NumberInputValue) => void;
   doseOut: NumberInputValue;
@@ -36,6 +42,8 @@ export function DetailsSheet({
   setOrigin,
   roaster,
   setRoaster,
+  roastLevel,
+  setRoastLevel,
   doseIn,
   setDoseIn,
   doseOut,
@@ -131,6 +139,46 @@ export function DetailsSheet({
                       onChange={(event) => setRoaster(event.target.value)}
                       className='rounded-xl border px-3 py-2'
                     />
+                  </div>
+
+                  <div className='space-y-2'>
+                    <p className='text-[11px] uppercase tracking-widest text-zinc-400'>
+                      Roast level optional
+                    </p>
+                    <div className='grid grid-cols-2 gap-2'>
+                      <button
+                        type='button'
+                        onClick={() => setRoastLevel('')}
+                        className={[
+                          'rounded-xl border px-3 py-2 text-sm font-semibold transition',
+                          roastLevel === ''
+                            ? 'border-zinc-900 bg-zinc-900 text-white'
+                            : 'border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900'
+                        ].join(' ')}
+                      >
+                        Not sure
+                      </button>
+
+                      {roastLevelOptions.map((option) => {
+                        const active = roastLevel === option;
+
+                        return (
+                          <button
+                            key={option}
+                            type='button'
+                            onClick={() => setRoastLevel(active ? '' : option)}
+                            className={[
+                              'rounded-xl border px-3 py-2 text-sm font-semibold transition',
+                              active
+                                ? 'border-zinc-900 bg-zinc-900 text-white'
+                                : 'border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900'
+                            ].join(' ')}
+                          >
+                            {RoastLevelLabel[option]}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </section>
 

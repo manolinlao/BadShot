@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
+import type { RoastLevel } from '../domain/coffee/roastLevel';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
 
@@ -19,6 +20,7 @@ export function CreateShot() {
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
   const [roaster, setRoaster] = useState('');
+  const [roastLevel, setRoastLevel] = useState<RoastLevel | ''>('');
   const [doseIn, setDoseIn] = useState<number | ''>('');
   const [doseOut, setDoseOut] = useState<number | ''>('');
   const [time, setTime] = useState<number | ''>('');
@@ -40,7 +42,8 @@ export function CreateShot() {
       coffee: {
         name: coffeeName,
         origin,
-        roaster
+        roaster,
+        roastLevel: roastLevel || undefined
       },
 
       recipe: {
@@ -86,6 +89,8 @@ export function CreateShot() {
         setOrigin={setOrigin}
         roaster={roaster}
         setRoaster={setRoaster}
+        roastLevel={roastLevel}
+        setRoastLevel={setRoastLevel}
         doseIn={doseIn}
         setDoseIn={setDoseIn}
         doseOut={doseOut}

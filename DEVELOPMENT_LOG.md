@@ -55,6 +55,9 @@
   - `PhotoPicker` handles photo selection and preview
   - `DetailsSheet` handles the details bottom sheet and scroll lock
   - `CreateShot` now mainly coordinates form state and saving
+- Added optional `Roast level` to the create-shot details flow.
+- `Not sure` is the default roast-level state and saves no `coffee.roastLevel` value.
+- Created shots save `coffee.roastLevel` only when the user chooses a roast level, and `ShotCard` can display it.
 
 ## Product Direction
 
@@ -124,7 +127,7 @@ http://127.0.0.1:5173
 Continue slowly with one small frontend improvement at a time. Good next options:
 
 - Then improve `ShotCard` interaction states such as like/comment buttons.
-- Next non-social creation-flow improvements can focus on useful espresso fields, such as roast level or a visible recipe ratio.
+- Next non-social creation-flow improvements can focus on a visible recipe ratio or more espresso-specific fields.
 
 Do this before adding backend, authentication, Effector, or PWA features.
 
