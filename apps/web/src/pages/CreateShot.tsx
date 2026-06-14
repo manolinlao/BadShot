@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, X } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RatingQuick } from '../components/shot/RatingQuick';
 import { useLocalShots } from '../hooks/useLocalShots';
@@ -11,7 +11,6 @@ export function CreateShot() {
   const { addShot } = useLocalShots();
 
   const fileRef = useRef<HTMLInputElement>(null);
-  const sheetRef = useRef<HTMLDivElement>(null);
 
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -150,11 +149,15 @@ export function CreateShot() {
         {sheetOpen && (
           <div className='fixed inset-0 z-50 flex items-end'>
             {/* OVERLAY */}
+
             <motion.div
               className='absolute inset-0 bg-black/40 backdrop-blur-sm'
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              style={{
+                opacity: sheetOpen ? 1 : 0
+              }}
               onClick={() => setSheetOpen(false)}
             />
 
@@ -198,9 +201,8 @@ export function CreateShot() {
               {/* CONTENT */}
               <div className='flex-1 overflow-y-auto px-5 py-4 space-y-5'>
                 {/* Coffee */}
-                <section className='space-y-3'>
+                <section className='rounded-2xl bg-zinc-50 p-4 space-y-3 border border-zinc-100'>
                   <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Coffee</p>
-
                   <input
                     placeholder='Name'
                     value={coffeeName}
@@ -226,37 +228,28 @@ export function CreateShot() {
                 </section>
 
                 {/* Recipe */}
-                <section className='space-y-3'>
+                <section className='rounded-2xl bg-zinc-900 text-white p-4 space-y-3'>
                   <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Recipe</p>
 
                   <div className='grid grid-cols-3 gap-2'>
                     <input
-                      placeholder='In'
-                      value={doseIn}
-                      onChange={(e) => setDoseIn(e.target.value)}
-                      className='border rounded-xl px-3 py-2 text-center'
+                      className='bg-white/10 rounded-xl px-3 py-2 text-center'
+                      placeholder='18g'
                     />
-
                     <input
-                      placeholder='Out'
-                      value={doseOut}
-                      onChange={(e) => setDoseOut(e.target.value)}
-                      className='border rounded-xl px-3 py-2 text-center'
+                      className='bg-white/10 rounded-xl px-3 py-2 text-center'
+                      placeholder='42g'
                     />
-
                     <input
-                      placeholder='Time'
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                      className='border rounded-xl px-3 py-2 text-center'
+                      className='bg-white/10 rounded-xl px-3 py-2 text-center'
+                      placeholder='31s'
                     />
                   </div>
                 </section>
 
                 {/* Notes */}
-                <section className='space-y-3'>
+                <section className='rounded-2xl bg-zinc-50 p-4 space-y-3 border border-zinc-100'>
                   <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Notes</p>
-
                   <textarea
                     placeholder='Tasting notes...'
                     value={notes}
