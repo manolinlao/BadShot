@@ -1,29 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ratingOptions } from '../domain/coffee/rating';
+import { RatingQuick } from '../components/shot/RatingQuick';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
-
-function RatingQuick({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  return (
-    <div className='flex justify-center gap-3'>
-      {ratingOptions.map((opt) => {
-        const active = value === opt.value;
-
-        return (
-          <button
-            key={opt.value}
-            onClick={() => onChange(opt.value)}
-            className={`text-2xl transition ${active ? 'scale-125' : 'opacity-40'}`}
-            title={opt.label}
-          >
-            {opt.label.split(' ')[0]}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 export function CreateShot() {
   const navigate = useNavigate();
@@ -174,7 +153,7 @@ export function CreateShot() {
       {/* EXPAND BUTTON */}
       <button
         onClick={() => setSheetOpen(true)}
-        className='flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-black transition w-full'
+        className='flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-black transition w-full cursor-pointer'
       >
         <span className='text-lg'>+</span>
         <span>Add details</span>
@@ -266,7 +245,10 @@ export function CreateShot() {
       )}
 
       {/* SAVE */}
-      <button onClick={handleSave} className='w-full bg-black text-white py-3 rounded-xl'>
+      <button
+        onClick={handleSave}
+        className='w-full bg-black text-white py-3 rounded-xl cursor-pointer hover:bg-gray-800 transition'
+      >
         Save shot
       </button>
     </div>
