@@ -20,8 +20,8 @@ export type Shot = {
   rating?: number;
   likesCount?: number;
   commentsCount?: number;
-  brewedAt: string; // fecha real del café ISO
-  createdAt: string; // fecha de publicación ISO
+  brewedAt: string; // actual coffee date as ISO
+  createdAt: string; // post publication date as ISO
 };
 
 export type ShotLocation = {

@@ -21,7 +21,7 @@ export const mockShots: Shot[] = [
     },
 
     location: {
-      name: 'Satan’s Coffee Corner',
+      name: "Satan's Coffee Corner",
       city: 'Barcelona',
       country: 'Spain'
     },
@@ -54,7 +54,7 @@ export const mockShots: Shot[] = [
       'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80',
 
     coffee: {
-      name: 'El Paraíso Washed',
+      name: 'El Paraiso Washed',
       origin: 'Huila, Colombia',
       roaster: 'Nomad Coffee',
       roastLevel: 'medium-light'
@@ -102,7 +102,7 @@ export const mockShots: Shot[] = [
 
     location: {
       name: 'Home',
-      city: 'Gijón',
+      city: 'Gijon',
       country: 'Spain'
     },
 
@@ -121,7 +121,7 @@ export const mockShots: Shot[] = [
     createdAt: '2026-06-12T11:10:00.000Z'
   },
 
-  // CASO REAL: sin receta (café de cafetería)
+  // Real cafe shot without recipe details.
   {
     id: 'shot-004',
     user: {
@@ -143,7 +143,7 @@ export const mockShots: Shot[] = [
 
     location: {
       name: 'Small Coffee Bar',
-      city: 'Gijón',
+      city: 'Gijon',
       country: 'Spain'
     },
 

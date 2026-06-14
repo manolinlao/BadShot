@@ -25,15 +25,15 @@ export const RecipeEditor = ({
 
       <div className='flex flex-wrap gap-2'>
         <button onClick={() => setEditing('in')} className='px-3 py-1 rounded-full bg-white/10'>
-          {doseIn !== '' ? doseIn : '—'} <span className='text-xs text-zinc-400'>g in</span>
+          {doseIn !== '' ? doseIn : '-'} <span className='text-xs text-zinc-400'>g in</span>
         </button>
 
         <button onClick={() => setEditing('out')} className='px-3 py-1 rounded-full bg-white/10'>
-          {doseOut !== '' ? doseOut : '—'} <span className='text-xs text-zinc-400'>g out</span>
+          {doseOut !== '' ? doseOut : '-'} <span className='text-xs text-zinc-400'>g out</span>
         </button>
 
         <button onClick={() => setEditing('time')} className='px-3 py-1 rounded-full bg-white/10'>
-          {time !== '' ? time : '—'} <span className='text-xs text-zinc-400'>s</span>
+          {time !== '' ? time : '-'} <span className='text-xs text-zinc-400'>s</span>
         </button>
       </div>
 

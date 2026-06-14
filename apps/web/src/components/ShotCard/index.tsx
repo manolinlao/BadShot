@@ -64,7 +64,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
         {/* LOCATION */}
         {shot.location && (
-          <p className='text-xs text-[#6f5b50]'>📍 {formatLocation(shot.location)}</p>
+          <p className='text-xs text-[#6f5b50]'>Location: {formatLocation(shot.location)}</p>
         )}
 
         {/* RECIPE */}
@@ -87,7 +87,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
           {shot.rating && <span className='text-[#7a4d2a]'>{ratingLabel[shot.rating]}</span>}
           {(likes > 0 || comments > 0) && (
             <span>
-              {likes} likes · {comments} comments
+              {likes} likes - {comments} comments
             </span>
           )}
         </footer>

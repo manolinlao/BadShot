@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Camera, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RatingQuick } from '../components/RatingQuick';
 import { RecipeEditor } from '../components/RecipeEditor';
@@ -26,8 +26,6 @@ export function CreateShot() {
   const [doseOut, setDoseOut] = useState<number | ''>('');
   const [time, setTime] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
-
-  const touchStartY = useRef<number | null>(null);
 
   /* ---------------- LOCK SCROLL ---------------- */
   useEffect(() => {
@@ -89,8 +87,9 @@ export function CreateShot() {
         {imageUrl ? (
           <img src={imageUrl} className='rounded-2xl w-full' />
         ) : (
-          <div className='h-64 border-dashed border-2 flex items-center justify-center rounded-2xl text-zinc-400'>
-            📸 Tap to take photo
+          <div className='h-64 border-dashed border-2 flex flex-col items-center justify-center gap-2 rounded-2xl text-zinc-400'>
+            <Camera size={28} aria-hidden='true' />
+            <span>Tap to take photo</span>
           </div>
         )}
 

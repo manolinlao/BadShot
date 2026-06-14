@@ -5,5 +5,5 @@ export function formatLocation(location?: ShotLocation) {
 
   const parts = [location.name, location.city, location.country].filter(Boolean);
 
-  return parts.join(' · ');
+  return parts.join(' - ');
 }
