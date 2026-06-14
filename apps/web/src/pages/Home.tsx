@@ -1,5 +1,19 @@
-import { ShotCard } from '../components/shot/ShotCard';
+import { ShotCard } from '../components/ShotCard';
 import { useLocalShots } from '../hooks/useLocalShots';
+/**
+ * 
+ * vamos a uar
+ * features/
+  shot/
+    components/
+      ShotCard/
+        index.tsx
+        RecipeStats.tsx
+        ShotHeader.tsx
+    hooks/
+    types/
+    utils/
+ */
 
 export function Home() {
   const { feed } = useLocalShots();

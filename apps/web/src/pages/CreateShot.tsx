@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RatingQuick } from '../components/shot/RatingQuick';
+import { RatingQuick } from '../components/RatingQuick';
+import { RecipeEditor } from '../components/RecipeEditor';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
 
@@ -17,8 +18,6 @@ export function CreateShot() {
   const [imageUrl, setImageUrl] = useState('');
   const [rating, setRating] = useState(3);
   const [location, setLocation] = useState('');
-
-  const [editing, setEditing] = useState<'in' | 'out' | 'time' | null>(null);
 
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
@@ -42,26 +41,6 @@ export function CreateShot() {
     const file = e.target.files?.[0];
     if (!file) return;
     setImageUrl(URL.createObjectURL(file));
-  };
-
-  /* ---------------- DRAG TO CLOSE ---------------- */
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === null) return;
-
-    const diff = e.touches[0].clientY - touchStartY.current;
-
-    if (diff > 160) {
-      setSheetOpen(false);
-      touchStartY.current = null;
-    }
-  };
-
-  const onTouchEnd = () => {
-    touchStartY.current = null;
   };
 
   /* ---------------- SAVE ---------------- */
@@ -230,66 +209,14 @@ export function CreateShot() {
                 </section>
 
                 {/* Recipe */}
-                <section className='rounded-2xl bg-zinc-900 text-white p-4 space-y-3'>
-                  <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Recipe</p>
-
-                  <div className='flex flex-wrap gap-2'>
-                    {/* IN */}
-                    <button
-                      onClick={() => setEditing('in')}
-                      className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
-                    >
-                      <span className='font-medium'>{doseIn !== '' ? doseIn : ''}</span>
-                      <span className='text-xs text-zinc-400'>g in</span>
-                    </button>
-
-                    {/* OUT */}
-                    <button
-                      onClick={() => setEditing('out')}
-                      className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
-                    >
-                      <span className='font-medium'>{doseOut !== '' ? doseOut : ''}</span>
-                      <span className='text-xs text-zinc-400'>g out</span>
-                    </button>
-
-                    {/* TIME */}
-                    <button
-                      onClick={() => setEditing('time')}
-                      className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
-                    >
-                      <span className='font-medium'>{time !== '' ? time : ''}</span>
-                      <span className='text-xs text-zinc-400'>s</span>
-                    </button>
-                  </div>
-
-                  {/* INLINE EDITOR */}
-                  {editing && (
-                    <input
-                      autoFocus
-                      type='number'
-                      inputMode='numeric'
-                      value={editing === 'in' ? doseIn : editing === 'out' ? doseOut : time}
-                      onChange={(e) => {
-                        const v = e.target.value;
-
-                        if (v === '') {
-                          if (editing === 'in') setDoseIn('');
-                          if (editing === 'out') setDoseOut('');
-                          if (editing === 'time') setTime('');
-                          return;
-                        }
-
-                        const num = Number(v);
-
-                        if (editing === 'in') setDoseIn(num);
-                        if (editing === 'out') setDoseOut(num);
-                        if (editing === 'time') setTime(num);
-                      }}
-                      onBlur={() => setEditing(null)}
-                      className='mt-2 px-3 py-2 rounded-xl bg-white/10 outline-none w-28 text-center'
-                    />
-                  )}
-                </section>
+                <RecipeEditor
+                  doseIn={doseIn}
+                  doseOut={doseOut}
+                  time={time}
+                  setDoseIn={setDoseIn}
+                  setDoseOut={setDoseOut}
+                  setTime={setTime}
+                />
 
                 {/* Notes */}
                 <section className='rounded-2xl bg-zinc-50 p-4 space-y-3 border border-zinc-100'>
