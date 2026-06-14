@@ -1,11 +1,13 @@
 import { ShotCard } from '../components/shot/ShotCard';
-import { mockShots } from '../data/mockShots';
+import { useLocalShots } from '../hooks/useLocalShots';
 
 export function Home() {
+  const { feed } = useLocalShots();
+
   return (
     <section className='grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]'>
       <div className='space-y-5'>
-        {mockShots.map((shot) => (
+        {feed.map((shot) => (
           <ShotCard key={shot.id} shot={shot} />
         ))}
       </div>
@@ -16,7 +18,7 @@ export function Home() {
           Your espresso social journal starts here.
         </h1>
         <p className='mt-4 text-sm leading-6 text-[#4a3a31]'>
-          This feed is using local mock data for now. Later, these shots will come from the API.
+          This feed now includes shots created in the browser and local mock data.
         </p>
       </aside>
     </section>
