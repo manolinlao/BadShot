@@ -65,6 +65,10 @@
 - `RatingQuick` now uses colored `lucide-react` icons instead of emoji text, avoiding encoding issues while keeping an emotive UI.
 - `ShotCard` now displays the rating with the same colored icon plus the rating text.
 - Rating icon metadata is shared from the coffee rating domain helper.
+- Deleting a local shot now opens a confirmation dialog before removing it from `localStorage`.
+- Local shots can now be edited through `/edit/:shotId`.
+- `CreateShot` is reused for both creating and editing local shots.
+- `useLocalShots` now exposes `updateShot`.
 
 ## Product Direction
 
@@ -142,7 +146,7 @@ http://127.0.0.1:5173
 Continue slowly with one small frontend improvement at a time. Good next options:
 
 - Then improve `ShotCard` interaction states such as like/comment buttons.
-- Next non-social creation-flow improvements can focus on editing local shots or adding more espresso-specific fields.
+- Next non-social creation-flow improvements can focus on more espresso-specific fields or polishing the create/edit form layout.
 
 Do this before adding backend, authentication, Effector, or PWA features.
 

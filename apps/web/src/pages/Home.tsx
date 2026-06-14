@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ShotCard } from '../components/ShotCard';
 import { useLocalShots } from '../hooks/useLocalShots';
+import type { Shot } from '../types/shot';
 
 type HomeLocationState = {
   flash?: string;
@@ -14,6 +15,7 @@ export function Home() {
   const navigate = useNavigate();
   const flash = (location.state as HomeLocationState | null)?.flash;
   const [visibleFlash, setVisibleFlash] = useState(flash);
+  const [shotToDelete, setShotToDelete] = useState<Shot | null>(null);
 
   useEffect(() => {
     if (!flash) return;
@@ -30,6 +32,14 @@ export function Home() {
 
     return () => window.clearTimeout(timeoutId);
   }, [visibleFlash]);
+
+  const handleConfirmDelete = () => {
+    if (!shotToDelete) return;
+
+    deleteShot(shotToDelete.id);
+    setShotToDelete(null);
+    setVisibleFlash('Shot deleted');
+  };
 
   return (
     <>
@@ -48,7 +58,8 @@ export function Home() {
             <ShotCard
               key={shot.id}
               shot={shot}
-              onDelete={isCreatedShot(shot.id) ? () => deleteShot(shot.id) : undefined}
+              onEdit={isCreatedShot(shot.id) ? () => navigate(`/edit/${shot.id}`) : undefined}
+              onDelete={isCreatedShot(shot.id) ? () => setShotToDelete(shot) : undefined}
             />
           ))}
         </div>
@@ -63,6 +74,41 @@ export function Home() {
           </p>
         </aside>
       </section>
+
+      {shotToDelete && (
+        <div className='fixed inset-0 z-30 flex items-center justify-center bg-black/40 px-4'>
+          <div
+            role='dialog'
+            aria-modal='true'
+            aria-labelledby='delete-shot-title'
+            className='w-full max-w-sm rounded-lg border border-[#e2d6ca] bg-[#fffaf5] p-5 shadow-xl'
+          >
+            <h2 id='delete-shot-title' className='text-lg font-black'>
+              Delete this shot?
+            </h2>
+            <p className='mt-2 text-sm leading-6 text-[#5f4a3f]'>
+              This only deletes the shot saved in this browser.
+            </p>
+
+            <div className='mt-5 flex justify-end gap-2'>
+              <button
+                type='button'
+                onClick={() => setShotToDelete(null)}
+                className='rounded px-4 py-2 text-sm font-bold text-[#5f4a3f] hover:bg-[#efe5dc]'
+              >
+                Cancel
+              </button>
+              <button
+                type='button'
+                onClick={handleConfirmDelete}
+                className='rounded bg-red-700 px-4 py-2 text-sm font-bold text-white hover:bg-red-800'
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

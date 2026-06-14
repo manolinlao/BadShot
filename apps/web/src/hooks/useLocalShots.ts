@@ -45,6 +45,12 @@ export const useLocalShots = () => {
     saveShots(next);
   };
 
+  const updateShot = (updatedShot: Shot) => {
+    const next = createdShots.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot));
+    setCreatedShots(next);
+    saveShots(next);
+  };
+
   const deleteShot = (shotId: string) => {
     const next = createdShots.filter((shot) => shot.id !== shotId);
     setCreatedShots(next);
@@ -59,6 +65,7 @@ export const useLocalShots = () => {
     feed,
     createdShots,
     addShot,
+    updateShot,
     deleteShot,
     isCreatedShot
   };

@@ -30,6 +30,10 @@ export const router = createBrowserRouter([
         element: <CreateShot />,
       },
       {
+        path: 'edit/:shotId',
+        element: <CreateShot />,
+      },
+      {
         path: 'profile',
         element: <Profile />,
       },

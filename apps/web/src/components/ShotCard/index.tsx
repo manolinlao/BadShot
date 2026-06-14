@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 import { isRating, ratingIcon, ratingLabel } from '../../domain/coffee/rating';
 import { RoastLevelLabel } from '../../domain/coffee/roastLevel';
@@ -9,10 +9,11 @@ import { RecipeStat } from './RecipeStat';
 
 interface ShotCardProps {
   shot: Shot;
+  onEdit?: () => void;
   onDelete?: () => void;
 }
 
-export const ShotCard: React.FC<ShotCardProps> = ({ shot, onDelete }) => {
+export const ShotCard: React.FC<ShotCardProps> = ({ shot, onEdit, onDelete }) => {
   const recipe = shot.recipe;
 
   const ratio =
@@ -30,7 +31,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot, onDelete }) => {
     shot.coffee.origin?.trim() || shot.coffee.roaster?.trim() || shot.coffee.roastLevel
   );
   const hasRecipeStats = Boolean(recipe?.doseIn || recipe?.doseOut || recipe?.time || ratio);
-  const hasFooter = Boolean(rating || likes > 0 || comments > 0 || onDelete);
+  const hasFooter = Boolean(rating || likes > 0 || comments > 0 || onEdit || onDelete);
 
   return (
     <article className='overflow-hidden rounded-xl border border-[#e2d6ca] bg-[#fffaf5] shadow-sm'>
@@ -130,6 +131,18 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot, onDelete }) => {
                 <span>
                   {likes} likes - {comments} comments
                 </span>
+              )}
+
+              {onEdit && (
+                <button
+                  type='button'
+                  onClick={onEdit}
+                  aria-label='Edit shot'
+                  title='Edit shot'
+                  className='rounded p-1 text-[#7a4d2a] transition hover:bg-[#f3ebe3] hover:text-[#211a16]'
+                >
+                  <Pencil className='h-4 w-4' aria-hidden='true' />
+                </button>
               )}
 
               {onDelete && (

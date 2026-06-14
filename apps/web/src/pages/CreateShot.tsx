@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
@@ -9,9 +9,16 @@ import type { Shot } from '../types/shot';
 
 export function CreateShot() {
   const navigate = useNavigate();
-  const { addShot } = useLocalShots();
+  const { shotId } = useParams();
+  const { addShot, createdShots, updateShot } = useLocalShots();
+  const editingShot = useMemo(
+    () => createdShots.find((shot) => shot.id === shotId),
+    [createdShots, shotId]
+  );
+  const editing = Boolean(shotId);
 
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [editLoaded, setEditLoaded] = useState(false);
 
   const [imageUrl, setImageUrl] = useState('');
   const [rating, setRating] = useState(3);
@@ -27,12 +34,29 @@ export function CreateShot() {
   const [notes, setNotes] = useState('');
   const canSave = Boolean(imageUrl);
 
+  useEffect(() => {
+    if (!editingShot || editLoaded) return;
+
+    setImageUrl(editingShot.imageUrl ?? '');
+    setRating(editingShot.rating ?? 3);
+    setLocation(editingShot.location?.name ?? '');
+    setCoffeeName(editingShot.coffee.name ?? '');
+    setOrigin(editingShot.coffee.origin ?? '');
+    setRoaster(editingShot.coffee.roaster ?? '');
+    setRoastLevel(editingShot.coffee.roastLevel ?? '');
+    setDoseIn(editingShot.recipe?.doseIn ?? '');
+    setDoseOut(editingShot.recipe?.doseOut ?? '');
+    setTime(editingShot.recipe?.time ?? '');
+    setNotes(editingShot.tastingNotes ?? '');
+    setEditLoaded(true);
+  }, [editLoaded, editingShot]);
+
   const handleSave = () => {
     if (!canSave) return;
 
     const shot: Shot = {
-      id: `shot-${Date.now()}`,
-      user: { displayName: 'You', username: 'local' },
+      id: editingShot?.id ?? `shot-${Date.now()}`,
+      user: editingShot?.user ?? { displayName: 'You', username: 'local' },
 
       imageUrl,
       rating,
@@ -54,11 +78,17 @@ export function CreateShot() {
 
       tastingNotes: notes,
 
-      likesCount: 0,
-      commentsCount: 0,
-      brewedAt: new Date().toISOString(),
-      createdAt: new Date().toISOString()
+      likesCount: editingShot?.likesCount ?? 0,
+      commentsCount: editingShot?.commentsCount ?? 0,
+      brewedAt: editingShot?.brewedAt ?? new Date().toISOString(),
+      createdAt: editingShot?.createdAt ?? new Date().toISOString()
     };
+
+    if (editingShot) {
+      updateShot(shot);
+      navigate('/', { state: { flash: 'Shot updated' } });
+      return;
+    }
 
     addShot(shot);
     navigate('/', { state: { flash: 'Shot saved' } });
@@ -66,7 +96,7 @@ export function CreateShot() {
 
   return (
     <div className='max-w-md mx-auto space-y-5'>
-      <h1 className='text-xl font-bold text-center'>New shot</h1>
+      <h1 className='text-xl font-bold text-center'>{editing ? 'Edit shot' : 'New shot'}</h1>
 
       <PhotoPicker imageUrl={imageUrl} onImageSelected={setImageUrl} />
 
@@ -106,7 +136,7 @@ export function CreateShot() {
         disabled={!canSave}
         className='w-full rounded-xl bg-black py-3 text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
       >
-        Save shot
+        {editing ? 'Update shot' : 'Save shot'}
       </button>
     </div>
   );
