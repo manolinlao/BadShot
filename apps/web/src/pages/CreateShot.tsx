@@ -1,37 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ratingOptions } from '../domain/coffee/rating';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
-function RatingQuick({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const options = [
-    { label: 'Bad', sub: '😬', value: 1 },
-    { label: 'Meh', sub: '😐', value: 2 },
-    { label: 'Ok', sub: '🙂', value: 3 },
-    { label: 'Good', sub: '😋', value: 4 },
-    { label: 'Super good', sub: '🔥', value: 5 }
-  ];
 
+function RatingQuick({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
-    <div className='grid grid-cols-5 gap-2 text-center'>
-      {options.map((opt) => {
+    <div className='flex justify-center gap-3'>
+      {ratingOptions.map((opt) => {
         const active = value === opt.value;
 
         return (
           <button
             key={opt.value}
-            type='button'
             onClick={() => onChange(opt.value)}
-            className={`
-              flex flex-col items-center gap-1 p-2 rounded-lg border text-xs transition
-              ${
-                active
-                  ? 'bg-black text-white border-black'
-                  : 'bg-white text-gray-600 border-gray-300'
-              }
-            `}
+            className={`text-2xl transition ${active ? 'scale-125' : 'opacity-40'}`}
+            title={opt.label}
           >
-            <span className='text-lg'>{opt.sub}</span>
-            <span>{opt.label}</span>
+            {opt.label.split(' ')[0]}
           </button>
         );
       })}

@@ -1,3 +1,4 @@
+import { ratingLabel } from '../../domain/coffee/rating';
 import { RoastLevelLabel } from '../../domain/coffee/roastLevel';
 import { formatLocation } from '../../domain/premises/premises';
 import type { Shot } from '../../types/shot';
@@ -83,8 +84,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
         {/* FOOTER */}
         <footer className='flex items-center justify-between border-t border-[#eadfd6] pt-4 text-sm font-semibold text-[#5f4a3f]'>
-          {shot.rating && <span className='text-[#7a4d2a]'>{'★'.repeat(shot.rating)}</span>}
-
+          {shot.rating && <span className='text-[#7a4d2a]'>{ratingLabel[shot.rating]}</span>}
           {(likes > 0 || comments > 0) && (
             <span>
               {likes} likes · {comments} comments
