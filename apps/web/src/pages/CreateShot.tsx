@@ -239,8 +239,8 @@ export function CreateShot() {
                       onClick={() => setEditing('in')}
                       className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
                     >
-                      <span>{doseIn !== '' ? doseIn : ''}</span>
-                      <span className='text-zinc-400 text-xs'>g in</span>
+                      <span className='font-medium'>{doseIn !== '' ? doseIn : ''}</span>
+                      <span className='text-xs text-zinc-400'>g in</span>
                     </button>
 
                     {/* OUT */}
@@ -248,8 +248,8 @@ export function CreateShot() {
                       onClick={() => setEditing('out')}
                       className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
                     >
-                      <span>{doseOut !== '' ? doseOut : ''}</span>
-                      <span className='text-zinc-400 text-xs'>g out</span>
+                      <span className='font-medium'>{doseOut !== '' ? doseOut : ''}</span>
+                      <span className='text-xs text-zinc-400'>g out</span>
                     </button>
 
                     {/* TIME */}
@@ -257,29 +257,38 @@ export function CreateShot() {
                       onClick={() => setEditing('time')}
                       className='px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition flex items-center gap-1'
                     >
-                      <span>{time !== '' ? time : ''}</span>
-                      <span className='text-zinc-400 text-xs'>s</span>
+                      <span className='font-medium'>{time !== '' ? time : ''}</span>
+                      <span className='text-xs text-zinc-400'>s</span>
                     </button>
-
-                    {/* INLINE EDITOR (single) */}
-                    {editing && (
-                      <input
-                        autoFocus
-                        type='number'
-                        inputMode='numeric'
-                        value={editing === 'in' ? doseIn : editing === 'out' ? doseOut : time}
-                        onChange={(e) => {
-                          const v = e.target.value;
-
-                          if (editing === 'in') setDoseIn(v);
-                          if (editing === 'out') setDoseOut(v);
-                          if (editing === 'time') setTime(v);
-                        }}
-                        onBlur={() => setEditing(null)}
-                        className='px-3 py-1 rounded-full bg-white/20 outline-none w-24 text-center'
-                      />
-                    )}
                   </div>
+
+                  {/* INLINE EDITOR */}
+                  {editing && (
+                    <input
+                      autoFocus
+                      type='number'
+                      inputMode='numeric'
+                      value={editing === 'in' ? doseIn : editing === 'out' ? doseOut : time}
+                      onChange={(e) => {
+                        const v = e.target.value;
+
+                        if (v === '') {
+                          if (editing === 'in') setDoseIn('');
+                          if (editing === 'out') setDoseOut('');
+                          if (editing === 'time') setTime('');
+                          return;
+                        }
+
+                        const num = Number(v);
+
+                        if (editing === 'in') setDoseIn(num);
+                        if (editing === 'out') setDoseOut(num);
+                        if (editing === 'time') setTime(num);
+                      }}
+                      onBlur={() => setEditing(null)}
+                      className='mt-2 px-3 py-2 rounded-xl bg-white/10 outline-none w-28 text-center'
+                    />
+                  )}
                 </section>
 
                 {/* Notes */}
