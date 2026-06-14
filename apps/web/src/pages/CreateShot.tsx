@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Sparkles, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RatingQuick } from '../components/shot/RatingQuick';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
@@ -9,17 +11,14 @@ export function CreateShot() {
   const { addShot } = useLocalShots();
 
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const [sheetOpen, setSheetOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  const touchStartY = useRef<number | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const [imageUrl, setImageUrl] = useState('');
   const [rating, setRating] = useState(3);
   const [location, setLocation] = useState('');
 
-  // extra fields (optional)
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
   const [roaster, setRoaster] = useState('');
@@ -28,24 +27,14 @@ export function CreateShot() {
   const [time, setTime] = useState('');
   const [notes, setNotes] = useState('');
 
-  // autofocus al abrir
-  useEffect(() => {
-    if (sheetOpen) {
-      const firstInput = sheetRef.current?.querySelector('input') as HTMLInputElement | null;
+  const touchStartY = useRef<number | null>(null);
 
-      firstInput?.focus();
-    }
+  /* ---------------- LOCK SCROLL ---------------- */
+  useEffect(() => {
+    document.body.style.overflow = sheetOpen ? 'hidden' : '';
   }, [sheetOpen]);
 
-  // bloqueo del scroll del fondo
-  useEffect(() => {
-    if (sheetOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-  }, [sheetOpen]);
-
+  /* ---------------- CAMERA ---------------- */
   const openCamera = () => fileRef.current?.click();
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,28 +43,27 @@ export function CreateShot() {
     setImageUrl(URL.createObjectURL(file));
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  /* ---------------- DRAG TO CLOSE ---------------- */
+  const onTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const start = touchStartY.current;
-    if (!start) return;
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY.current === null) return;
 
-    const currentY = e.touches[0].clientY;
-    const diff = currentY - start;
+    const diff = e.touches[0].clientY - touchStartY.current;
 
-    // si arrastras hacia abajo mucho → cerrar
-    if (diff > 120) {
+    if (diff > 160) {
       setSheetOpen(false);
       touchStartY.current = null;
     }
   };
 
-  const handleTouchEnd = () => {
+  const onTouchEnd = () => {
     touchStartY.current = null;
   };
 
+  /* ---------------- SAVE ---------------- */
   const handleSave = () => {
     if (!imageUrl) return;
 
@@ -88,23 +76,19 @@ export function CreateShot() {
 
       location: location ? { name: location } : { name: 'Home' },
 
-      coffee: sheetOpen
-        ? {
-            name: coffeeName,
-            origin,
-            roaster
-          }
-        : {},
+      coffee: {
+        name: coffeeName,
+        origin,
+        roaster
+      },
 
-      recipe: sheetOpen
-        ? {
-            doseIn: doseIn ? Number(doseIn) : undefined,
-            doseOut: doseOut ? Number(doseOut) : undefined,
-            time: time ? Number(time) : undefined
-          }
-        : {},
+      recipe: {
+        doseIn: doseIn ? Number(doseIn) : undefined,
+        doseOut: doseOut ? Number(doseOut) : undefined,
+        time: time ? Number(time) : undefined
+      },
 
-      tastingNotes: sheetOpen ? notes : undefined,
+      tastingNotes: notes,
 
       likesCount: 0,
       commentsCount: 0,
@@ -123,9 +107,9 @@ export function CreateShot() {
       {/* PHOTO */}
       <div onClick={openCamera} className='cursor-pointer'>
         {imageUrl ? (
-          <img src={imageUrl} className='rounded-xl w-full' />
+          <img src={imageUrl} className='rounded-2xl w-full' />
         ) : (
-          <div className='h-64 border-dashed border-2 flex items-center justify-center rounded-xl'>
+          <div className='h-64 border-dashed border-2 flex items-center justify-center rounded-2xl text-zinc-400'>
             📸 Tap to take photo
           </div>
         )}
@@ -140,114 +124,156 @@ export function CreateShot() {
         />
       </div>
 
-      {/* QUICK FIELDS */}
+      {/* QUICK */}
       <input
-        placeholder='Location (optional)'
+        placeholder='Location'
         value={location}
         onChange={(e) => setLocation(e.target.value)}
-        className='w-full border rounded px-3 py-2'
+        className='w-full border rounded-xl px-3 py-2'
       />
 
       <RatingQuick value={rating} onChange={setRating} />
 
-      {/* EXPAND BUTTON */}
+      {/* OPEN SHEET BUTTON */}
       <button
         onClick={() => setSheetOpen(true)}
-        className='flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-black transition w-full cursor-pointer'
+        className='group flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-600 hover:text-zinc-900 transition'
       >
-        <span className='text-lg'>+</span>
-        <span>Add details</span>
+        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-white group-hover:scale-110 transition'>
+          <Sparkles size={13} />
+        </div>
+        Add details
       </button>
 
-      {sheetOpen && (
-        <div className='fixed inset-0 z-50'>
-          {/* overlay con blur */}
-          <div
-            className='absolute inset-0 bg-black/40 backdrop-blur-sm'
-            onClick={() => setSheetOpen(false)}
-          />
+      {/* SHEET */}
+      <AnimatePresence>
+        {sheetOpen && (
+          <div className='fixed inset-0 z-50 flex items-end'>
+            {/* OVERLAY */}
+            <motion.div
+              className='absolute inset-0 bg-black/40 backdrop-blur-sm'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSheetOpen(false)}
+            />
 
-          {/* sheet */}
-          <div
-            ref={sheetRef}
-            className='absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto animate-slideUp shadow-2xl'
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {/* handle */}
-            <div className='w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-3' />
-
-            {/* header */}
-            <div className='flex justify-between items-center mb-4'>
-              <h2 className='font-semibold'>Details</h2>
-
-              <button onClick={() => setSheetOpen(false)} className='text-sm text-gray-500'>
-                Close
-              </button>
-            </div>
-
-            {/* inputs */}
-            <div className='space-y-3'>
-              <input
-                placeholder='Coffee name'
-                value={coffeeName}
-                onChange={(e) => setCoffeeName(e.target.value)}
-                className='input'
-              />
-
-              <input
-                placeholder='Origin'
-                value={origin}
-                onChange={(e) => setOrigin(e.target.value)}
-                className='input'
-              />
-
-              <input
-                placeholder='Roaster'
-                value={roaster}
-                onChange={(e) => setRoaster(e.target.value)}
-                className='input'
-              />
-
-              <div className='grid grid-cols-3 gap-2'>
-                <input
-                  placeholder='In'
-                  value={doseIn}
-                  onChange={(e) => setDoseIn(e.target.value)}
-                  className='input'
-                />
-
-                <input
-                  placeholder='Out'
-                  value={doseOut}
-                  onChange={(e) => setDoseOut(e.target.value)}
-                  className='input'
-                />
-
-                <input
-                  placeholder='Time'
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  className='input'
-                />
+            {/* SHEET */}
+            <motion.div
+              className='relative w-full bg-white rounded-t-3xl shadow-2xl max-h-[88vh] flex flex-col'
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{
+                type: 'spring',
+                stiffness: 320,
+                damping: 30
+              }}
+              drag='y'
+              dragConstraints={{ top: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 150) {
+                  setSheetOpen(false);
+                }
+              }}
+            >
+              {/* HANDLE */}
+              <div className='py-3'>
+                <div className='w-12 h-1.5 bg-zinc-300 rounded-full mx-auto' />
               </div>
 
-              <textarea
-                placeholder='Tasting notes'
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className='input h-24'
-              />
-            </div>
+              {/* HEADER */}
+              <div className='px-5 pb-3 flex justify-between items-center border-b border-zinc-100'>
+                <h2 className='font-semibold'>Details</h2>
+
+                <button
+                  onClick={() => setSheetOpen(false)}
+                  className='text-sm text-zinc-500 hover:text-zinc-900'
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* CONTENT */}
+              <div className='flex-1 overflow-y-auto px-5 py-4 space-y-5'>
+                {/* Coffee */}
+                <section className='space-y-3'>
+                  <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Coffee</p>
+
+                  <input
+                    placeholder='Name'
+                    value={coffeeName}
+                    onChange={(e) => setCoffeeName(e.target.value)}
+                    className='w-full border rounded-xl px-3 py-2'
+                  />
+
+                  <div className='grid grid-cols-2 gap-2'>
+                    <input
+                      placeholder='Origin'
+                      value={origin}
+                      onChange={(e) => setOrigin(e.target.value)}
+                      className='border rounded-xl px-3 py-2'
+                    />
+
+                    <input
+                      placeholder='Roaster'
+                      value={roaster}
+                      onChange={(e) => setRoaster(e.target.value)}
+                      className='border rounded-xl px-3 py-2'
+                    />
+                  </div>
+                </section>
+
+                {/* Recipe */}
+                <section className='space-y-3'>
+                  <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Recipe</p>
+
+                  <div className='grid grid-cols-3 gap-2'>
+                    <input
+                      placeholder='In'
+                      value={doseIn}
+                      onChange={(e) => setDoseIn(e.target.value)}
+                      className='border rounded-xl px-3 py-2 text-center'
+                    />
+
+                    <input
+                      placeholder='Out'
+                      value={doseOut}
+                      onChange={(e) => setDoseOut(e.target.value)}
+                      className='border rounded-xl px-3 py-2 text-center'
+                    />
+
+                    <input
+                      placeholder='Time'
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      className='border rounded-xl px-3 py-2 text-center'
+                    />
+                  </div>
+                </section>
+
+                {/* Notes */}
+                <section className='space-y-3'>
+                  <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Notes</p>
+
+                  <textarea
+                    placeholder='Tasting notes...'
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className='w-full border rounded-xl px-3 py-2 h-28'
+                  />
+                </section>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* SAVE */}
       <button
         onClick={handleSave}
-        className='w-full bg-black text-white py-3 rounded-xl cursor-pointer hover:bg-gray-800 transition'
+        className='w-full bg-black text-white py-3 rounded-xl hover:bg-zinc-800 transition'
       >
         Save shot
       </button>
