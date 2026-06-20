@@ -97,11 +97,6 @@ export function CreateShot() {
 
   return (
     <div className='mx-auto max-w-md space-y-4 pb-28'>
-      <div className='space-y-1 text-center'>
-        <h1 className='text-xl font-bold'>{editing ? 'Edit shot' : 'New shot'}</h1>
-        <p className='text-sm text-zinc-500'>Photo and location come first. Details stay optional.</p>
-      </div>
-
       <section className='space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm'>
         <div className='flex items-center gap-3'>
           <div className='flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white'>
@@ -175,16 +170,14 @@ export function CreateShot() {
         />
       </section>
 
-      <div className='sticky bottom-3 z-10 -mx-1 bg-gradient-to-t from-[#f8f4ef] via-[#f8f4ef] to-transparent px-1 pb-[env(safe-area-inset-bottom)] pt-3'>
-        <button
-          onClick={handleSave}
-          disabled={!canSave}
-          className='flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-white shadow-lg shadow-black/10 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
-        >
-          <Sparkles className='h-4 w-4' aria-hidden='true' />
-          {editing ? 'Update shot' : 'Save shot'}
-        </button>
-      </div>
+      <button
+        onClick={handleSave}
+        disabled={!canSave}
+        className='flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-white shadow-lg shadow-black/10 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
+      >
+        <Sparkles className='h-4 w-4' aria-hidden='true' />
+        {editing ? 'Update shot' : 'Save shot'}
+      </button>
     </div>
   );
 }
