@@ -25,6 +25,14 @@ BadShot is a social network for specialty coffee espresso enthusiasts.
 * JWT authentication
 * Cloudinary for images
 
+## Workflow
+
+- Work on the frontend step by step.
+- Propose small changes only.
+- Wait for explicit user approval before making changes.
+- Do not add tests, packages, backend, or refactors unless requested.
+- Keep each change easy to review and easy to revert.
+
 ## Monorepo Structure
 
 * `apps/web`: React frontend

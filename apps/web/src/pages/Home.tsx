@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ShotCard } from '../components/ShotCard';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types/shot';
+import { formatDate } from '../utils/util';
 
 type HomeLocationState = {
   flash?: string;
@@ -16,6 +18,7 @@ export function Home() {
   const flash = (location.state as HomeLocationState | null)?.flash;
   const [visibleFlash, setVisibleFlash] = useState(flash);
   const [shotToDelete, setShotToDelete] = useState<Shot | null>(null);
+  const [previewShot, setPreviewShot] = useState<Shot | null>(null);
 
   useEffect(() => {
     if (!flash) return;
@@ -32,6 +35,20 @@ export function Home() {
 
     return () => window.clearTimeout(timeoutId);
   }, [visibleFlash]);
+
+  useEffect(() => {
+    if (!previewShot) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setPreviewShot(null);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [previewShot]);
 
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
@@ -60,6 +77,7 @@ export function Home() {
               shot={shot}
               onEdit={isCreatedShot(shot.id) ? () => navigate(`/edit/${shot.id}`) : undefined}
               onDelete={isCreatedShot(shot.id) ? () => setShotToDelete(shot) : undefined}
+              onImageClick={shot.imageUrl ? () => setPreviewShot(shot) : undefined}
             />
           ))}
         </div>
@@ -106,6 +124,43 @@ export function Home() {
                 Delete
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {previewShot?.imageUrl && (
+        <div
+          className='fixed inset-0 z-40 flex items-center justify-center bg-black/80 px-4 py-6'
+          role='dialog'
+          aria-modal='true'
+          aria-label='Shot image preview'
+          onClick={() => setPreviewShot(null)}
+        >
+          <div
+            className='relative w-full max-w-4xl'
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type='button'
+              onClick={() => setPreviewShot(null)}
+              className='absolute right-2 top-2 z-10 rounded-full bg-black/60 p-2 text-white transition hover:bg-black'
+              aria-label='Close image preview'
+            >
+              <X className='h-5 w-5' aria-hidden='true' />
+            </button>
+
+            <div className='mb-3 rounded-2xl bg-white/10 px-4 py-3 text-white backdrop-blur-sm'>
+              <h2 className='text-lg font-black leading-tight'>
+                {previewShot.coffee.name?.trim() || previewShot.coffee.origin?.trim() || 'Untitled shot'}
+              </h2>
+              <p className='mt-1 text-sm text-white/75'>{formatDate(previewShot.brewedAt)}</p>
+            </div>
+
+            <img
+              src={previewShot.imageUrl}
+              alt='Shot preview'
+              className='max-h-[85vh] w-full rounded-2xl object-contain shadow-2xl'
+            />
           </div>
         </div>
       )}

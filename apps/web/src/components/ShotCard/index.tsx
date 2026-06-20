@@ -11,9 +11,10 @@ interface ShotCardProps {
   shot: Shot;
   onEdit?: () => void;
   onDelete?: () => void;
+  onImageClick?: () => void;
 }
 
-export const ShotCard: React.FC<ShotCardProps> = ({ shot, onEdit, onDelete }) => {
+export const ShotCard: React.FC<ShotCardProps> = ({ shot, onEdit, onDelete, onImageClick }) => {
   const recipe = shot.recipe;
 
   const ratio =
@@ -64,7 +65,18 @@ export const ShotCard: React.FC<ShotCardProps> = ({ shot, onEdit, onDelete }) =>
 
       {/* IMAGE */}
       {shot.imageUrl ? (
-        <img src={shot.imageUrl} alt='Espresso shot' className='aspect-square w-full object-cover' />
+        <button
+          type='button'
+          onClick={onImageClick}
+          className='block w-full cursor-zoom-in text-left'
+          aria-label='View shot image'
+        >
+          <img
+            src={shot.imageUrl}
+            alt='Espresso shot'
+            className='aspect-square w-full object-cover'
+          />
+        </button>
       ) : (
         <div className='flex aspect-square w-full items-center justify-center bg-[#f3ebe3] text-sm font-bold text-[#7a4d2a]'>
           No photo
