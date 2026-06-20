@@ -11,9 +11,9 @@ const navItems = [
 export function AppLayout() {
   return (
     <div className="min-h-screen bg-[#f8f4ef] text-[#211a16]">
-      <header className="border-b border-[#e2d6ca] bg-[#fffaf5]">
+      <header className="sticky top-0 z-20 border-b border-[#e2d6ca] bg-[#fffaf5]/95 backdrop-blur-sm">
         <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <NavLink to="/" className="text-lg font-black tracking-none">
+          <NavLink to="/" className="text-lg font-black tracking-tight">
             BadShot
           </NavLink>
 
