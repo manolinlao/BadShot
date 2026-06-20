@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Camera, MapPin, Sparkles } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
@@ -95,49 +96,95 @@ export function CreateShot() {
   };
 
   return (
-    <div className='max-w-md mx-auto space-y-5'>
-      <h1 className='text-xl font-bold text-center'>{editing ? 'Edit shot' : 'New shot'}</h1>
+    <div className='mx-auto max-w-md space-y-4 pb-28'>
+      <div className='space-y-1 text-center'>
+        <h1 className='text-xl font-bold'>{editing ? 'Edit shot' : 'New shot'}</h1>
+        <p className='text-sm text-zinc-500'>Photo and location come first. Details stay optional.</p>
+      </div>
 
-      <PhotoPicker imageUrl={imageUrl} onImageSelected={setImageUrl} />
+      <section className='space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm'>
+        <div className='flex items-center gap-3'>
+          <div className='flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white'>
+            <Camera className='h-4 w-4' aria-hidden='true' />
+          </div>
+          <div>
+            <p className='text-xs font-semibold uppercase tracking-widest text-zinc-400'>Photo</p>
+            <p className='text-sm text-zinc-500'>Start with the espresso shot itself.</p>
+          </div>
+        </div>
 
-      <input
-        placeholder='Location'
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        className='w-full border rounded-xl px-3 py-2'
-      />
+        <PhotoPicker imageUrl={imageUrl} onImageSelected={setImageUrl} />
+      </section>
 
-      <RatingQuick value={rating} onChange={setRating} />
+      <section className='space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm'>
+        <div className='flex items-start gap-3'>
+          <div className='mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white'>
+            <MapPin className='h-4 w-4' aria-hidden='true' />
+          </div>
+          <div>
+            <p className='text-xs font-semibold uppercase tracking-widest text-zinc-400'>
+              Location
+            </p>
+            <p className='mt-1 text-sm text-zinc-500'>Where this espresso was brewed.</p>
+          </div>
+        </div>
 
-      <DetailsSheet
-        open={sheetOpen}
-        onOpen={() => setSheetOpen(true)}
-        onClose={() => setSheetOpen(false)}
-        coffeeName={coffeeName}
-        setCoffeeName={setCoffeeName}
-        origin={origin}
-        setOrigin={setOrigin}
-        roaster={roaster}
-        setRoaster={setRoaster}
-        roastLevel={roastLevel}
-        setRoastLevel={setRoastLevel}
-        doseIn={doseIn}
-        setDoseIn={setDoseIn}
-        doseOut={doseOut}
-        setDoseOut={setDoseOut}
-        time={time}
-        setTime={setTime}
-        notes={notes}
-        setNotes={setNotes}
-      />
+        <input
+          placeholder='Location'
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className='w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900'
+        />
+      </section>
 
-      <button
-        onClick={handleSave}
-        disabled={!canSave}
-        className='w-full rounded-xl bg-black py-3 text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
-      >
-        {editing ? 'Update shot' : 'Save shot'}
-      </button>
+      <section className='space-y-3'>
+        <p className='text-xs font-semibold uppercase tracking-widest text-zinc-400'>Rating</p>
+        <RatingQuick value={rating} onChange={setRating} />
+      </section>
+
+      <section className='space-y-2 rounded-2xl border border-zinc-100 bg-white p-3 shadow-sm'>
+        <div>
+          <p className='text-[11px] font-semibold uppercase tracking-widest text-zinc-400'>
+            Optional details
+          </p>
+          <p className='mt-1 text-xs leading-5 text-zinc-500'>
+            Add coffee info, recipe and notes if you want a fuller shot.
+          </p>
+        </div>
+
+        <DetailsSheet
+          open={sheetOpen}
+          onOpen={() => setSheetOpen(true)}
+          onClose={() => setSheetOpen(false)}
+          coffeeName={coffeeName}
+          setCoffeeName={setCoffeeName}
+          origin={origin}
+          setOrigin={setOrigin}
+          roaster={roaster}
+          setRoaster={setRoaster}
+          roastLevel={roastLevel}
+          setRoastLevel={setRoastLevel}
+          doseIn={doseIn}
+          setDoseIn={setDoseIn}
+          doseOut={doseOut}
+          setDoseOut={setDoseOut}
+          time={time}
+          setTime={setTime}
+          notes={notes}
+          setNotes={setNotes}
+        />
+      </section>
+
+      <div className='sticky bottom-3 z-10 -mx-1 bg-gradient-to-t from-[#f8f4ef] via-[#f8f4ef] to-transparent px-1 pb-[env(safe-area-inset-bottom)] pt-3'>
+        <button
+          onClick={handleSave}
+          disabled={!canSave}
+          className='flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-white shadow-lg shadow-black/10 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
+        >
+          <Sparkles className='h-4 w-4' aria-hidden='true' />
+          {editing ? 'Update shot' : 'Save shot'}
+        </button>
+      </div>
     </div>
   );
 }

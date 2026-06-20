@@ -65,12 +65,18 @@ export function DetailsSheet({
     <>
       <button
         onClick={onOpen}
-        className='group flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-600 transition hover:text-zinc-900'
+        className='group flex w-full items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-600 transition hover:border-zinc-900 hover:text-zinc-900'
       >
-        <div className='flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-white transition group-hover:scale-110'>
-          <Sparkles size={13} />
+        <div className='flex items-center gap-3'>
+          <div className='flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-white transition group-hover:scale-110'>
+            <Sparkles size={13} />
+          </div>
+          <div>
+            <span className='block font-semibold text-zinc-900'>Add coffee details</span>
+            <span className='block text-xs text-zinc-500'>Name, origin, recipe and tasting notes</span>
+          </div>
         </div>
-        Add details
+        <span className='text-xs font-semibold text-zinc-400'>Open</span>
       </button>
 
       <AnimatePresence>
@@ -108,10 +114,10 @@ export function DetailsSheet({
               </div>
 
               <div className='flex items-center justify-between border-b border-zinc-100 px-5 pb-3'>
-                <h2 className='font-semibold'>Details</h2>
+                <h2 className='font-semibold'>Coffee details</h2>
 
                 <button onClick={onClose} className='text-sm text-zinc-500 hover:text-zinc-900'>
-                  Close
+                  Done
                 </button>
               </div>
 
@@ -143,7 +149,7 @@ export function DetailsSheet({
 
                   <div className='space-y-2'>
                     <p className='text-[11px] uppercase tracking-widest text-zinc-400'>
-                      Roast level optional
+                      Roast level
                     </p>
                     <div className='grid grid-cols-2 gap-2'>
                       <button
