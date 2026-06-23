@@ -1,6 +1,7 @@
 # BadShot - Especificación del Proyecto
 
 ## Concepto
+
 Red social tipo Instagram enfocada en espressos de café de especialidad.
 
 **Estrategia de Plataforma**: PWA (Progressive Web App) optimizada para móvil, tablet y desktop. Apps nativas (iOS/Android) se desarrollarán post-MVP si hay demanda.
@@ -8,6 +9,7 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ## MVP (Producto Mínimo Viable)
 
 ### Features Core del MVP
+
 1. **Autenticación**
    - Registro/Login con email y contraseña
    - Perfil básico (nombre, username, bio, foto)
@@ -42,40 +44,42 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ### Stack Tecnológico
 
 #### Frontend (PWA)
+
 - **Framework**: React 18+ con TypeScript
 - **Build Tool**: Vite
-- **PWA**: 
+- **PWA**:
   - Vite PWA Plugin (workbox)
   - Service Worker para offline capability
   - Web App Manifest
 - **Routing**: React Router v6
-- **State Management**: 
+- **State Management**:
   - **Effector** (state management con event-driven architecture)
   - **Effector-react** (React bindings)
   - TanStack Query (server state, caching, optimistic updates)
-- **Local Storage/Offline**: 
+- **Local Storage/Offline**:
   - **IndexedDB** (via Dexie.js) para:
     - Cache de shots y perfiles
     - Queue de acciones offline (likes, comentarios, posts)
     - Sincronización automática cuando vuelve conexión
-- **UI/Styling**: 
+- **UI/Styling**:
   - **Tailwind CSS** (utility-first, responsive)
   - HeadlessUI o Radix UI (componentes accesibles)
   - React Hook Form para formularios
   - Zod para validación
-- **Imágenes**: 
+- **Imágenes**:
   - React Dropzone
   - Cliente de Cloudinary o AWS S3
   - Compresión en cliente (browser-image-compression)
 
 #### Backend
+
 - **Runtime**: Node.js con TypeScript
 - **Framework**: Express.js o Fastify
 - **Base de Datos**: PostgreSQL
 - **ORM**: Prisma
 - **Autenticación**: JWT + bcrypt
 - **Validación**: Zod
-- **Storage**: 
+- **Storage**:
   - Cloudinary para imágenes (recomendado para MVP)
   - o AWS S3 + CloudFront
 - **API Style**: RESTful (o tRPC para type-safety end-to-end)
@@ -109,6 +113,7 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ## Modelo de Datos (Entidades Principales)
 
 ### User
+
 ```typescript
 {
   id: string (uuid)
@@ -123,6 +128,7 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ```
 
 ### Shot
+
 ```typescript
 {
   id: string (uuid)
@@ -156,6 +162,7 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ```
 
 ### Follow
+
 ```typescript
 {
   id: string (uuid)
@@ -166,30 +173,33 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 ```
 
 ### Like
+
 ```typescript
 {
-  id: string (uuid)
-  userId: string (FK)
-  shotId: string (FK)
-  createdAt: DateTime
+  id: string(uuid);
+  userId: string(FK);
+  shotId: string(FK);
+  createdAt: DateTime;
 }
 ```
 
 ### Comment
+
 ```typescript
 {
-  id: string (uuid)
-  userId: string (FK)
-  shotId: string (FK)
-  content: string
-  createdAt: DateTime
-  updatedAt: DateTime
+  id: string(uuid);
+  userId: string(FK);
+  shotId: string(FK);
+  content: string;
+  createdAt: DateTime;
+  updatedAt: DateTime;
 }
 ```
 
 ## Features Post-MVP (Roadmap)
 
 ### Fase 2
+
 - **Rueda de Sabores Interactiva**
   - Basada en SCA Coffee Taster's Flavor Wheel
   - Selector visual para categorizar sabores del espresso
@@ -205,6 +215,7 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 - Instalación como app (Add to Home Screen optimizado)
 
 ### Fase 3
+
 - **Análisis avanzado de perfiles de sabor**
   - Comparación de perfiles entre diferentes shots
   - Sugerencias de cafés basadas en preferencias de sabor del usuario
@@ -215,6 +226,7 @@ Red social tipo Instagram enfocada en espressos de café de especialidad.
 - Integración con tiendas de café
 
 ### Fase 4
+
 - Checkins en cafeterías (Geolocation API)
 - Reviews de cafeterías
 - Mapa de cafeterías visitadas

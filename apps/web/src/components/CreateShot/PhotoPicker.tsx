@@ -19,22 +19,26 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
   };
 
   return (
-    <div onClick={openCamera} className='cursor-pointer'>
+    <div onClick={openCamera} className="cursor-pointer">
       {imageUrl ? (
-        <img src={imageUrl} alt='Selected espresso shot' className='w-full rounded-2xl' />
+        <img
+          src={imageUrl}
+          alt="Selected espresso shot"
+          className="w-full rounded-2xl"
+        />
       ) : (
-        <div className='flex h-64 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-zinc-400'>
-          <Camera size={28} aria-hidden='true' />
+        <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-zinc-400">
+          <Camera size={28} aria-hidden="true" />
           <span>Tap to take photo</span>
         </div>
       )}
 
       <input
         ref={fileRef}
-        type='file'
-        accept='image/*'
-        capture='environment'
-        className='hidden'
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
         onChange={handleImage}
       />
     </div>

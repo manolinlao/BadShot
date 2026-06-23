@@ -13,6 +13,7 @@
 ### Fase 0: Setup Inicial (2-3 días)
 
 #### 1. Inicializar Monorepo
+
 ```bash
 # Crear estructura base
 mkdir -p apps/web apps/api packages/shared
@@ -22,15 +23,13 @@ npm init -y
 ```
 
 **Root package.json**:
+
 ```json
 {
   "name": "badshot",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "concurrently \"npm:dev:*\"",
     "dev:web": "npm run dev -w apps/web",
@@ -45,6 +44,7 @@ npm init -y
 ```
 
 #### 2. Setup Frontend (apps/web)
+
 ```bash
 cd apps/web
 npm create vite@latest . -- --template react-ts
@@ -76,12 +76,10 @@ npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
 ```
 
 **Configurar Tailwind** (`tailwind.config.js`):
+
 ```javascript
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -96,17 +94,18 @@ export default {
           700: '#4a2f19',
           800: '#392414',
           900: '#29190f',
-        }
-      }
+        },
+      },
     },
   },
   plugins: [],
-}
+};
 ```
 
 **Configurar Vite PWA** (`vite.config.ts`) - Ver `PWA_SETUP.md`
 
 #### 3. Setup Backend (apps/api)
+
 ```bash
 cd apps/api
 npm init -y
@@ -132,6 +131,7 @@ npm install -D jest @types/jest ts-jest supertest @types/supertest
 ```
 
 **tsconfig.json**:
+
 ```json
 {
   "compilerOptions": {
@@ -153,11 +153,13 @@ npm install -D jest @types/jest ts-jest supertest @types/supertest
 ```
 
 **Inicializar Prisma**:
+
 ```bash
 npx prisma init
 ```
 
 **prisma/schema.prisma** (inicial):
+
 ```prisma
 generator client {
   provider = "prisma-client-js"
@@ -178,7 +180,7 @@ model User {
   profileImage String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  
+
   shots        Shot[]
   comments     Comment[]
   likes        Like[]
@@ -201,10 +203,10 @@ model Shot {
   rating           Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  
+
   userId           String
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   comments         Comment[]
   likes            Like[]
 }
@@ -214,10 +216,10 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   shotId    String
   shot      Shot     @relation(fields: [shotId], references: [id], onDelete: Cascade)
 }
@@ -225,31 +227,32 @@ model Comment {
 model Like {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  
+
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   shotId    String
   shot      Shot     @relation(fields: [shotId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, shotId])
 }
 
 model Follow {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
-  
+
   followerId  String
   follower    User     @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
-  
+
   followingId String
   following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
-  
+
   @@unique([followerId, followingId])
 }
 ```
 
 #### 4. Setup Database Local
+
 ```bash
 # Opción 1: Docker (recomendado)
 docker run --name badshot-postgres \
@@ -263,6 +266,7 @@ docker run --name badshot-postgres \
 ```
 
 **.env** (apps/api):
+
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/badshot"
 JWT_SECRET="tu-secret-super-secreto-cambiar-en-prod"
@@ -276,12 +280,14 @@ CLOUDINARY_API_SECRET="your-api-secret"
 ```
 
 **Crear migración inicial**:
+
 ```bash
 npx prisma migrate dev --name init
 npx prisma generate
 ```
 
 #### 5. Setup Shared Package (opcional)
+
 ```bash
 cd packages/shared
 npm init -y
@@ -393,6 +399,7 @@ npm install -D typescript
 ## 📦 Dependencias Totales
 
 ### Frontend
+
 ```json
 {
   "dependencies": {
@@ -435,6 +442,7 @@ npm install -D typescript
 ```
 
 ### Backend
+
 ```json
 {
   "dependencies": {
@@ -477,6 +485,7 @@ npm install -D typescript
 **¿Quieres que empiece a crear la estructura del monorepo y los archivos de configuración?**
 
 Puedo generar:
+
 1. Root `package.json` con workspaces
 2. Frontend setup completo (Vite + React + Tailwind + Effector + PWA)
 3. Backend setup completo (Express + Prisma + TypeScript)

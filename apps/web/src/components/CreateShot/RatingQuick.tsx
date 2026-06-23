@@ -7,7 +7,7 @@ interface RatingQuickProps {
 
 export const RatingQuick = ({ value, onChange }: RatingQuickProps) => {
   return (
-    <div className='flex justify-center gap-2'>
+    <div className="flex justify-center gap-2">
       {ratingOptions.map((opt) => {
         const active = value === opt.value;
         const Icon = ratingIcon[opt.value].icon;
@@ -15,7 +15,7 @@ export const RatingQuick = ({ value, onChange }: RatingQuickProps) => {
         return (
           <button
             key={opt.value}
-            type='button'
+            type="button"
             onClick={() => onChange(opt.value)}
             aria-label={opt.label}
             title={opt.label}
@@ -24,10 +24,10 @@ export const RatingQuick = ({ value, onChange }: RatingQuickProps) => {
               ratingIcon[opt.value].color,
               active
                 ? `scale-110 border-current ${ratingIcon[opt.value].activeBg}`
-                : 'border-transparent bg-white/70 opacity-55 hover:opacity-100'
+                : 'border-transparent bg-white/70 opacity-55 hover:opacity-100',
             ].join(' ')}
           >
-            <Icon className='h-6 w-6' aria-hidden='true' />
+            <Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         );
       })}

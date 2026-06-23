@@ -230,6 +230,7 @@ badshot/
 Si prefieres mantener frontend y backend en repositorios separados:
 
 ### Frontend Repo
+
 ```
 badshot-web/
 ├── public/
@@ -252,6 +253,7 @@ badshot-web/
 ```
 
 ### Backend Repo
+
 ```
 badshot-api/
 ├── src/

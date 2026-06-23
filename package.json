@@ -11,9 +11,13 @@
     "dev:web": "npm run dev -w apps/web",
     "dev:api": "npm run dev -w apps/api",
     "build": "npm run build -w apps/web && npm run build -w apps/api",
-    "test": "npm run test --workspaces"
+    "test": "npm run test --workspaces",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "prettier": "^3.8.4"
   }
 }

@@ -278,13 +278,13 @@ estrategia offline definida.
 
 Estas decisiones deben cerrarse en la fase indicada:
 
-| Decisión | Recomendación | Límite |
-| --- | --- | --- |
-| React Router | Mantener v7 y alinear la documentación con la implementación | Fase 0 |
-| Política de refresh token | Cookie `httpOnly`, `secure` y `sameSite`; access token corto en memoria | Fase 3 |
-| Conflictos offline | Última edición válida para campos; operaciones sociales idempotentes | Fase 4 |
-| Ubicación en MVP | Texto y coordenadas opcionales; sin mapa de cafeterías | Fase 4 |
-| Hosting | Elegir servicios compatibles con PostgreSQL, almacenamiento de secretos y despliegue separado | Fase 6 |
+| Decisión                  | Recomendación                                                                                 | Límite |
+| ------------------------- | --------------------------------------------------------------------------------------------- | ------ |
+| React Router              | Mantener v7 y alinear la documentación con la implementación                                  | Fase 0 |
+| Política de refresh token | Cookie `httpOnly`, `secure` y `sameSite`; access token corto en memoria                       | Fase 3 |
+| Conflictos offline        | Última edición válida para campos; operaciones sociales idempotentes                          | Fase 4 |
+| Ubicación en MVP          | Texto y coordenadas opcionales; sin mapa de cafeterías                                        | Fase 4 |
+| Hosting                   | Elegir servicios compatibles con PostgreSQL, almacenamiento de secretos y despliegue separado | Fase 6 |
 
 ## 9. Criterios globales de aceptación
 

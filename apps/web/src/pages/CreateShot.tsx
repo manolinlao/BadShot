@@ -14,7 +14,7 @@ export function CreateShot() {
   const { addShot, createdShots, updateShot } = useLocalShots();
   const editingShot = useMemo(
     () => createdShots.find((shot) => shot.id === shotId),
-    [createdShots, shotId]
+    [createdShots, shotId],
   );
   const editing = Boolean(shotId);
 
@@ -68,13 +68,13 @@ export function CreateShot() {
         name: coffeeName,
         origin,
         roaster,
-        roastLevel: roastLevel || undefined
+        roastLevel: roastLevel || undefined,
       },
 
       recipe: {
         doseIn: doseIn ? Number(doseIn) : undefined,
         doseOut: doseOut ? Number(doseOut) : undefined,
-        time: time ? Number(time) : undefined
+        time: time ? Number(time) : undefined,
       },
 
       tastingNotes: notes,
@@ -82,7 +82,7 @@ export function CreateShot() {
       likesCount: editingShot?.likesCount ?? 0,
       commentsCount: editingShot?.commentsCount ?? 0,
       brewedAt: editingShot?.brewedAt ?? new Date().toISOString(),
-      createdAt: editingShot?.createdAt ?? new Date().toISOString()
+      createdAt: editingShot?.createdAt ?? new Date().toISOString(),
     };
 
     if (editingShot) {
@@ -96,53 +96,61 @@ export function CreateShot() {
   };
 
   return (
-    <div className='mx-auto max-w-md space-y-4 pb-28'>
-      <section className='space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm'>
-        <div className='flex items-center gap-3'>
-          <div className='flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white'>
-            <Camera className='h-4 w-4' aria-hidden='true' />
+    <div className="mx-auto max-w-md space-y-4 pb-28">
+      <section className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white">
+            <Camera className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
-            <p className='text-xs font-semibold uppercase tracking-widest text-zinc-400'>Photo</p>
-            <p className='text-sm text-zinc-500'>Start with the espresso shot itself.</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+              Photo
+            </p>
+            <p className="text-sm text-zinc-500">
+              Start with the espresso shot itself.
+            </p>
           </div>
         </div>
 
         <PhotoPicker imageUrl={imageUrl} onImageSelected={setImageUrl} />
       </section>
 
-      <section className='space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm'>
-        <div className='flex items-start gap-3'>
-          <div className='mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white'>
-            <MapPin className='h-4 w-4' aria-hidden='true' />
+      <section className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white">
+            <MapPin className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
-            <p className='text-xs font-semibold uppercase tracking-widest text-zinc-400'>
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
               Location
             </p>
-            <p className='mt-1 text-sm text-zinc-500'>Where this espresso was brewed.</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              Where this espresso was brewed.
+            </p>
           </div>
         </div>
 
         <input
-          placeholder='Location'
+          placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className='w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900'
+          className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
         />
       </section>
 
-      <section className='space-y-3'>
-        <p className='text-xs font-semibold uppercase tracking-widest text-zinc-400'>Rating</p>
+      <section className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+          Rating
+        </p>
         <RatingQuick value={rating} onChange={setRating} />
       </section>
 
-      <section className='space-y-2 rounded-2xl border border-zinc-100 bg-white p-3 shadow-sm'>
+      <section className="space-y-2 rounded-2xl border border-zinc-100 bg-white p-3 shadow-sm">
         <div>
-          <p className='text-[11px] font-semibold uppercase tracking-widest text-zinc-400'>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
             Optional details
           </p>
-          <p className='mt-1 text-xs leading-5 text-zinc-500'>
+          <p className="mt-1 text-xs leading-5 text-zinc-500">
             Add coffee info, recipe and notes if you want a fuller shot.
           </p>
         </div>
@@ -173,9 +181,9 @@ export function CreateShot() {
       <button
         onClick={handleSave}
         disabled={!canSave}
-        className='flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-white shadow-lg shadow-black/10 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300'
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-white shadow-lg shadow-black/10 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300"
       >
-        <Sparkles className='h-4 w-4' aria-hidden='true' />
+        <Sparkles className="h-4 w-4" aria-hidden="true" />
         {editing ? 'Update shot' : 'Save shot'}
       </button>
     </div>

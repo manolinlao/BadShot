@@ -13,11 +13,12 @@ The domain/ layer contains:
 
 Example:
 
-````
+```
 domain/
   coffee/
     roastLevel.ts
-````
+```
+
 - You are building an Instagram-like coffee app
 - There will be many entities (shots, users, recipes, etc.)
 - You want to scale features over time

@@ -5,5 +5,5 @@ export const RoastLevelLabel: Record<RoastLevel, string> = {
   light: 'Light',
   'medium-light': 'Medium Light',
   medium: 'Medium',
-  dark: 'Dark'
+  dark: 'Dark',
 };

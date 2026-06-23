@@ -36,7 +36,10 @@ export const useLocalShots = () => {
     const allShots = [...createdShots, ...mockShots];
     return allShots
       .slice()
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
   }, [createdShots]);
 
   const addShot = (shot: Shot) => {
@@ -46,7 +49,9 @@ export const useLocalShots = () => {
   };
 
   const updateShot = (updatedShot: Shot) => {
-    const next = createdShots.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot));
+    const next = createdShots.map((shot) =>
+      shot.id === updatedShot.id ? updatedShot : shot,
+    );
     setCreatedShots(next);
     saveShots(next);
   };
@@ -67,6 +72,6 @@ export const useLocalShots = () => {
     addShot,
     updateShot,
     deleteShot,
-    isCreatedShot
+    isCreatedShot,
   };
 };

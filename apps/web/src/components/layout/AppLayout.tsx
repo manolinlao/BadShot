@@ -1,12 +1,12 @@
-import { CirclePlus, Home, User, UserRound } from 'lucide-react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { CirclePlus, Home, User, UserRound } from 'lucide-react';
+import { NavLink, Outlet } from 'react-router-dom';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/create', label: 'Create', icon: CirclePlus },
   { to: '/profile', label: 'Profile', icon: User },
   { to: '/login', label: 'Account', icon: UserRound },
-]
+];
 
 export function AppLayout() {
   return (
@@ -68,5 +68,5 @@ export function AppLayout() {
         </div>
       </nav>
     </div>
-  )
+  );
 }

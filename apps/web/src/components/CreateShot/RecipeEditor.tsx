@@ -15,37 +15,54 @@ export const RecipeEditor = ({
   time,
   setDoseIn,
   setDoseOut,
-  setTime
+  setTime,
 }: RecipeEditorProps) => {
   const [editing, setEditing] = useState<'in' | 'out' | 'time' | null>(null);
   const ratio =
-    typeof doseIn === 'number' && doseIn > 0 && typeof doseOut === 'number' && doseOut > 0
+    typeof doseIn === 'number' &&
+    doseIn > 0 &&
+    typeof doseOut === 'number' &&
+    doseOut > 0
       ? (doseOut / doseIn).toFixed(2)
       : null;
 
   return (
-    <section className='rounded-2xl bg-zinc-900 text-white p-4 space-y-3'>
-      <p className='text-[11px] uppercase tracking-widest text-zinc-400'>Recipe</p>
+    <section className="rounded-2xl bg-zinc-900 text-white p-4 space-y-3">
+      <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+        Recipe
+      </p>
 
-      <div className='flex flex-wrap gap-2'>
-        <button onClick={() => setEditing('in')} className='px-3 py-1 rounded-full bg-white/10'>
-          {doseIn !== '' ? doseIn : '-'} <span className='text-xs text-zinc-400'>g in</span>
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setEditing('in')}
+          className="px-3 py-1 rounded-full bg-white/10"
+        >
+          {doseIn !== '' ? doseIn : '-'}{' '}
+          <span className="text-xs text-zinc-400">g in</span>
         </button>
 
-        <button onClick={() => setEditing('out')} className='px-3 py-1 rounded-full bg-white/10'>
-          {doseOut !== '' ? doseOut : '-'} <span className='text-xs text-zinc-400'>g out</span>
+        <button
+          onClick={() => setEditing('out')}
+          className="px-3 py-1 rounded-full bg-white/10"
+        >
+          {doseOut !== '' ? doseOut : '-'}{' '}
+          <span className="text-xs text-zinc-400">g out</span>
         </button>
 
-        <button onClick={() => setEditing('time')} className='px-3 py-1 rounded-full bg-white/10'>
-          {time !== '' ? time : '-'} <span className='text-xs text-zinc-400'>s</span>
+        <button
+          onClick={() => setEditing('time')}
+          className="px-3 py-1 rounded-full bg-white/10"
+        >
+          {time !== '' ? time : '-'}{' '}
+          <span className="text-xs text-zinc-400">s</span>
         </button>
       </div>
 
       {editing && (
         <input
           autoFocus
-          type='number'
-          inputMode='numeric'
+          type="number"
+          inputMode="numeric"
           value={editing === 'in' ? doseIn : editing === 'out' ? doseOut : time}
           onChange={(e) => {
             const v = e.target.value;
@@ -56,13 +73,13 @@ export const RecipeEditor = ({
             if (editing === 'time') setTime(num);
           }}
           onBlur={() => setEditing(null)}
-          className='mt-2 px-3 py-2 rounded-xl bg-white/10 outline-none w-28 text-center'
+          className="mt-2 px-3 py-2 rounded-xl bg-white/10 outline-none w-28 text-center"
         />
       )}
 
       {ratio && (
-        <p className='text-sm font-semibold text-zinc-200'>
-          Ratio <span className='text-white'>1:{ratio}</span>
+        <p className="text-sm font-semibold text-zinc-200">
+          Ratio <span className="text-white">1:{ratio}</span>
         </p>
       )}
     </section>

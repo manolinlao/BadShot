@@ -7,6 +7,7 @@ Implementación de una rueda de sabores interactiva basada en la **SCA Coffee Ta
 ## Estructura de Datos
 
 ### Categorías Principales (Tier 1)
+
 1. **Frutal** (Fruity)
 2. **Agrio/Fermentado** (Sour/Fermented)
 3. **Vegetal** (Green/Vegetative)
@@ -81,6 +82,7 @@ model Shot {
 ```
 
 **Formato JSON:**
+
 ```typescript
 {
   flavors: [
@@ -130,7 +132,7 @@ model ShotFlavor {
   subcategory     FlavorSubcategory @relation(fields: [subcategoryId], references: [id])
   descriptor      String
   intensity       Int // 1-10
-  
+
   @@unique([shotId, subcategoryId, descriptor])
 }
 
@@ -169,6 +171,7 @@ model Shot {
 ```
 
 **Alternativa Simplificada (mejor para mobile):**
+
 - Lista categorizada en lugar de rueda circular
 - Chips clickeables organizados por categoría
 - Más accesible y responsive
@@ -190,6 +193,7 @@ model Shot {
 ```
 
 **Visualización Avanzada (Fase 3):**
+
 - Gráfico radar/spider chart con las categorías principales
 - Comparador de perfiles entre shots
 
@@ -232,17 +236,20 @@ model Shot {
 ## Consideraciones Técnicas
 
 ### Performance
+
 - Rueda de sabores como JSON en DB (índice GIN en PostgreSQL para búsquedas)
 - Pre-computar categorías dominantes al guardar
 - Caché de agregaciones en IndexedDB (PWA)
 
 ### Accesibilidad
+
 - Alternativa a rueda circular para screen readers
 - Uso de ARIA labels
 - Navegación por teclado
 - Alto contraste en colores
 
 ### Internacionalización
+
 - Traducción de categorías y descriptores
 - Considerar diferencias culturales en descriptores
 - API con locale support
@@ -253,43 +260,48 @@ model Shot {
 
 ```typescript
 const FLAVOR_COLORS = {
-  fruity: "#FF6B9D",      // Rosa/Fucsia
-  sour: "#FFD93D",        // Amarillo
-  green: "#6BCB77",       // Verde
-  other: "#9D9D9D",       // Gris
-  roasted: "#8B4513",     // Marrón
-  spices: "#FF8C42",      // Naranja
-  nutty: "#CD853F",       // Café claro
-  sweet: "#A8E6CF",       // Verde menta
-  floral: "#E8B4F0"       // Lavanda
-}
+  fruity: '#FF6B9D', // Rosa/Fucsia
+  sour: '#FFD93D', // Amarillo
+  green: '#6BCB77', // Verde
+  other: '#9D9D9D', // Gris
+  roasted: '#8B4513', // Marrón
+  spices: '#FF8C42', // Naranja
+  nutty: '#CD853F', // Café claro
+  sweet: '#A8E6CF', // Verde menta
+  floral: '#E8B4F0', // Lavanda
+};
 ```
 
 ### Dataset Completo (JSON)
 
 Crear archivo `flavor-wheel-data.json` con la estructura completa de:
+
 - 9 categorías principales
 - ~30 subcategorías
 - ~100+ descriptores específicos
 
 **Fuente de datos**: SCA Coffee Taster's Flavor Wheel (2016)
+
 - Licencia: Uso educativo/comercial permitido con atribución
 - URL: https://sca.coffee/research/coffee-taster-s-flavor-wheel
 
 ## Implementación Sugerida
 
 ### Fase 2.1: Fundamentos
+
 1. Crear dataset de sabores (JSON static)
 2. Implementar modelo flexible (JSON en DB)
 3. Componente selector simplificado (lista categorizada)
 4. Display básico de perfil
 
 ### Fase 2.2: Interactividad
+
 5. Mejorar selector (búsqueda, sugerencias)
 6. Añadir filtros en feed
 7. "Shots similares" por sabor
 
 ### Fase 3: Avanzado
+
 8. Visualización gráfica (radar chart)
 9. Estadísticas y análisis
 10. Recomendaciones ML-based
