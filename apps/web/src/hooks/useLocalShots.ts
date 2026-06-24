@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getAllShots } from '../api/shots/db';
 import { mockShots } from '../data/mockShots';
 import type { Shot } from '../types';
 
@@ -29,7 +30,7 @@ export const useLocalShots = () => {
   const [createdShots, setCreatedShots] = useState<Shot[]>([]);
 
   useEffect(() => {
-    setCreatedShots(loadSavedShots());
+    getAllShots().then(setCreatedShots);
   }, []);
 
   const feed = useMemo(() => {
