@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { mockShots } from '../data/mockShots';
-import type { Shot } from '../types/shot';
+import type { Shot } from '../types';
 
 const STORAGE_KEY = 'badshot-created-shots';
 

@@ -1,4 +1,4 @@
-import type { Shot } from '../types/shot';
+import type { Shot } from '../types';
 
 export const mockShots: Shot[] = [
   {

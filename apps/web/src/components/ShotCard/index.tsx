@@ -2,8 +2,8 @@ import { Pencil, Trash2 } from 'lucide-react';
 
 import { isRating, ratingIcon, ratingLabel } from '../../domain/coffee/rating';
 import { RoastLevelLabel } from '../../domain/coffee/roastLevel';
-import { formatLocation } from '../../domain/premises/premises';
-import type { Shot } from '../../types/shot';
+import { formatLocation } from '../../domain/location/location';
+import type { Shot } from '../../types';
 import { formatDate } from '../../utils/util';
 import { RecipeStat } from './RecipeStat';
 

@@ -21,9 +21,9 @@ export type Shot = {
   commentsCount?: number;
   brewedAt: string; // actual coffee date as ISO
   createdAt: string; // post publication date as ISO
-  
+
   imageUrl?: string;
-  photoIds: string[];
+  photoId?: string[]; // de momento sólo dejo 1 foto
 };
 
 export interface PhotoEntry {

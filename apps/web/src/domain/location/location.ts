@@ -1,4 +1,4 @@
-import type { ShotLocation } from '../../types/shot';
+import type { ShotLocation } from '../../types';
 
 export function formatLocation(location?: ShotLocation) {
   if (!location) return '';

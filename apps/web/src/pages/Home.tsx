@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import { ShotCard } from '../components/ShotCard';
 import { useLocalShots } from '../hooks/useLocalShots';
-import type { Shot } from '../types/shot';
+import type { Shot } from '../types';
 import { formatDate } from '../utils/util';
 
 type HomeLocationState = {

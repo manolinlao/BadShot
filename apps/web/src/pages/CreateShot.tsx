@@ -6,7 +6,7 @@ import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import type { RoastLevel } from '../domain/coffee/roastLevel';
 import { useLocalShots } from '../hooks/useLocalShots';
-import type { Shot } from '../types/shot';
+import type { Shot } from '../types';
 
 export function CreateShot() {
   const navigate = useNavigate();
