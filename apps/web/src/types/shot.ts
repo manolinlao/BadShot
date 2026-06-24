@@ -7,7 +7,6 @@ export type Shot = {
     username?: string;
     avatarUrl?: string;
   };
-  imageUrl?: string;
   coffee: {
     name?: string;
     origin?: string;
@@ -22,7 +21,16 @@ export type Shot = {
   commentsCount?: number;
   brewedAt: string; // actual coffee date as ISO
   createdAt: string; // post publication date as ISO
+  
+  imageUrl?: string;
+  photoIds: string[];
 };
+
+export interface PhotoEntry {
+  id: string;
+  shotId: string;
+  blob: Blob;
+}
 
 export type ShotLocation = {
   name: string;
