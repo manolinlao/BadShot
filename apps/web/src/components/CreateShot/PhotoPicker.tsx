@@ -3,7 +3,7 @@ import { Camera } from 'lucide-react';
 
 interface PhotoPickerProps {
   imageUrl: string;
-  onImageSelected: (imageUrl: string) => void;
+  onImageSelected: (file: File) => void;
 }
 
 export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
@@ -15,7 +15,8 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    onImageSelected(URL.createObjectURL(file));
+    // el componente no ha de decidir cómo persistir la imagen
+    onImageSelected(file);
   };
 
   return (

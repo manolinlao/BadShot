@@ -1,14 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
-import { getAllShots, saveShot } from '../api/shots/db';
+import { useMemo } from 'react';
+import { useUnit } from 'effector-react';
 import { mockShots } from '../data/mockShots';
 import type { Shot } from '../types';
+import { shotsEffects, shotsStores } from '../state/shots';
 
 export const useLocalShots = () => {
-  const [createdShots, setCreatedShots] = useState<Shot[]>([]);
-
-  useEffect(() => {
-    getAllShots().then(setCreatedShots);
-  }, []);
+  const createdShots = useUnit(shotsStores.$shots);
 
   const feed = useMemo(() => {
     const allShots = [...createdShots, ...mockShots];
@@ -21,22 +18,15 @@ export const useLocalShots = () => {
   }, [createdShots]);
 
   const addShot = async (shot: Shot) => {
-    await saveShot(shot);
-    setCreatedShots((prev) => [shot, ...prev]);
+    await shotsEffects.saveShotFx(shot);
   };
 
-  const updateShot = async (updatedShot: Shot) => {
-    await saveShot(updatedShot);
-
-    setCreatedShots((prev) =>
-      prev.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot)),
-    );
+  const updateShot = async (shot: Shot) => {
+    await shotsEffects.saveShotFx(shot);
   };
 
   const deleteShot = async (shotId: string) => {
-    await deleteShotFromDb(shotId);
-
-    setCreatedShots((prev) => prev.filter((shot) => shot.id !== shotId));
+    await shotsEffects.deleteShotFx(shotId);
   };
 
   const isCreatedShot = (shotId: string) => {
@@ -52,6 +42,3 @@ export const useLocalShots = () => {
     isCreatedShot,
   };
 };
-function deleteShotFromDb(shotId: string) {
-  throw new Error('Function not implemented.');
-}

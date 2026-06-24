@@ -6,6 +6,8 @@ import { formatLocation } from '../../domain/location/location';
 import type { Shot } from '../../types';
 import { formatDate } from '../../utils/util';
 import { RecipeStat } from './RecipeStat';
+import { useEffect, useState } from 'react';
+import { getPhotoPreviewUrl } from '../../domain/photo/getPhotoPreviewUrl';
 
 interface ShotCardProps {
   shot: Shot;
@@ -20,6 +22,20 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   onDelete,
   onImageClick,
 }) => {
+  const [photoUrl, setPhotoUrl] = useState<string>();
+
+  useEffect(() => {
+    if (!shot.photoId) return;
+
+    const loadPhoto = async () => {
+      const url = await getPhotoPreviewUrl(shot.photoId);
+
+      setPhotoUrl(url);
+    };
+
+    void loadPhoto();
+  }, [shot.photoId]);
+
   const recipe = shot.recipe;
 
   const ratio =
@@ -80,7 +96,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
       </header>
 
       {/* IMAGE */}
-      {shot.imageUrl ? (
+      {photoUrl ? (
         <button
           type="button"
           onClick={onImageClick}
@@ -88,7 +104,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           aria-label="View shot image"
         >
           <img
-            src={shot.imageUrl}
+            src={photoUrl}
             alt="Espresso shot"
             className="aspect-square w-full object-cover"
           />

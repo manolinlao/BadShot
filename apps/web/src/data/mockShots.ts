@@ -10,9 +10,6 @@ export const mockShots: Shot[] = [
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80',
     },
 
-    imageUrl:
-      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1200&q=80',
-
     coffee: {
       name: 'Black Honey Lot 23',
       origin: 'Yirgacheffe, Ethiopia',
@@ -49,9 +46,6 @@ export const mockShots: Shot[] = [
       avatarUrl:
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80',
     },
-
-    imageUrl:
-      'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80',
 
     coffee: {
       name: 'El Paraiso Washed',
@@ -90,9 +84,6 @@ export const mockShots: Shot[] = [
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80',
     },
 
-    imageUrl:
-      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80',
-
     coffee: {
       name: 'Brazil Fazenda Reserve',
       origin: 'Minas Gerais, Brazil',
@@ -130,9 +121,6 @@ export const mockShots: Shot[] = [
       avatarUrl:
         'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=120&q=80',
     },
-
-    imageUrl:
-      'https://images.unsplash.com/photo-1459755486867-b55449bb39ff?auto=format&fit=crop&w=1200&q=80',
 
     coffee: {
       name: 'House Espresso',

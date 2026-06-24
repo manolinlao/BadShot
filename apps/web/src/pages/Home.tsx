@@ -5,6 +5,7 @@ import { ShotCard } from '../components/ShotCard';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types';
 import { formatDate } from '../utils/util';
+import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
 
 type HomeLocationState = {
   flash?: string;
@@ -18,6 +19,7 @@ export function Home() {
   const [visibleFlash, setVisibleFlash] = useState(flash);
   const [shotToDelete, setShotToDelete] = useState<Shot | null>(null);
   const [previewShot, setPreviewShot] = useState<Shot | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>();
 
   useEffect(() => {
     if (!flash) return;
@@ -47,6 +49,20 @@ export function Home() {
     window.addEventListener('keydown', onKeyDown);
 
     return () => window.removeEventListener('keydown', onKeyDown);
+  }, [previewShot]);
+
+  useEffect(() => {
+    if (!previewShot?.photoId) {
+      setPreviewUrl(undefined);
+      return;
+    }
+
+    const loadPreview = async () => {
+      const url = await getPhotoPreviewUrl(previewShot.photoId);
+      setPreviewUrl(url);
+    };
+
+    void loadPreview();
   }, [previewShot]);
 
   const handleConfirmDelete = () => {
@@ -83,7 +99,7 @@ export function Home() {
                 isCreatedShot(shot.id) ? () => setShotToDelete(shot) : undefined
               }
               onImageClick={
-                shot.imageUrl ? () => setPreviewShot(shot) : undefined
+                shot.photoId ? () => setPreviewShot(shot) : undefined
               }
             />
           ))}
@@ -138,7 +154,7 @@ export function Home() {
         </div>
       )}
 
-      {previewShot?.imageUrl && (
+      {previewShot?.photoId && (
         <div
           className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 px-4 py-6"
           role="dialog"
@@ -170,11 +186,13 @@ export function Home() {
               </p>
             </div>
 
-            <img
-              src={previewShot.imageUrl}
-              alt="Shot preview"
-              className="max-h-[85vh] w-full rounded-2xl object-contain shadow-2xl"
-            />
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt="Shot preview"
+                className="max-h-[85vh] w-full rounded-2xl object-contain shadow-2xl"
+              />
+            )}
           </div>
         </div>
       )}

@@ -7,6 +7,8 @@ import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import type { RoastLevel } from '../domain/coffee/roastLevel';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types';
+import { savePhoto } from '../api/photos/db';
+import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
 
 export function CreateShot() {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ export function CreateShot() {
   const [editLoaded, setEditLoaded] = useState(false);
 
   const [imageUrl, setImageUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [rating, setRating] = useState(3);
   const [location, setLocation] = useState('');
 
@@ -33,33 +36,62 @@ export function CreateShot() {
   const [doseOut, setDoseOut] = useState<number | ''>('');
   const [time, setTime] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
-  const canSave = Boolean(imageUrl);
+  const canSave = Boolean(imageUrl || editingShot?.photoId?.length);
 
   useEffect(() => {
     if (!editingShot || editLoaded) return;
 
-    setImageUrl(editingShot.imageUrl ?? '');
-    setRating(editingShot.rating ?? 3);
-    setLocation(editingShot.location?.name ?? '');
-    setCoffeeName(editingShot.coffee.name ?? '');
-    setOrigin(editingShot.coffee.origin ?? '');
-    setRoaster(editingShot.coffee.roaster ?? '');
-    setRoastLevel(editingShot.coffee.roastLevel ?? '');
-    setDoseIn(editingShot.recipe?.doseIn ?? '');
-    setDoseOut(editingShot.recipe?.doseOut ?? '');
-    setTime(editingShot.recipe?.time ?? '');
-    setNotes(editingShot.tastingNotes ?? '');
-    setEditLoaded(true);
+    const loadShot = async () => {
+      if (editingShot.photoId) {
+        const previewUrl = await getPhotoPreviewUrl(editingShot.photoId);
+
+        if (previewUrl) {
+          setImageUrl(previewUrl);
+        }
+      }
+
+      setRating(editingShot.rating ?? 3);
+      setLocation(editingShot.location?.name ?? '');
+      setCoffeeName(editingShot.coffee.name ?? '');
+      setOrigin(editingShot.coffee.origin ?? '');
+      setRoaster(editingShot.coffee.roaster ?? '');
+      setRoastLevel(editingShot.coffee.roastLevel ?? '');
+      setDoseIn(editingShot.recipe?.doseIn ?? '');
+      setDoseOut(editingShot.recipe?.doseOut ?? '');
+      setTime(editingShot.recipe?.time ?? '');
+      setNotes(editingShot.tastingNotes ?? '');
+
+      setEditLoaded(true);
+    };
+
+    void loadShot();
   }, [editLoaded, editingShot]);
 
-  const handleSave = () => {
+  const handlePhotoSelected = (file: File) => {
+    setSelectedFile(file);
+    setImageUrl(URL.createObjectURL(file));
+  };
+
+  const handleSave = async () => {
     if (!canSave) return;
 
+    const shotId = editingShot?.id ?? `shot-${Date.now()}`;
+    let photoId: string | undefined;
+
+    if (selectedFile) {
+      photoId = `photo-${Date.now()}`;
+
+      await savePhoto({
+        id: photoId,
+        shotId,
+        blob: selectedFile,
+      });
+    }
+
     const shot: Shot = {
-      id: editingShot?.id ?? `shot-${Date.now()}`,
+      id: shotId,
       user: editingShot?.user ?? { displayName: 'You', username: 'local' },
 
-      imageUrl,
       rating,
 
       location: location ? { name: location } : { name: 'Home' },
@@ -83,6 +115,8 @@ export function CreateShot() {
       commentsCount: editingShot?.commentsCount ?? 0,
       brewedAt: editingShot?.brewedAt ?? new Date().toISOString(),
       createdAt: editingShot?.createdAt ?? new Date().toISOString(),
+
+      photoId: photoId ?? editingShot?.photoId,
     };
 
     if (editingShot) {
@@ -112,7 +146,10 @@ export function CreateShot() {
           </div>
         </div>
 
-        <PhotoPicker imageUrl={imageUrl} onImageSelected={setImageUrl} />
+        <PhotoPicker
+          imageUrl={imageUrl}
+          onImageSelected={handlePhotoSelected}
+        />
       </section>
 
       <section className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
