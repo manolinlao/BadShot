@@ -1,30 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getAllShots } from '../api/shots/db';
+import { getAllShots, saveShot } from '../api/shots/db';
 import { mockShots } from '../data/mockShots';
 import type { Shot } from '../types';
-
-const STORAGE_KEY = 'badshot-created-shots';
-
-const loadSavedShots = (): Shot[] => {
-  if (typeof window === 'undefined') return [];
-
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Shot[]) : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveShots = (shots: Shot[]) => {
-  if (typeof window === 'undefined') return;
-
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(shots));
-  } catch {
-    // ignore localStorage failures
-  }
-};
 
 export const useLocalShots = () => {
   const [createdShots, setCreatedShots] = useState<Shot[]>([]);
@@ -43,24 +20,23 @@ export const useLocalShots = () => {
       );
   }, [createdShots]);
 
-  const addShot = (shot: Shot) => {
-    const next = [shot, ...createdShots];
-    setCreatedShots(next);
-    saveShots(next);
+  const addShot = async (shot: Shot) => {
+    await saveShot(shot);
+    setCreatedShots((prev) => [shot, ...prev]);
   };
 
-  const updateShot = (updatedShot: Shot) => {
-    const next = createdShots.map((shot) =>
-      shot.id === updatedShot.id ? updatedShot : shot,
+  const updateShot = async (updatedShot: Shot) => {
+    await saveShot(updatedShot);
+
+    setCreatedShots((prev) =>
+      prev.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot)),
     );
-    setCreatedShots(next);
-    saveShots(next);
   };
 
-  const deleteShot = (shotId: string) => {
-    const next = createdShots.filter((shot) => shot.id !== shotId);
-    setCreatedShots(next);
-    saveShots(next);
+  const deleteShot = async (shotId: string) => {
+    await deleteShotFromDb(shotId);
+
+    setCreatedShots((prev) => prev.filter((shot) => shot.id !== shotId));
   };
 
   const isCreatedShot = (shotId: string) => {
@@ -76,3 +52,6 @@ export const useLocalShots = () => {
     isCreatedShot,
   };
 };
+function deleteShotFromDb(shotId: string) {
+  throw new Error('Function not implemented.');
+}
