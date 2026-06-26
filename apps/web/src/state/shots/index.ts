@@ -6,7 +6,11 @@ import { deletePhoto } from '../../api/photos/db';
 const loadShotsFx = createEffect(async () => {
   return getAllShots();
 });
-const saveShotFx = createEffect(async (shot: Shot) => {
+const createShotFx = createEffect(async (shot: Shot) => {
+  await saveShot(shot);
+  return shot;
+});
+const updateShotFx = createEffect(async (shot: Shot) => {
   await saveShot(shot);
   return shot;
 });
@@ -19,11 +23,10 @@ const deleteShotFx = createEffect(async (shot: Shot) => {
 });
 const $shots = createStore<Shot[]>([])
   .on(loadShotsFx.doneData, (_, shots) => shots)
-  .on(saveShotFx.doneData, (shots, savedShot) => {
-    const filtered = shots.filter((shot) => shot.id !== savedShot.id);
-
-    return [savedShot, ...filtered];
-  })
+  .on(createShotFx.doneData, (shots, createdShot) => [createdShot, ...shots])
+  .on(updateShotFx.doneData, (shots, updatedShot) =>
+    shots.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot)),
+  )
   .on(deleteShotFx.doneData, (shots, shotId) =>
     shots.filter((shot) => shot.id !== shotId),
   );
@@ -37,6 +40,7 @@ export const shotsStores = {
 
 export const shotsEffects = {
   loadShotsFx,
-  saveShotFx,
+  createShotFx,
+  updateShotFx,
   deleteShotFx,
 };

@@ -18,11 +18,11 @@ export const useShots = () => {
   }, [createdShots]);
 
   const addShot = async (shot: Shot) => {
-    await shotsEffects.saveShotFx(shot);
+    await shotsEffects.createShotFx(shot);
   };
 
   const updateShot = async (shot: Shot) => {
-    await shotsEffects.saveShotFx(shot);
+    await shotsEffects.updateShotFx(shot);
   };
 
   const deleteShot = async (shot: Shot) => {
