@@ -1,4 +1,4 @@
-import { ratingIcon, ratingOptions } from '../../domain/coffee/rating';
+import { ratingIcon, ratingOptions } from '../../domain/coffee';
 
 interface RatingQuickProps {
   value: number;

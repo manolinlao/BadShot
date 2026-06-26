@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Camera, MapPin, Sparkles } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Camera, MapPin, Sparkles } from 'lucide-react';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
-import type { RoastLevel } from '../domain/coffee/roastLevel';
+import type { RoastLevel } from '../domain/coffee';
+import { getPhotoPreviewUrl } from '../domain/photo';
 import { useShots } from '../hooks/useShots';
 import type { Shot } from '../types';
 import { deletePhoto, savePhoto } from '../api/photos/db';
-import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
 
 export function CreateShot() {
   const navigate = useNavigate();

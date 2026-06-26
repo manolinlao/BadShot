@@ -1,4 +1,4 @@
-import type { RoastLevel } from '../domain/coffee/roastLevel';
+import type { RoastLevel } from '../domain/coffee';
 
 export type Shot = {
   id: string;

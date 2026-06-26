@@ -1,11 +1,7 @@
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-
-import {
-  RoastLevelLabel,
-  type RoastLevel,
-} from '../../domain/coffee/roastLevel';
+import { RoastLevelLabel, type RoastLevel } from '../../domain/coffee';
 import { RecipeEditor } from './RecipeEditor';
 
 type NumberInputValue = number | '';

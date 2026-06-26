@@ -1,17 +1,18 @@
+import { useEffect, useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
-
-import { isRating, ratingIcon, ratingLabel } from '../../domain/coffee/rating';
-import { RoastLevelLabel } from '../../domain/coffee/roastLevel';
-import { formatLocation } from '../../domain/location/location';
 import type { Shot } from '../../types';
 import { formatDate } from '../../utils/util';
+import { formatLocation } from '../../domain/location';
+import {
+  isRating,
+  ratingIcon,
+  ratingLabel,
+  RoastLevelLabel,
+} from '../../domain/coffee';
+import { getPhotoPreviewUrl } from '../../domain/photo';
+import { getCoffeeTitle, hasCoffeeMeta } from '../../domain/shot';
+import { getRecipeRatio, hasRecipeStats } from '../../domain/recipe';
 import { RecipeStat } from './RecipeStat';
-import { useEffect, useState } from 'react';
-import { getPhotoPreviewUrl } from '../../domain/photo/getPhotoPreviewUrl';
-import { getCoffeeTitle } from '../../domain/shot/getCoffeeTitle';
-import { getRecipeRatio } from '../../domain/recipe/getRecipeRatio';
-import { hasCoffeeMeta } from '../../domain/shot/hasCoffeeMeta';
-import { hasRecipeStats } from '../../domain/recipe/hasRecipeStats';
 
 interface ShotCardProps {
   shot: Shot;

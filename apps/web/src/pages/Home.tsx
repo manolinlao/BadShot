@@ -5,7 +5,7 @@ import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
 import type { Shot } from '../types';
 import { formatDate } from '../utils/util';
-import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
+import { getPhotoPreviewUrl } from '../domain/photo';
 
 type HomeLocationState = {
   flash?: string;
