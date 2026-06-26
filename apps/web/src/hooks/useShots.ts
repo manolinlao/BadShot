@@ -1,15 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useUnit } from 'effector-react';
 import { mockShots } from '../data/mockShots';
 import type { Shot } from '../types';
 import { shotsEffects, shotsStores } from '../state/shots';
 
-export const useLocalShots = () => {
+export const useShots = () => {
   const createdShots = useUnit(shotsStores.$shots);
-
-  useEffect(() => {
-    void shotsEffects.loadShotsFx();
-  }, []);
 
   const feed = useMemo(() => {
     const allShots = [...createdShots, ...mockShots];

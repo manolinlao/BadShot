@@ -5,7 +5,7 @@ import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import type { RoastLevel } from '../domain/coffee/roastLevel';
-import { useLocalShots } from '../hooks/useLocalShots';
+import { useShots } from '../hooks/useShots';
 import type { Shot } from '../types';
 import { deletePhoto, savePhoto } from '../api/photos/db';
 import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
@@ -13,7 +13,7 @@ import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
 export function CreateShot() {
   const navigate = useNavigate();
   const { shotId } = useParams();
-  const { addShot, createdShots, updateShot } = useLocalShots();
+  const { addShot, createdShots, updateShot } = useShots();
   const editingShot = useMemo(
     () => createdShots.find((shot) => shot.id === shotId),
     [createdShots, shotId],

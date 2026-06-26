@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
-import { useLocalShots } from '../hooks/useLocalShots';
+import { useShots } from '../hooks/useShots';
 import type { Shot } from '../types';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
@@ -12,7 +12,7 @@ type HomeLocationState = {
 };
 
 export function Home() {
-  const { feed, deleteShot, isCreatedShot } = useLocalShots();
+  const { feed, deleteShot, isCreatedShot } = useShots();
   const location = useLocation();
   const navigate = useNavigate();
   const flash = (location.state as HomeLocationState | null)?.flash;
