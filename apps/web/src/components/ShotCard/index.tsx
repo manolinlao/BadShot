@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 import { getPhotoPreviewUrl } from '../../domain/photo/getPhotoPreviewUrl';
 import { getCoffeeTitle } from '../../domain/shot/getCoffeeTitle';
 import { getRecipeRatio } from '../../domain/recipe/getRecipeRatio';
+import { hasCoffeeMeta } from '../../domain/shot/hasCoffeeMeta';
+import { hasRecipeStats } from '../../domain/recipe/hasRecipeStats';
 
 interface ShotCardProps {
   shot: Shot;
@@ -49,14 +51,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   const username = shot.user.username?.trim();
   const avatarInitial = displayName.charAt(0).toUpperCase();
   const coffeeTitle = getCoffeeTitle(shot);
-  const hasCoffeeMeta = Boolean(
-    shot.coffee.origin?.trim() ||
-    shot.coffee.roaster?.trim() ||
-    shot.coffee.roastLevel,
-  );
-  const hasRecipeStats = Boolean(
-    recipe?.doseIn || recipe?.doseOut || recipe?.time || ratio,
-  );
+  const hasCoffeeInformation = hasCoffeeMeta(shot);
+  const showRecipeStats = hasRecipeStats(recipe);
   const hasFooter = Boolean(
     rating || likes > 0 || comments > 0 || onEdit || onDelete,
   );
@@ -122,7 +118,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
             <p className="text-sm text-[#6f5b50]">{shot.coffee.origin}</p>
           )}
 
-          {hasCoffeeMeta && (
+          {hasCoffeeInformation && (
             <div className="mt-1 flex items-center justify-between gap-3 text-xs text-[#6f5b50]">
               {shot.coffee.roaster && (
                 <span className="font-semibold uppercase text-[#7a4d2a]">
@@ -145,7 +141,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
         )}
 
         {/* RECIPE */}
-        {hasRecipeStats && (
+        {showRecipeStats && (
           <dl className="grid grid-cols-4 gap-2 text-center">
             {recipe?.doseIn && (
               <RecipeStat label="In" value={`${recipe.doseIn}g`} />

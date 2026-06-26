@@ -1,5 +1,4 @@
 import { getPhoto } from '../../api/photos/db';
-import { createPhotoUrl } from './url';
 
 export async function getPhotoPreviewUrl(
   photoId?: string,
@@ -11,4 +10,12 @@ export async function getPhotoPreviewUrl(
   if (!photo) return undefined;
 
   return createPhotoUrl(photo.blob);
+}
+
+export function createPhotoUrl(blob: Blob): string {
+  return URL.createObjectURL(blob);
+}
+
+export function revokePhotoUrl(url: string): void {
+  URL.revokeObjectURL(url);
 }
