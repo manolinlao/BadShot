@@ -68,7 +68,7 @@ export function Home() {
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
 
-    deleteShot(shotToDelete.id);
+    deleteShot(shotToDelete);
     setShotToDelete(null);
     setVisibleFlash('Shot deleted');
   };

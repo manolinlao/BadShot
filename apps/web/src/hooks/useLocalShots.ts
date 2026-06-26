@@ -29,8 +29,8 @@ export const useLocalShots = () => {
     await shotsEffects.saveShotFx(shot);
   };
 
-  const deleteShot = async (shotId: string) => {
-    await shotsEffects.deleteShotFx(shotId);
+  const deleteShot = async (shot: Shot) => {
+    await shotsEffects.deleteShotFx(shot);
   };
 
   const isCreatedShot = (shotId: string) => {
