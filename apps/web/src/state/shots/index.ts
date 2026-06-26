@@ -3,17 +3,9 @@ import type { Shot } from '../../types';
 import { deleteShot, getAllShots, saveShot } from '../../api/shots/db';
 import { deletePhoto } from '../../api/photos/db';
 
-const loadShotsFx = createEffect(async () => {
-  return getAllShots();
-});
-const createShotFx = createEffect(async (shot: Shot) => {
-  await saveShot(shot);
-  return shot;
-});
-const updateShotFx = createEffect(async (shot: Shot) => {
-  await saveShot(shot);
-  return shot;
-});
+const loadShotsFx = createEffect(getAllShots);
+const createShotFx = createEffect(saveShot);
+const updateShotFx = createEffect(saveShot);
 const deleteShotFx = createEffect(async (shot: Shot) => {
   if (shot.photoId) {
     await deletePhoto(shot.photoId);

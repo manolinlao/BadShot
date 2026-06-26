@@ -8,8 +8,9 @@ export async function getAllShots(): Promise<Shot[]> {
 }
 
 // put sirve tanto para add como update
-export async function saveShot(shot: Shot): Promise<void> {
+export async function saveShot(shot: Shot): Promise<Shot> {
   await db.shots.put(shot);
+  return shot;
 }
 
 export async function deleteShot(id: string): Promise<void> {
