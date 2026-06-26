@@ -8,6 +8,8 @@ import { formatDate } from '../../utils/util';
 import { RecipeStat } from './RecipeStat';
 import { useEffect, useState } from 'react';
 import { getPhotoPreviewUrl } from '../../domain/photo/getPhotoPreviewUrl';
+import { getCoffeeTitle } from '../../domain/shot/getCoffeeTitle';
+import { getRecipeRatio } from '../../domain/recipe/getRecipeRatio';
 
 interface ShotCardProps {
   shot: Shot;
@@ -37,11 +39,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   }, [shot.photoId]);
 
   const recipe = shot.recipe;
-
-  const ratio =
-    recipe?.doseIn && recipe?.doseOut
-      ? (recipe.doseOut / recipe.doseIn).toFixed(2)
-      : null;
+  const ratio = getRecipeRatio(shot);
 
   const likes = shot.likesCount ?? 0;
   const comments = shot.commentsCount ?? 0;
@@ -50,8 +48,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   const displayName = shot.user.displayName?.trim() || 'BadShot user';
   const username = shot.user.username?.trim();
   const avatarInitial = displayName.charAt(0).toUpperCase();
-  const coffeeTitle =
-    shot.coffee.name?.trim() || shot.coffee.origin?.trim() || 'Untitled shot';
+  const coffeeTitle = getCoffeeTitle(shot);
   const hasCoffeeMeta = Boolean(
     shot.coffee.origin?.trim() ||
     shot.coffee.roaster?.trim() ||
