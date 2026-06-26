@@ -7,7 +7,7 @@ import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import type { RoastLevel } from '../domain/coffee/roastLevel';
 import { useLocalShots } from '../hooks/useLocalShots';
 import type { Shot } from '../types';
-import { savePhoto } from '../api/photos/db';
+import { deletePhoto, savePhoto } from '../api/photos/db';
 import { getPhotoPreviewUrl } from '../domain/photo/getPhotoPreviewUrl';
 
 export function CreateShot() {
@@ -79,6 +79,10 @@ export function CreateShot() {
     let photoId: string | undefined;
 
     if (selectedFile) {
+      if (editingShot?.photoId) {
+        await deletePhoto(editingShot.photoId);
+      }
+
       photoId = `photo-${Date.now()}`;
 
       await savePhoto({
