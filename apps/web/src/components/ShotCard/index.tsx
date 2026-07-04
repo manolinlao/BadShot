@@ -13,6 +13,12 @@ import { getPhotoPreviewUrl } from '../../domain/photo';
 import { getCoffeeTitle, hasCoffeeMeta } from '../../domain/shot';
 import { getRecipeRatio, hasRecipeStats } from '../../domain/recipe';
 import { RecipeStat } from './RecipeStat';
+import {
+  getAvatarInitial,
+  getDisplayName,
+  getUserName,
+} from '../../domain/user';
+import { usePhoto } from '../../hooks/usePhoto';
 
 interface ShotCardProps {
   shot: Shot;
@@ -27,33 +33,23 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   onDelete,
   onImageClick,
 }) => {
-  const [photoUrl, setPhotoUrl] = useState<string>();
-
-  useEffect(() => {
-    if (!shot.photoId) return;
-
-    const loadPhoto = async () => {
-      const url = await getPhotoPreviewUrl(shot.photoId);
-
-      setPhotoUrl(url);
-    };
-
-    void loadPhoto();
-  }, [shot.photoId]);
+  const photoUrl = usePhoto(shot.photoId);
 
   const recipe = shot.recipe;
-  const ratio = getRecipeRatio(shot);
+  const ratio = getRecipeRatio(recipe);
+  const showRecipeStats = hasRecipeStats(recipe);
 
   const likes = shot.likesCount ?? 0;
   const comments = shot.commentsCount ?? 0;
   const rating = isRating(shot.rating) ? shot.rating : null;
   const RatingIcon = rating ? ratingIcon[rating].icon : null;
-  const displayName = shot.user.displayName?.trim() || 'BadShot user';
-  const username = shot.user.username?.trim();
-  const avatarInitial = displayName.charAt(0).toUpperCase();
-  const coffeeTitle = getCoffeeTitle(shot);
-  const hasCoffeeInformation = hasCoffeeMeta(shot);
-  const showRecipeStats = hasRecipeStats(recipe);
+  const displayName = getDisplayName(shot.user);
+  const username = getUserName(shot.user);
+  const avatarInitial = getAvatarInitial(shot.user);
+
+  const coffeeTitle = getCoffeeTitle(shot.coffee);
+  const hasCoffeeInformation = hasCoffeeMeta(shot.coffee);
+
   const hasFooter = Boolean(
     rating || likes > 0 || comments > 0 || onEdit || onDelete,
   );

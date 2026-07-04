@@ -1,18 +1,22 @@
 import type { RoastLevel } from '../domain/coffee';
 
+export interface ShotUser {
+  displayName?: string;
+  username?: string;
+  avatarUrl?: string;
+}
+
+export interface Coffee {
+  name?: string;
+  origin?: string;
+  roaster?: string;
+  roastLevel?: RoastLevel;
+}
+
 export type Shot = {
   id: string;
-  user: {
-    displayName?: string;
-    username?: string;
-    avatarUrl?: string;
-  };
-  coffee: {
-    name?: string;
-    origin?: string;
-    roaster?: string;
-    roastLevel?: RoastLevel;
-  };
+  user: ShotUser;
+  coffee: Coffee;
   location?: ShotLocation;
   recipe?: Recipe;
   tastingNotes?: string;

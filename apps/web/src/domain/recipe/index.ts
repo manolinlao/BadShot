@@ -1,9 +1,6 @@
-import type { Shot } from '../../types';
 import type { Recipe } from '../../types';
 
-export function getRecipeRatio(shot: Shot): string | null {
-  const recipe = shot.recipe;
-
+export function getRecipeRatio(recipe?: Recipe): string | null {
   if (!recipe?.doseIn || !recipe?.doseOut) {
     return null;
   }

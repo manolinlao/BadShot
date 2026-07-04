@@ -1,15 +1,11 @@
-import type { Shot } from '../../types';
+import type { Coffee } from '../../types';
 
-export function getCoffeeTitle(shot: Shot): string {
-  return (
-    shot.coffee.name?.trim() || shot.coffee.origin?.trim() || 'Untitled shot'
-  );
+export function getCoffeeTitle(coffee: Coffee): string {
+  return coffee.name?.trim() || coffee.origin?.trim() || 'Untitled shot';
 }
 
-export function hasCoffeeMeta(shot: Shot): boolean {
+export function hasCoffeeMeta(coffee: Coffee): boolean {
   return Boolean(
-    shot.coffee.origin?.trim() ||
-    shot.coffee.roaster?.trim() ||
-    shot.coffee.roastLevel,
+    coffee.origin?.trim() || coffee.roaster?.trim() || coffee.roastLevel,
   );
 }
