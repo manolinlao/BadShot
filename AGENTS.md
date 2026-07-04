@@ -14,8 +14,8 @@ BadShot is a social network for specialty coffee espresso enthusiasts.
 - Tailwind CSS
 - React Router v6
 - Effector for client state
-- TanStack Query for server state
 - Dexie + IndexedDB for offline persistence
+- TanStack Query will be used once a backend is introduced.
 
 ### Backend
 
@@ -68,7 +68,6 @@ BadShot is a social network for specialty coffee espresso enthusiasts.
 - Hooks use `use*` naming.
 - Services use `*.service.ts`.
 - Use strict TypeScript.
-- Validate with Zod.
 - Handle async errors explicitly.
 
 ## API Response Format
@@ -84,3 +83,30 @@ Error:
 ```ts
 { success: false, error: { message: string, code?: string } }
 ```
+
+## Domain Modeling
+
+- Keep business logic inside the `domain` folder.
+- UI components should focus on rendering and user interaction.
+- Prefer small domain helper functions over embedding business rules in React components.
+- Domain functions should receive the smallest data structure they need (e.g. `Coffee`, `Recipe`) instead of an entire `Shot` whenever possible.
+- Keep domain code framework-agnostic. It must not depend on React, Effector, Dexie, or browser APIs.
+
+## Data Flow
+
+The preferred data flow is:
+
+UI
+→ Effector
+→ API layer
+→ Persistence (IndexedDB or Backend)
+
+React components must not access IndexedDB directly.
+Business logic should not live inside React components.
+
+## Separation of Concerns
+
+- `domain/` contains business rules.
+- `state/` contains Effector stores and effects.
+- `api/` abstracts persistence and network access.
+- `components/` render the UI.
