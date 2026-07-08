@@ -1,4 +1,5 @@
 import type { Coffee } from '../coffee/types';
+import type { ShotLocation } from '../location/types';
 import type { ShotCreationInput } from './types';
 
 export function getCoffeeTitle(coffee: Coffee): string {
@@ -18,12 +19,67 @@ export function getShotPreviewTitle(shot: {
   return getCoffeeTitle(shot.coffee);
 }
 
+export function matchesShotSearchQuery(
+  shot: {
+    coffee: Coffee;
+    location?: ShotLocation;
+    tastingNotes?: string;
+  },
+  query: string,
+): boolean {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) return true;
+
+  const haystack = [
+    shot.coffee.name,
+    shot.coffee.origin,
+    shot.coffee.roaster,
+    shot.location?.name,
+    shot.location?.city,
+    shot.location?.country,
+    shot.tastingNotes,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  return haystack.includes(normalizedQuery);
+}
+
+export type ShotQuickFilter =
+  | 'all'
+  | 'top-rated'
+  | 'with-photo'
+  | 'with-location';
+
+export function matchesShotQuickFilter(
+  shot: {
+    rating?: number;
+    photoId?: string;
+    location?: ShotLocation;
+  },
+  filter: ShotQuickFilter,
+): boolean {
+  if (filter === 'all') return true;
+
+  if (filter === 'top-rated') {
+    return (shot.rating ?? 0) >= 4;
+  }
+
+  if (filter === 'with-location') {
+    return Boolean(shot.location?.name?.trim());
+  }
+
+  return Boolean(shot.photoId);
+}
+
 export function createShot(input: ShotCreationInput) {
   return {
     id: input.id,
     user: input.user ?? { displayName: 'You', username: 'local' },
     coffee: input.coffee,
-    location: input.location ?? { name: 'Home' },
+    location: input.location,
     recipe: input.recipe,
     tastingNotes: input.tastingNotes,
     rating: input.rating,

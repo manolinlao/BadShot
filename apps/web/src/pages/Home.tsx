@@ -1,12 +1,26 @@
-import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { ChevronDown, Search, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
 import type { Shot } from '../domain/shot/types';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
-import { getShotPreviewTitle } from '../domain/shot';
+import {
+  getShotPreviewTitle,
+  matchesShotQuickFilter,
+  matchesShotSearchQuery,
+  type ShotQuickFilter,
+} from '../domain/shot';
+
+const INITIAL_VISIBLE_SHOTS = 10;
+const LOAD_MORE_STEP = 10;
+const quickFilters: Array<{ value: ShotQuickFilter; label: string }> = [
+  { value: 'all', label: 'All' },
+  { value: 'top-rated', label: '4+ rating' },
+  { value: 'with-photo', label: 'With photo' },
+  { value: 'with-location', label: 'Has location' },
+];
 
 type HomeLocationState = {
   flash?: string;
@@ -21,6 +35,28 @@ export function Home() {
   const [shotToDelete, setShotToDelete] = useState<Shot | null>(null);
   const [previewShot, setPreviewShot] = useState<Shot | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>();
+  const [visibleShotsCount, setVisibleShotsCount] = useState(
+    INITIAL_VISIBLE_SHOTS,
+  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [quickFilter, setQuickFilter] = useState<ShotQuickFilter>('all');
+
+  const filteredFeed = useMemo(
+    () =>
+      feed.filter(
+        (shot) =>
+          matchesShotSearchQuery(shot, searchQuery) &&
+          matchesShotQuickFilter(shot, quickFilter),
+      ),
+    [feed, quickFilter, searchQuery],
+  );
+
+  const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
+  const canLoadMore = visibleShotsCount < filteredFeed.length;
+  const visibleShotsLabel = `${visibleFeed.length} of ${filteredFeed.length}`;
+  const activeQuickFilterLabel =
+    quickFilters.find((filter) => filter.value === quickFilter)?.label ??
+    'All';
 
   useEffect(() => {
     if (!flash) return;
@@ -66,12 +102,28 @@ export function Home() {
     void loadPreview();
   }, [previewShot]);
 
+  useEffect(() => {
+    setVisibleShotsCount((currentVisibleShots) =>
+      Math.min(currentVisibleShots, Math.max(feed.length, INITIAL_VISIBLE_SHOTS)),
+    );
+  }, [feed.length]);
+
+  useEffect(() => {
+    setVisibleShotsCount(INITIAL_VISIBLE_SHOTS);
+  }, [quickFilter, searchQuery]);
+
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
 
     deleteShot(shotToDelete);
     setShotToDelete(null);
     setVisibleFlash('Shot deleted');
+  };
+
+  const handleLoadMore = () => {
+    setVisibleShotsCount(
+      (currentVisibleShots) => currentVisibleShots + LOAD_MORE_STEP,
+    );
   };
 
   return (
@@ -86,24 +138,102 @@ export function Home() {
       )}
 
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-5">
-          {feed.map((shot) => (
-            <ShotCard
-              key={shot.id}
-              shot={shot}
-              onEdit={
-                isCreatedShot(shot.id)
-                  ? () => navigate(`/edit/${shot.id}`)
-                  : undefined
-              }
-              onDelete={
-                isCreatedShot(shot.id) ? () => setShotToDelete(shot) : undefined
-              }
-              onImageClick={
-                shot.photoId ? () => setPreviewShot(shot) : undefined
-              }
-            />
-          ))}
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {quickFilters.map((filter) => {
+              const active = quickFilter === filter.value;
+
+              return (
+                <button
+                  key={filter.value}
+                  type="button"
+                  onClick={() => setQuickFilter(filter.value)}
+                  className={[
+                    'rounded-full border px-3 py-1.5 text-sm font-semibold transition',
+                    active
+                      ? 'border-[#211a16] bg-[#211a16] text-white'
+                      : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a] hover:text-[#211a16]',
+                  ].join(' ')}
+                >
+                  {filter.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <label className="block">
+            <span className="sr-only">Search shots</span>
+            <div className="flex items-center gap-2 rounded-xl border border-[#e2d6ca] bg-white px-3 py-2">
+              <Search className="h-4 w-4 shrink-0 text-[#7a4d2a]" aria-hidden="true" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search by coffee, location, roaster or notes"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-[#9b8b7e]"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="rounded p-1 text-[#7a4d2a] transition hover:bg-[#f3ebe3] hover:text-[#211a16]"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+          </label>
+
+          <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
+            <p className="font-semibold">
+              Showing <span className="text-[#211a16]">{visibleShotsLabel}</span>{' '}
+              shots
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            {visibleFeed.map((shot) => (
+              <ShotCard
+                key={shot.id}
+                shot={shot}
+                onEdit={
+                  isCreatedShot(shot.id)
+                    ? () => navigate(`/edit/${shot.id}`)
+                    : undefined
+                }
+                onDelete={
+                  isCreatedShot(shot.id)
+                    ? () => setShotToDelete(shot)
+                    : undefined
+                }
+                onImageClick={
+                  shot.photoId ? () => setPreviewShot(shot) : undefined
+                }
+              />
+            ))}
+          </div>
+
+          {(searchQuery || quickFilter !== 'all') && filteredFeed.length === 0 && (
+            <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
+              No shots match{' '}
+              <span className="font-semibold text-[#211a16]">
+                {searchQuery || activeQuickFilterLabel}
+              </span>
+              .
+            </div>
+          )}
+
+          {canLoadMore && (
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              className="mx-auto flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-4 py-2 text-sm font-bold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+            >
+              <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              Load more
+            </button>
+          )}
         </div>
 
         <aside className="h-fit rounded-lg border border-[#e2d6ca] bg-[#fffaf5] p-5">
