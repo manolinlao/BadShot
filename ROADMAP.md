@@ -1,4 +1,12 @@
-﻿# 3. Trabajar con el location
+﻿# 2. analizar esto
+
+brewedDate?: string;
+brewedAt: string;
+createdAt: string;
+
+que es?? yo solo quero la fecha del dia que creo el shot y ya esta
+
+# 3. Trabajar con el location
 
 Primero haria una version simple y controlable:
 

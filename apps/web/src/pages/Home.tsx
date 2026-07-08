@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
@@ -28,6 +28,122 @@ type HomeLocationState = {
   flash?: string;
 };
 
+type ShotFiltersControlsProps = {
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+  quickFilter: ShotQuickFilter;
+  setQuickFilter: (value: ShotQuickFilter) => void;
+  dateFrom: string;
+  setDateFrom: (value: string) => void;
+  dateTo: string;
+  setDateTo: (value: string) => void;
+  hasActiveFilters: boolean;
+  onClearFilters: () => void;
+};
+
+function ShotFiltersControls({
+  searchQuery,
+  setSearchQuery,
+  quickFilter,
+  setQuickFilter,
+  dateFrom,
+  setDateFrom,
+  dateTo,
+  setDateTo,
+  hasActiveFilters,
+  onClearFilters,
+}: ShotFiltersControlsProps) {
+  return (
+    <div className="rounded-2xl border border-[#e2d6ca] bg-[#f8f4ef] p-3 shadow-sm sm:bg-[#f8f4ef]/95 sm:backdrop-blur-sm">
+      <div className="flex flex-wrap gap-2">
+        {quickFilters.map((filter) => {
+          const active = quickFilter === filter.value;
+
+          return (
+            <button
+              key={filter.value}
+              type="button"
+              onClick={() => setQuickFilter(filter.value)}
+              className={[
+                'rounded-full border px-3 py-1.5 text-sm font-semibold transition',
+                active
+                  ? 'border-[#211a16] bg-[#211a16] text-white'
+                  : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a] hover:text-[#211a16]',
+              ].join(' ')}
+            >
+              {filter.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <label className="mt-3 block">
+        <span className="sr-only">Search shots</span>
+        <div className="flex items-center gap-2 rounded-xl border border-[#e2d6ca] bg-white px-3 py-2">
+          <Search
+            className="h-4 w-4 shrink-0 text-[#7a4d2a]"
+            aria-hidden="true"
+          />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search by coffee, location, roaster or notes"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-[#9b8b7e]"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="rounded p-1 text-[#7a4d2a] transition hover:bg-[#f3ebe3] hover:text-[#211a16]"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      </label>
+
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
+            From
+          </span>
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(event) => setDateFrom(event.target.value)}
+            className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
+          />
+        </label>
+
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
+            To
+          </span>
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(event) => setDateTo(event.target.value)}
+            className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
+          />
+        </label>
+      </div>
+
+      {hasActiveFilters && (
+        <button
+          type="button"
+          onClick={onClearFilters}
+          className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+          Clear filters
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function Home() {
   const { feed, deleteShot, isCreatedShot } = useShots();
   const location = useLocation();
@@ -44,14 +160,18 @@ export function Home() {
   const [quickFilter, setQuickFilter] = useState<ShotQuickFilter>('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const dateRange: ShotDateRange = {
     from: dateFrom || undefined,
     to: dateTo || undefined,
   };
   const hasDateRange = Boolean(dateFrom || dateTo);
-  const hasActiveFilters =
-    Boolean(searchQuery) || quickFilter !== 'all' || hasDateRange;
+  const activeFiltersCount =
+    Number(Boolean(searchQuery)) +
+    Number(quickFilter !== 'all') +
+    Number(hasDateRange);
+  const hasActiveFilters = activeFiltersCount > 0;
 
   const filteredFeed = useMemo(
     () =>
@@ -149,16 +269,12 @@ export function Home() {
     );
   };
 
-  const handleClearDates = () => {
-    setDateFrom('');
-    setDateTo('');
-  };
-
   const handleClearFilters = () => {
     setSearchQuery('');
     setQuickFilter('all');
     setDateFrom('');
     setDateTo('');
+    setFiltersOpen(false);
   };
 
   return (
@@ -174,102 +290,53 @@ export function Home() {
 
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <div className="rounded-2xl border border-[#e2d6ca] bg-[#f8f4ef] p-3 shadow-sm sm:sticky sm:top-20 sm:z-10 sm:bg-[#f8f4ef]/95 sm:backdrop-blur-sm">
-            <div className="flex flex-wrap gap-2">
-              {quickFilters.map((filter) => {
-                const active = quickFilter === filter.value;
+          <div className="sm:hidden">
+            <ShotFiltersControls
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              quickFilter={quickFilter}
+              setQuickFilter={setQuickFilter}
+              dateFrom={dateFrom}
+              setDateFrom={setDateFrom}
+              dateTo={dateTo}
+              setDateTo={setDateTo}
+              hasActiveFilters={hasActiveFilters}
+              onClearFilters={handleClearFilters}
+            />
+          </div>
 
-                return (
-                  <button
-                    key={filter.value}
-                    type="button"
-                    onClick={() => setQuickFilter(filter.value)}
-                    className={[
-                      'rounded-full border px-3 py-1.5 text-sm font-semibold transition',
-                      active
-                        ? 'border-[#211a16] bg-[#211a16] text-white'
-                        : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a] hover:text-[#211a16]',
-                    ].join(' ')}
-                  >
-                    {filter.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <label className="mt-3 block">
-              <span className="sr-only">Search shots</span>
-              <div className="flex items-center gap-2 rounded-xl border border-[#e2d6ca] bg-white px-3 py-2">
-                <Search
-                  className="h-4 w-4 shrink-0 text-[#7a4d2a]"
-                  aria-hidden="true"
-                />
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Search by coffee, location, roaster or notes"
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-[#9b8b7e]"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="rounded p-1 text-[#7a4d2a] transition hover:bg-[#f3ebe3] hover:text-[#211a16]"
-                    aria-label="Clear search"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
+          <div className="hidden sm:block sm:sticky sm:top-20 sm:z-10">
+            <div className="flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setFiltersOpen((current) => !current)}
+                className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+              >
+                <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                {filtersOpen ? 'Hide filters' : 'Show filters'}
+                {hasActiveFilters && (
+                  <span className="ml-1 rounded-full bg-[#211a16] px-2 py-0.5 text-[11px] font-bold text-white">
+                    {activeFiltersCount}
+                  </span>
                 )}
-              </div>
-            </label>
-
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
-                  From
-                </span>
-                <input
-                  type="date"
-                  value={dateFrom}
-                  onChange={(event) => setDateFrom(event.target.value)}
-                  className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
-                />
-              </label>
-
-              <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
-                  To
-                </span>
-                <input
-                  type="date"
-                  value={dateTo}
-                  onChange={(event) => setDateTo(event.target.value)}
-                  className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
-                />
-              </label>
+              </button>
             </div>
 
-            {hasDateRange && (
-              <button
-                type="button"
-                onClick={handleClearDates}
-                className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-1.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-                Clear dates
-              </button>
-            )}
-
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={handleClearFilters}
-                className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-                Clear filters
-              </button>
+            {filtersOpen && (
+              <div className="mt-3">
+                <ShotFiltersControls
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  quickFilter={quickFilter}
+                  setQuickFilter={setQuickFilter}
+                  dateFrom={dateFrom}
+                  setDateFrom={setDateFrom}
+                  dateTo={dateTo}
+                  setDateTo={setDateTo}
+                  hasActiveFilters={hasActiveFilters}
+                  onClearFilters={handleClearFilters}
+                />
+              </div>
             )}
           </div>
 
@@ -303,14 +370,14 @@ export function Home() {
           </div>
 
           {hasActiveFilters && filteredFeed.length === 0 && (
-              <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
-                No shots match{' '}
-                <span className="font-semibold text-[#211a16]">
-                  {activeEmptyStateLabel}
-                </span>
-                .
-              </div>
-            )}
+            <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
+              No shots match{' '}
+              <span className="font-semibold text-[#211a16]">
+                {activeEmptyStateLabel}
+              </span>
+              .
+            </div>
+          )}
 
           {canLoadMore && (
             <button
