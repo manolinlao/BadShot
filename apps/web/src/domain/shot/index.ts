@@ -79,7 +79,7 @@ export type ShotDateRange = {
   to?: string;
 };
 
-function getLocalDateValue(isoDate: string): string {
+function getCalendarDateValue(isoDate: string): string {
   const date = new Date(isoDate);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -88,13 +88,21 @@ function getLocalDateValue(isoDate: string): string {
   return `${year}-${month}-${day}`;
 }
 
+export function getShotCalendarDate(shot: {
+  brewedAt: string;
+  brewedDate?: string;
+}): string {
+  return shot.brewedDate ?? getCalendarDateValue(shot.brewedAt);
+}
+
 export function matchesShotDateRange(
   shot: {
     brewedAt: string;
+    brewedDate?: string;
   },
   range: ShotDateRange,
 ): boolean {
-  const brewedDate = getLocalDateValue(shot.brewedAt);
+  const brewedDate = getShotCalendarDate(shot);
 
   if (range.from && brewedDate < range.from) {
     return false;
@@ -108,6 +116,8 @@ export function matchesShotDateRange(
 }
 
 export function createShot(input: ShotCreationInput) {
+  const brewedAt = input.brewedAt ?? new Date().toISOString();
+
   return {
     id: input.id,
     user: input.user ?? { displayName: 'You', username: 'local' },
@@ -118,7 +128,9 @@ export function createShot(input: ShotCreationInput) {
     rating: input.rating,
     likesCount: input.likesCount ?? 0,
     commentsCount: input.commentsCount ?? 0,
-    brewedAt: input.brewedAt ?? new Date().toISOString(),
+    brewedDate:
+      input.brewedDate ?? getCalendarDateValue(input.brewedAt ?? brewedAt),
+    brewedAt,
     createdAt: input.createdAt ?? new Date().toISOString(),
     photoId: input.photoId,
   };

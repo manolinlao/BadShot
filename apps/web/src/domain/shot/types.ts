@@ -13,6 +13,7 @@ export interface Shot {
   rating?: number;
   likesCount?: number;
   commentsCount?: number;
+  brewedDate?: string;
   brewedAt: string;
   createdAt: string;
   photoId?: string;
@@ -28,6 +29,7 @@ export interface ShotCreationInput {
   rating?: number;
   likesCount?: number;
   commentsCount?: number;
+  brewedDate?: string;
   brewedAt?: string;
   createdAt?: string;
   photoId?: string;

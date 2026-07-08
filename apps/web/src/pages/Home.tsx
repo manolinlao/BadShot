@@ -50,6 +50,8 @@ export function Home() {
     to: dateTo || undefined,
   };
   const hasDateRange = Boolean(dateFrom || dateTo);
+  const hasActiveFilters =
+    Boolean(searchQuery) || quickFilter !== 'all' || hasDateRange;
 
   const filteredFeed = useMemo(
     () =>
@@ -68,8 +70,13 @@ export function Home() {
   const activeQuickFilterLabel =
     quickFilters.find((filter) => filter.value === quickFilter)?.label ??
     'All';
-  const activeEmptyStateLabel =
-    searchQuery || activeQuickFilterLabel || (hasDateRange ? 'selected dates' : '');
+  const activeEmptyStateLabel = searchQuery
+    ? searchQuery
+    : quickFilter !== 'all'
+      ? activeQuickFilterLabel
+      : hasDateRange
+        ? 'selected dates'
+        : '';
 
   useEffect(() => {
     if (!flash) return;
@@ -143,6 +150,13 @@ export function Home() {
   };
 
   const handleClearDates = () => {
+    setDateFrom('');
+    setDateTo('');
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setQuickFilter('all');
     setDateFrom('');
     setDateTo('');
   };
@@ -246,6 +260,17 @@ export function Home() {
                 Clear dates
               </button>
             )}
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+                Clear filters
+              </button>
+            )}
           </div>
 
           <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
@@ -277,8 +302,7 @@ export function Home() {
             ))}
           </div>
 
-          {(searchQuery || quickFilter !== 'all' || dateFrom || dateTo) &&
-            filteredFeed.length === 0 && (
+          {hasActiveFilters && filteredFeed.length === 0 && (
               <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
                 No shots match{' '}
                 <span className="font-semibold text-[#211a16]">
