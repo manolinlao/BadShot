@@ -27,7 +27,9 @@ export function CreateShot() {
   const [imageUrl, setImageUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [rating, setRating] = useState(3);
-  const [location, setLocation] = useState('');
+  const [locationName, setLocationName] = useState('');
+  const [locationCity, setLocationCity] = useState('');
+  const [locationCountry, setLocationCountry] = useState('');
 
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
@@ -52,7 +54,9 @@ export function CreateShot() {
       }
 
       setRating(editingShot.rating ?? 3);
-      setLocation(editingShot.location?.name ?? '');
+      setLocationName(editingShot.location?.name ?? '');
+      setLocationCity(editingShot.location?.city ?? '');
+      setLocationCountry(editingShot.location?.country ?? '');
       setCoffeeName(editingShot.coffee.name ?? '');
       setOrigin(editingShot.coffee.origin ?? '');
       setRoaster(editingShot.coffee.roaster ?? '');
@@ -81,6 +85,22 @@ export function CreateShot() {
     setImageUrl(URL.createObjectURL(file));
   };
 
+  const buildLocation = () => {
+    const name = locationName.trim();
+    const city = locationCity.trim();
+    const country = locationCountry.trim();
+
+    if (!name && !city && !country) {
+      return undefined;
+    }
+
+    return {
+      name: name || city || country,
+      ...(city ? { city } : {}),
+      ...(country ? { country } : {}),
+    };
+  };
+
   const handleSave = async () => {
     if (!canSave) return;
 
@@ -105,7 +125,7 @@ export function CreateShot() {
       id: shotId,
       user: editingShot?.user,
       rating,
-      location: location ? { name: location } : undefined,
+      location: buildLocation(),
       coffee: {
         name: coffeeName,
         origin,
@@ -168,17 +188,33 @@ export function CreateShot() {
               Location
             </p>
             <p className="mt-1 text-sm text-zinc-500">
-              Where this espresso was brewed.
+              Add the local name, city or country.
             </p>
           </div>
         </div>
 
         <input
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Local name"
+          value={locationName}
+          onChange={(e) => setLocationName(e.target.value)}
           className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
         />
+
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <input
+            placeholder="City"
+            value={locationCity}
+            onChange={(e) => setLocationCity(e.target.value)}
+            className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
+          />
+
+          <input
+            placeholder="Country"
+            value={locationCountry}
+            onChange={(e) => setLocationCountry(e.target.value)}
+            className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
+          />
+        </div>
       </section>
 
       <section className="space-y-3">

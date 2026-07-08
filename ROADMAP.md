@@ -1,45 +1,41 @@
-# 1. Terminar el dominio (lo siguiente que haría) "Dejar el dominio realmente bien modelado."
+﻿# 3. Trabajar con el location
 
-# 2. Definir mejor el modelo
+Primero haria una version simple y controlable:
 
-Ahora mismo Shot tiene objetos anónimos:
-Yo los convertiría en tipos propios:
+- nombre del local;
+- ciudad;
+- pais.
 
-- Coffee
-- Recipe
-- ShotLocation
-- User
+Mas adelante, si merece la pena, haria la version mas sofisticada:
 
-# 3. Mejorar la gestión de fotos
-
-Ya funciona, pero aún hay margen:
-
-- liberar URL.createObjectURL() con URL.revokeObjectURL();
-- generar miniaturas;
-- comprimir imágenes antes de guardarlas.
+- mapa o coordenadas;
+- deteccion automatica de ubicacion;
+- autocompletado de locales;
+- boton para guardar la ubicacion actual si el navegador lo permite;
+- fallback manual si no se puede detectar nada.
 
 # 4. Funcionalidades reales
 
-Una vez la base esté limpia, empezaría a añadir valor a BadShot.
+Una vez la base este limpia, empezaria a anadir valor a BadShot.
 
 Por ejemplo:
 
-- búsqueda;
-- filtros (origen, tostador, puntuación);
+- busqueda;
+- filtros (origen, tostador, puntuacion);
 - favoritos;
-- estadísticas.
+- estadisticas.
 
 # 5. Backend
 
-Solo cuando el frontend esté cómodo.
+Solo cuando el frontend este comodo.
 
-Gracias a la arquitectura que has montado, el cambio será principalmente sustituir la implementación de api/.
-A partir de ahora intentaría tratar BadShot como si fuera un producto de verdad.
-Cada nueva funcionalidad seguiría este orden:
+Gracias a la arquitectura que has montado, el cambio sera principalmente sustituir la implementacion de api/.
+A partir de ahora intentaria tratar BadShot como si fuera un producto de verdad.
+Cada nueva funcionalidad seguiria este orden:
 
-- ¿Necesito cambiar el modelo (types o domain)?
-- ¿Necesito cambiar el estado (state)?
-- ¿Necesito cambiar la persistencia (api)?
-- ¿Solo entonces toco los componentes (components).
+- Necesito cambiar el modelo (types o domain)?
+- Necesito cambiar el estado (state)?
+- Necesito cambiar la persistencia (api)?
+- Solo entonces toco los componentes (components).
 
-Es un flujo muy parecido al que se sigue en proyectos grandes y evita que la lógica termine escondida dentro de React.
+Es un flujo muy parecido al que se sigue en proyectos grandes y evita que la logica termine escondida dentro de React.
