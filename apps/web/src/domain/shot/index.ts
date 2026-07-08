@@ -74,6 +74,39 @@ export function matchesShotQuickFilter(
   return Boolean(shot.photoId);
 }
 
+export type ShotDateRange = {
+  from?: string;
+  to?: string;
+};
+
+function getLocalDateValue(isoDate: string): string {
+  const date = new Date(isoDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+export function matchesShotDateRange(
+  shot: {
+    brewedAt: string;
+  },
+  range: ShotDateRange,
+): boolean {
+  const brewedDate = getLocalDateValue(shot.brewedAt);
+
+  if (range.from && brewedDate < range.from) {
+    return false;
+  }
+
+  if (range.to && brewedDate > range.to) {
+    return false;
+  }
+
+  return true;
+}
+
 export function createShot(input: ShotCreationInput) {
   return {
     id: input.id,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, Search, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
@@ -8,8 +8,10 @@ import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
 import {
   getShotPreviewTitle,
+  matchesShotDateRange,
   matchesShotQuickFilter,
   matchesShotSearchQuery,
+  type ShotDateRange,
   type ShotQuickFilter,
 } from '../domain/shot';
 
@@ -40,15 +42,24 @@ export function Home() {
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [quickFilter, setQuickFilter] = useState<ShotQuickFilter>('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  const dateRange: ShotDateRange = {
+    from: dateFrom || undefined,
+    to: dateTo || undefined,
+  };
+  const hasDateRange = Boolean(dateFrom || dateTo);
 
   const filteredFeed = useMemo(
     () =>
       feed.filter(
         (shot) =>
           matchesShotSearchQuery(shot, searchQuery) &&
-          matchesShotQuickFilter(shot, quickFilter),
+          matchesShotQuickFilter(shot, quickFilter) &&
+          matchesShotDateRange(shot, dateRange),
       ),
-    [feed, quickFilter, searchQuery],
+    [feed, quickFilter, searchQuery, dateRange],
   );
 
   const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
@@ -57,6 +68,8 @@ export function Home() {
   const activeQuickFilterLabel =
     quickFilters.find((filter) => filter.value === quickFilter)?.label ??
     'All';
+  const activeEmptyStateLabel =
+    searchQuery || activeQuickFilterLabel || (hasDateRange ? 'selected dates' : '');
 
   useEffect(() => {
     if (!flash) return;
@@ -104,13 +117,16 @@ export function Home() {
 
   useEffect(() => {
     setVisibleShotsCount((currentVisibleShots) =>
-      Math.min(currentVisibleShots, Math.max(feed.length, INITIAL_VISIBLE_SHOTS)),
+      Math.min(
+        currentVisibleShots,
+        Math.max(feed.length, INITIAL_VISIBLE_SHOTS),
+      ),
     );
   }, [feed.length]);
 
   useEffect(() => {
     setVisibleShotsCount(INITIAL_VISIBLE_SHOTS);
-  }, [quickFilter, searchQuery]);
+  }, [dateFrom, dateTo, quickFilter, searchQuery]);
 
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
@@ -124,6 +140,11 @@ export function Home() {
     setVisibleShotsCount(
       (currentVisibleShots) => currentVisibleShots + LOAD_MORE_STEP,
     );
+  };
+
+  const handleClearDates = () => {
+    setDateFrom('');
+    setDateTo('');
   };
 
   return (
@@ -165,7 +186,10 @@ export function Home() {
             <label className="mt-3 block">
               <span className="sr-only">Search shots</span>
               <div className="flex items-center gap-2 rounded-xl border border-[#e2d6ca] bg-white px-3 py-2">
-                <Search className="h-4 w-4 shrink-0 text-[#7a4d2a]" aria-hidden="true" />
+                <Search
+                  className="h-4 w-4 shrink-0 text-[#7a4d2a]"
+                  aria-hidden="true"
+                />
                 <input
                   type="search"
                   value={searchQuery}
@@ -185,6 +209,43 @@ export function Home() {
                 )}
               </div>
             </label>
+
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
+                  From
+                </span>
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(event) => setDateFrom(event.target.value)}
+                  className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
+                  To
+                </span>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(event) => setDateTo(event.target.value)}
+                  className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
+                />
+              </label>
+            </div>
+
+            {hasDateRange && (
+              <button
+                type="button"
+                onClick={handleClearDates}
+                className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-1.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+                Clear dates
+              </button>
+            )}
           </div>
 
           <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
@@ -216,15 +277,16 @@ export function Home() {
             ))}
           </div>
 
-          {(searchQuery || quickFilter !== 'all') && filteredFeed.length === 0 && (
-            <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
-              No shots match{' '}
-              <span className="font-semibold text-[#211a16]">
-                {searchQuery || activeQuickFilterLabel}
-              </span>
-              .
-            </div>
-          )}
+          {(searchQuery || quickFilter !== 'all' || dateFrom || dateTo) &&
+            filteredFeed.length === 0 && (
+              <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
+                No shots match{' '}
+                <span className="font-semibold text-[#211a16]">
+                  {activeEmptyStateLabel}
+                </span>
+                .
+              </div>
+            )}
 
           {canLoadMore && (
             <button
