@@ -1,4 +1,4 @@
-import type { ShotLocation } from '../../types';
+import type { ShotLocation } from './types';
 
 export function formatLocation(location?: ShotLocation) {
   if (!location) return '';
@@ -9,3 +9,5 @@ export function formatLocation(location?: ShotLocation) {
 
   return parts.join(' - ');
 }
+
+export type { ShotLocation } from './types';

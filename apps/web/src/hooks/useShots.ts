@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useUnit } from 'effector-react';
 import { mockShots } from '../data/mockShots';
-import type { Shot } from '../types';
+import type { Shot } from '../domain/shot/types';
 import { shotsEffects, shotsStores } from '../state/shots';
 
 export const useShots = () => {

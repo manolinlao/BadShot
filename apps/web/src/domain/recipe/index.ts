@@ -1,4 +1,4 @@
-import type { Recipe } from '../../types';
+import type { Recipe } from './types';
 
 export function getRecipeRatio(recipe?: Recipe): string | null {
   if (!recipe?.doseIn || !recipe?.doseOut) {
@@ -11,3 +11,5 @@ export function getRecipeRatio(recipe?: Recipe): string | null {
 export function hasRecipeStats(recipe?: Recipe): boolean {
   return Boolean(recipe?.doseIn || recipe?.doseOut || recipe?.time);
 }
+
+export type { Recipe } from './types';

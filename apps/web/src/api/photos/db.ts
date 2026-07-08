@@ -1,5 +1,5 @@
 import { db } from '../db/database';
-import type { PhotoEntry } from '../../types';
+import type { PhotoEntry } from './types';
 
 export async function savePhoto(photo: PhotoEntry): Promise<void> {
   await db.photos.put(photo);

@@ -3,9 +3,10 @@ import { X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
-import type { Shot } from '../types';
+import type { Shot } from '../domain/shot/types';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
+import { getShotPreviewTitle } from '../domain/shot';
 
 type HomeLocationState = {
   flash?: string;
@@ -58,7 +59,7 @@ export function Home() {
     }
 
     const loadPreview = async () => {
-      const url = await getPhotoPreviewUrl(previewShot.photoId);
+      const url = await getPhotoPreviewUrl(previewShot.photoId, false);
       setPreviewUrl(url);
     };
 
@@ -177,9 +178,7 @@ export function Home() {
 
             <div className="mb-3 rounded-2xl bg-white/10 px-4 py-3 text-white backdrop-blur-sm">
               <h2 className="text-lg font-black leading-tight">
-                {previewShot.coffee.name?.trim() ||
-                  previewShot.coffee.origin?.trim() ||
-                  'Untitled shot'}
+                {getShotPreviewTitle(previewShot)}
               </h2>
               <p className="mt-1 text-sm text-white/75">
                 {formatDate(previewShot.brewedAt)}

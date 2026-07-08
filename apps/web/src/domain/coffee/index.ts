@@ -1,4 +1,5 @@
 import { Flame, Frown, Laugh, Meh, Smile, type LucideIcon } from 'lucide-react';
+import type { RoastLevel } from './types';
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
@@ -42,12 +43,11 @@ export const ratingIcon = {
   }
 >;
 
-// Avoid enum here because it emits JavaScript at runtime.
-export type RoastLevel = 'light' | 'medium-light' | 'medium' | 'dark';
-
 export const RoastLevelLabel: Record<RoastLevel, string> = {
   light: 'Light',
   'medium-light': 'Medium Light',
   medium: 'Medium',
   dark: 'Dark',
 };
+
+export type { Coffee, RoastLevel } from './types';

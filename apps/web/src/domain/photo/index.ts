@@ -2,6 +2,7 @@ import { getPhoto } from '../../api/photos/db';
 
 export async function getPhotoPreviewUrl(
   photoId?: string,
+  preferThumbnail = true,
 ): Promise<string | undefined> {
   if (!photoId) return undefined;
 
@@ -9,7 +10,9 @@ export async function getPhotoPreviewUrl(
 
   if (!photo) return undefined;
 
-  return createPhotoUrl(photo.blob);
+  const blob = preferThumbnail && photo.thumbnailBlob ? photo.thumbnailBlob : photo.blob;
+
+  return createPhotoUrl(blob);
 }
 
 export function createPhotoUrl(blob: Blob): string {

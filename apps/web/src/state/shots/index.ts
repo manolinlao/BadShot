@@ -1,5 +1,5 @@
 import { createEffect, createStore } from 'effector';
-import type { Shot } from '../../types';
+import type { Shot } from '../../domain/shot/types';
 import { deleteShot, getAllShots, saveShot } from '../../api/shots/db';
 import { deletePhoto } from '../../api/photos/db';
 

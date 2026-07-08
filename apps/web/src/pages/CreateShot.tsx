@@ -5,10 +5,11 @@ import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import type { RoastLevel } from '../domain/coffee';
-import { getPhotoPreviewUrl } from '../domain/photo';
+import { getPhotoPreviewUrl, revokePhotoUrl } from '../domain/photo';
+import { createShot } from '../domain/shot';
 import { useShots } from '../hooks/useShots';
-import type { Shot } from '../types';
-import { deletePhoto, savePhoto } from '../api/photos/db';
+import { deletePhoto } from '../api/photos/db';
+import { savePhotoFromFile } from '../api/photos/repository';
 
 export function CreateShot() {
   const navigate = useNavigate();
@@ -67,6 +68,14 @@ export function CreateShot() {
     void loadShot();
   }, [editLoaded, editingShot]);
 
+  useEffect(() => {
+    if (!imageUrl) return;
+
+    return () => {
+      revokePhotoUrl(imageUrl);
+    };
+  }, [imageUrl]);
+
   const handlePhotoSelected = (file: File) => {
     setSelectedFile(file);
     setImageUrl(URL.createObjectURL(file));
@@ -85,43 +94,36 @@ export function CreateShot() {
 
       photoId = `photo-${Date.now()}`;
 
-      await savePhoto({
+      await savePhotoFromFile({
         id: photoId,
         shotId,
         blob: selectedFile,
       });
     }
 
-    const shot: Shot = {
+    const shot = createShot({
       id: shotId,
-      user: editingShot?.user ?? { displayName: 'You', username: 'local' },
-
+      user: editingShot?.user,
       rating,
-
-      location: location ? { name: location } : { name: 'Home' },
-
+      location: location ? { name: location } : undefined,
       coffee: {
         name: coffeeName,
         origin,
         roaster,
         roastLevel: roastLevel || undefined,
       },
-
       recipe: {
         doseIn: doseIn ? Number(doseIn) : undefined,
         doseOut: doseOut ? Number(doseOut) : undefined,
         time: time ? Number(time) : undefined,
       },
-
       tastingNotes: notes,
-
-      likesCount: editingShot?.likesCount ?? 0,
-      commentsCount: editingShot?.commentsCount ?? 0,
-      brewedAt: editingShot?.brewedAt ?? new Date().toISOString(),
-      createdAt: editingShot?.createdAt ?? new Date().toISOString(),
-
+      likesCount: editingShot?.likesCount,
+      commentsCount: editingShot?.commentsCount,
+      brewedAt: editingShot?.brewedAt,
+      createdAt: editingShot?.createdAt,
       photoId: photoId ?? editingShot?.photoId,
-    };
+    });
 
     if (editingShot) {
       updateShot(shot);

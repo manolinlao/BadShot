@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
-import type { PhotoEntry, Shot } from '../../types';
+import type { PhotoEntry } from '../photos/types';
+import type { Shot } from '../../domain/shot/types';
 
 export const DATABASE_NAME = 'badshot-db';
 export const DATABASE_VERSION = 1;

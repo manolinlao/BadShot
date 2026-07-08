@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
-import type { Shot } from '../../types';
+import type { Shot } from '../../domain/shot/types';
 import { formatDate } from '../../utils/util';
 import { formatLocation } from '../../domain/location';
 import {
@@ -9,7 +8,6 @@ import {
   ratingLabel,
   RoastLevelLabel,
 } from '../../domain/coffee';
-import { getPhotoPreviewUrl } from '../../domain/photo';
 import { getCoffeeTitle, hasCoffeeMeta } from '../../domain/shot';
 import { getRecipeRatio, hasRecipeStats } from '../../domain/recipe';
 import { RecipeStat } from './RecipeStat';

@@ -1,5 +1,5 @@
 import { db } from '../db/database';
-import type { Shot } from '../../types';
+import type { Shot } from '../../domain/shot/types';
 
 // La idea es que el resto de la aplicación no conozca Dexie.
 
