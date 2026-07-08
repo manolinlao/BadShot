@@ -290,22 +290,7 @@ export function Home() {
 
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <div className="sm:hidden">
-            <ShotFiltersControls
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              quickFilter={quickFilter}
-              setQuickFilter={setQuickFilter}
-              dateFrom={dateFrom}
-              setDateFrom={setDateFrom}
-              dateTo={dateTo}
-              setDateTo={setDateTo}
-              hasActiveFilters={hasActiveFilters}
-              onClearFilters={handleClearFilters}
-            />
-          </div>
-
-          <div className="hidden sm:block sm:sticky sm:top-20 sm:z-10">
+          <div className="sticky top-16 z-10 sm:top-20">
             <div className="flex items-center justify-between gap-3">
               <button
                 type="button"
