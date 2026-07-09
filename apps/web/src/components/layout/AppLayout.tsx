@@ -12,12 +12,15 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-[#f8f4ef] text-[#211a16]">
       <header className="sticky top-0 z-20 border-b border-[#e2d6ca] bg-[#fffaf5]/95 backdrop-blur-sm">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <NavLink to="/" className="text-lg font-black tracking-tight">
-            BadShot
+        <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
+          <NavLink to="/" className="flex flex-col">
+            <span className="text-lg font-black tracking-tight">BadShot</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
+              Espresso journal
+            </span>
           </NavLink>
 
-          <div className="hidden gap-1 sm:flex">
+          <div className="hidden items-center gap-1 sm:flex">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -30,11 +33,11 @@ export function AppLayout() {
                       : 'text-[#5f4a3f] hover:bg-[#efe5dc]',
                   ].join(' ')
                 }
-              >
-                <item.icon className="h-4 w-4" aria-hidden="true" />
-                {item.label}
-              </NavLink>
-            ))}
+                >
+                  <item.icon className="h-4 w-4" aria-hidden="true" />
+                  {item.label}
+                </NavLink>
+              ))}
           </div>
         </nav>
       </header>
