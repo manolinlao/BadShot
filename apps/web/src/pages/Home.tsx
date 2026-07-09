@@ -186,7 +186,6 @@ export function Home() {
 
   const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
   const canLoadMore = visibleShotsCount < filteredFeed.length;
-  const visibleShotsLabel = `${visibleFeed.length} of ${filteredFeed.length}`;
   const activeQuickFilterLabel =
     quickFilters.find((filter) => filter.value === quickFilter)?.label ??
     'All';
@@ -352,10 +351,12 @@ export function Home() {
           </div>
 
           <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
-            <p className="font-semibold">
-              Showing <span className="text-[#211a16]">{visibleShotsLabel}</span>{' '}
-              shots
-            </p>
+            <div>
+              <p className="font-semibold text-[#211a16]">Latest shots</p>
+              <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
+                Browse the shots saved in this browser and the local mock feed.
+              </p>
+            </div>
           </div>
 
           <div className="space-y-5">
