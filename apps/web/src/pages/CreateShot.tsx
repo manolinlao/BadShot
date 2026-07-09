@@ -177,26 +177,26 @@ export function CreateShot() {
             Step by step
           </p>
           <h1 className="text-2xl font-black leading-tight text-zinc-900">
-            Add a new espresso shot
+            Create a new espresso shot
           </h1>
           <p className="text-sm leading-6 text-zinc-500">
-            Start with the photo, then add location, rating and optional coffee
+            Start with the photo. Then add location, rating and optional coffee
             details if you want a fuller entry.
           </p>
         </div>
       </header>
 
-      <section className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
+      <section className="space-y-3 rounded-2xl border border-zinc-100 bg-[linear-gradient(180deg,#fffaf5_0%,#f7efe6_100%)] p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white">
             <Camera className="h-4 w-4" aria-hidden="true" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
               1. Photo
             </p>
-            <p className="text-sm text-zinc-500">
-              Start with the espresso shot itself.
+            <p className="text-sm text-zinc-600">
+              This is the first thing to add. It is required for a new shot.
             </p>
           </div>
         </div>
@@ -212,11 +212,11 @@ export function CreateShot() {
           <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white">
             <MapPin className="h-4 w-4" aria-hidden="true" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
               2. Location
             </p>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-zinc-600">
               Add the local name, city or country.
             </p>
           </div>
@@ -251,7 +251,7 @@ export function CreateShot() {
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
             3. Rating
           </p>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-zinc-600">
             Use this as a quick first impression.
           </p>
         </div>
@@ -264,7 +264,7 @@ export function CreateShot() {
             4. Optional details
           </p>
           <p className="mt-1 text-xs leading-5 text-zinc-500">
-            Add coffee info, recipe and notes if you want a fuller shot.
+            Add coffee info, recipe and notes only if you want a fuller shot.
           </p>
         </div>
 
