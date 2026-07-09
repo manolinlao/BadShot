@@ -173,6 +173,9 @@ export function CreateShot() {
         </div>
 
         <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
+            Step by step
+          </p>
           <h1 className="text-2xl font-black leading-tight text-zinc-900">
             Add a new espresso shot
           </h1>
@@ -190,7 +193,7 @@ export function CreateShot() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-              Photo
+              1. Photo
             </p>
             <p className="text-sm text-zinc-500">
               Start with the espresso shot itself.
@@ -211,7 +214,7 @@ export function CreateShot() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-              Location
+              2. Location
             </p>
             <p className="mt-1 text-sm text-zinc-500">
               Add the local name, city or country.
@@ -244,16 +247,21 @@ export function CreateShot() {
       </section>
 
       <section className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-          Rating
-        </p>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            3. Rating
+          </p>
+          <p className="mt-1 text-sm text-zinc-500">
+            Use this as a quick first impression.
+          </p>
+        </div>
         <RatingQuick value={rating} onChange={setRating} />
       </section>
 
       <section className="space-y-2 rounded-2xl border border-zinc-100 bg-white p-3 shadow-sm">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
-            Optional details
+            4. Optional details
           </p>
           <p className="mt-1 text-xs leading-5 text-zinc-500">
             Add coffee info, recipe and notes if you want a fuller shot.
@@ -291,6 +299,10 @@ export function CreateShot() {
         <Sparkles className="h-4 w-4" aria-hidden="true" />
         {editing ? 'Update shot' : 'Save shot'}
       </button>
+
+      <p className="text-center text-xs text-zinc-500">
+        Your shot is saved locally in this browser.
+      </p>
     </div>
   );
 }
