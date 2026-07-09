@@ -1,10 +1,14 @@
 ﻿# 2. analizar esto
 
-brewedDate?: string;
-brewedAt: string;
-createdAt: string;
+Solo hace falta una fecha: `createdAt`.
 
-que es?? yo solo quero la fecha del dia que creo el shot y ya esta
+Esa fecha representa el dia en que se crea la entrada del Shot.
+
+Por tanto:
+
+- `brewedDate` sobra;
+- `brewedAt` sobra;
+- `createdAt` se queda como unica fecha.
 
 # 3. Trabajar con el location
 

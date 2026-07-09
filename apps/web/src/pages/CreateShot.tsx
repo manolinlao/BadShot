@@ -140,7 +140,6 @@ export function CreateShot() {
       tastingNotes: notes,
       likesCount: editingShot?.likesCount,
       commentsCount: editingShot?.commentsCount,
-      brewedAt: editingShot?.brewedAt,
       createdAt: editingShot?.createdAt,
       photoId: photoId ?? editingShot?.photoId,
     });

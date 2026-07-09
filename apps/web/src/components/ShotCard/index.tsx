@@ -79,7 +79,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
         </div>
 
         <time className="text-xs font-semibold text-[#7a4d2a]">
-          {formatDate(shot.brewedAt)}
+          {formatDate(shot.createdAt)}
         </time>
       </header>
 

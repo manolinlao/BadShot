@@ -34,7 +34,6 @@ export const mockShots: Shot[] = [
     likesCount: 128,
     commentsCount: 18,
 
-    brewedAt: '2026-06-12T11:00:00.000Z',
     createdAt: '2026-06-12T11:10:00.000Z',
   },
 
@@ -71,7 +70,6 @@ export const mockShots: Shot[] = [
     likesCount: 86,
     commentsCount: 9,
 
-    brewedAt: '2026-06-13T09:15:00.000Z',
     createdAt: '2026-06-13T09:20:00.000Z',
   },
 
@@ -108,7 +106,6 @@ export const mockShots: Shot[] = [
     likesCount: 64,
     commentsCount: 6,
 
-    brewedAt: '2026-06-12T11:00:00.000Z',
     createdAt: '2026-06-12T11:10:00.000Z',
   },
 
@@ -141,7 +138,6 @@ export const mockShots: Shot[] = [
     likesCount: 12,
     commentsCount: 2,
 
-    brewedAt: '2026-06-11T08:30:00.000Z',
     createdAt: '2026-06-11T08:35:00.000Z',
   },
 ];

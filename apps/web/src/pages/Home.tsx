@@ -34,9 +34,9 @@ type ShotFiltersControlsProps = {
   quickFilter: ShotQuickFilter;
   setQuickFilter: (value: ShotQuickFilter) => void;
   dateFrom: string;
-  setDateFrom: (value: string) => void;
   dateTo: string;
-  setDateTo: (value: string) => void;
+  onDateFromChange: (value: string) => void;
+  onDateToChange: (value: string) => void;
   hasActiveFilters: boolean;
   onClearFilters: () => void;
 };
@@ -47,9 +47,9 @@ function ShotFiltersControls({
   quickFilter,
   setQuickFilter,
   dateFrom,
-  setDateFrom,
   dateTo,
-  setDateTo,
+  onDateFromChange,
+  onDateToChange,
   hasActiveFilters,
   onClearFilters,
 }: ShotFiltersControlsProps) {
@@ -112,7 +112,7 @@ function ShotFiltersControls({
           <input
             type="date"
             value={dateFrom}
-            onChange={(event) => setDateFrom(event.target.value)}
+            onChange={(event) => onDateFromChange(event.target.value)}
             className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
           />
         </label>
@@ -124,7 +124,7 @@ function ShotFiltersControls({
           <input
             type="date"
             value={dateTo}
-            onChange={(event) => setDateTo(event.target.value)}
+            onChange={(event) => onDateToChange(event.target.value)}
             className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
           />
         </label>
@@ -277,6 +277,32 @@ export function Home() {
     setFiltersOpen(false);
   };
 
+  const handleDateFromChange = (value: string) => {
+    setDateFrom(value);
+
+    if (value && !dateTo) {
+      setDateTo(value);
+      return;
+    }
+
+    if (!value && dateTo === dateFrom) {
+      setDateTo('');
+    }
+  };
+
+  const handleDateToChange = (value: string) => {
+    setDateTo(value);
+
+    if (value && !dateFrom) {
+      setDateFrom(value);
+      return;
+    }
+
+    if (!value && dateFrom === dateTo) {
+      setDateFrom('');
+    }
+  };
+
   return (
     <>
       {visibleFlash && (
@@ -315,9 +341,9 @@ export function Home() {
                   quickFilter={quickFilter}
                   setQuickFilter={setQuickFilter}
                   dateFrom={dateFrom}
-                  setDateFrom={setDateFrom}
                   dateTo={dateTo}
-                  setDateTo={setDateTo}
+                  onDateFromChange={handleDateFromChange}
+                  onDateToChange={handleDateToChange}
                   hasActiveFilters={hasActiveFilters}
                   onClearFilters={handleClearFilters}
                 />
@@ -451,7 +477,7 @@ export function Home() {
                 {getShotPreviewTitle(previewShot)}
               </h2>
               <p className="mt-1 text-sm text-white/75">
-                {formatDate(previewShot.brewedAt)}
+                {formatDate(previewShot.createdAt)}
               </p>
             </div>
 

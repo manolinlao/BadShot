@@ -14,7 +14,6 @@ export function hasCoffeeMeta(coffee: Coffee): boolean {
 
 export function getShotPreviewTitle(shot: {
   coffee: Coffee;
-  brewedAt: string;
 }): string {
   return getCoffeeTitle(shot.coffee);
 }
@@ -88,27 +87,25 @@ function getCalendarDateValue(isoDate: string): string {
   return `${year}-${month}-${day}`;
 }
 
-export function getShotCalendarDate(shot: {
-  brewedAt: string;
-  brewedDate?: string;
+export function getShotDateValue(shot: {
+  createdAt: string;
 }): string {
-  return shot.brewedDate ?? getCalendarDateValue(shot.brewedAt);
+  return getCalendarDateValue(shot.createdAt);
 }
 
 export function matchesShotDateRange(
   shot: {
-    brewedAt: string;
-    brewedDate?: string;
+    createdAt: string;
   },
   range: ShotDateRange,
 ): boolean {
-  const brewedDate = getShotCalendarDate(shot);
+  const shotDate = getShotDateValue(shot);
 
-  if (range.from && brewedDate < range.from) {
+  if (range.from && shotDate < range.from) {
     return false;
   }
 
-  if (range.to && brewedDate > range.to) {
+  if (range.to && shotDate > range.to) {
     return false;
   }
 
@@ -116,8 +113,6 @@ export function matchesShotDateRange(
 }
 
 export function createShot(input: ShotCreationInput) {
-  const brewedAt = input.brewedAt ?? new Date().toISOString();
-
   return {
     id: input.id,
     user: input.user ?? { displayName: 'You', username: 'local' },
@@ -128,9 +123,6 @@ export function createShot(input: ShotCreationInput) {
     rating: input.rating,
     likesCount: input.likesCount ?? 0,
     commentsCount: input.commentsCount ?? 0,
-    brewedDate:
-      input.brewedDate ?? getCalendarDateValue(input.brewedAt ?? brewedAt),
-    brewedAt,
     createdAt: input.createdAt ?? new Date().toISOString(),
     photoId: input.photoId,
   };
