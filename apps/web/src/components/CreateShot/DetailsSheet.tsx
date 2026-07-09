@@ -68,6 +68,7 @@ export function DetailsSheet({
   return (
     <>
       <button
+        type="button"
         onClick={onOpen}
         className="group flex w-full items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-600 transition hover:border-zinc-900 hover:text-zinc-900"
       >
@@ -77,10 +78,10 @@ export function DetailsSheet({
           </div>
           <div>
             <span className="block font-semibold text-zinc-900">
-              Add coffee details
+              Optional details
             </span>
             <span className="block text-xs text-zinc-500">
-              Name, origin, recipe and tasting notes
+              Coffee info, recipe and tasting notes
             </span>
           </div>
         </div>
@@ -122,11 +123,19 @@ export function DetailsSheet({
               </div>
 
               <div className="flex items-center justify-between border-b border-zinc-100 px-5 pb-3">
-                <h2 className="font-semibold">Coffee details</h2>
+                <div>
+                  <h2 className="font-semibold text-zinc-900">
+                    Optional details
+                  </h2>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    Fill only what you want. The shot still works without it.
+                  </p>
+                </div>
 
                 <button
+                  type="button"
                   onClick={onClose}
-                  className="text-sm text-zinc-500 hover:text-zinc-900"
+                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm font-semibold text-zinc-500 transition hover:border-zinc-900 hover:text-zinc-900"
                 >
                   Done
                 </button>
@@ -141,7 +150,7 @@ export function DetailsSheet({
                     placeholder="Name"
                     value={coffeeName}
                     onChange={(event) => setCoffeeName(event.target.value)}
-                    className="w-full rounded-xl border px-3 py-2"
+                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
                   />
 
                   <div className="grid grid-cols-2 gap-2">
@@ -149,14 +158,14 @@ export function DetailsSheet({
                       placeholder="Origin"
                       value={origin}
                       onChange={(event) => setOrigin(event.target.value)}
-                      className="rounded-xl border px-3 py-2"
+                      className="rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
                     />
 
                     <input
                       placeholder="Roaster"
                       value={roaster}
                       onChange={(event) => setRoaster(event.target.value)}
-                      className="rounded-xl border px-3 py-2"
+                      className="rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
                     />
                   </div>
 
@@ -218,7 +227,7 @@ export function DetailsSheet({
                     placeholder="Tasting notes..."
                     value={notes}
                     onChange={(event) => setNotes(event.target.value)}
-                    className="h-28 w-full rounded-xl border px-3 py-2"
+                    className="h-28 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
                   />
                 </section>
               </div>

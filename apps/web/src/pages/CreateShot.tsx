@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Camera, MapPin, Sparkles } from 'lucide-react';
+import { ArrowLeft, Camera, MapPin, Sparkles } from 'lucide-react';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
@@ -156,6 +156,33 @@ export function CreateShot() {
 
   return (
     <div className="mx-auto max-w-md space-y-4 pb-28">
+      <header className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm font-semibold text-zinc-600 transition hover:border-zinc-900 hover:text-zinc-900"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Back
+          </button>
+
+          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            Create shot
+          </p>
+        </div>
+
+        <div className="space-y-1">
+          <h1 className="text-2xl font-black leading-tight text-zinc-900">
+            Add a new espresso shot
+          </h1>
+          <p className="text-sm leading-6 text-zinc-500">
+            Start with the photo, then add location, rating and optional coffee
+            details if you want a fuller entry.
+          </p>
+        </div>
+      </header>
+
       <section className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white">
