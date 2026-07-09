@@ -1,53 +1,40 @@
-﻿# 2. analizar esto
+﻿# Roadmap BadShot v1
 
-Solo hace falta una fecha: `createdAt`.
+## Summary
+Reordenar el roadmap para que siga una secuencia mas natural: primero pulir la experiencia base, despues anadir `location` simple, luego funciones reales del producto, y dejar lo avanzado y el backend para mas adelante.
 
-Esa fecha representa el dia en que se crea la entrada del Shot.
+## Key Changes
+- **1. UI base y pulido**
+  - Mejorar layout, jerarquia visual, spacing, estados vacios y consistencia general.
+  - Dejar la app mas "producto" antes de sumar mas complejidad.
 
-Por tanto:
+- **2. Location v1 simple**
+  - Mantener solo la version basica:
+    - nombre del local
+    - ciudad
+    - pais
+  - No meter todavia mapa, geolocalizacion automatica, coordenadas ni autocompletado.
 
-- `brewedDate` sobra;
-- `brewedAt` sobra;
-- `createdAt` se queda como unica fecha.
+- **3. Funcionalidades reales**
+  - Buscar shots
+  - Filtrar por origen, tostador y puntuacion
+  - Favoritos
+  - Estadisticas basicas
 
-# 3. Trabajar con el location
+- **4. Navegacion del feed**
+  - Mantener paginacion o carga progresiva simple de momento.
+  - Tratar el infinite scroll como mejora posterior, no como prioridad inmediata.
 
-Primero haria una version simple y controlable:
+- **5. Backend**
+  - Posponerlo hasta que el frontend este solido y el modelo de datos este claro.
+  - Cuando llegue el momento, el cambio sera principalmente sustituir la capa `api/`.
 
-- nombre del local;
-- ciudad;
-- pais.
+## Test Plan
+- Revisar que el roadmap refleje una sola direccion de producto y no mezcle ideas de MVP con ideas avanzadas.
+- Comprobar que cada fase depende de la anterior de forma logica.
+- Validar que `location` queda como una feature util desde ya, pero sin sobreingenieria.
 
-Mas adelante, si merece la pena, haria la version mas sofisticada:
-
-- mapa o coordenadas;
-- deteccion automatica de ubicacion;
-- autocompletado de locales;
-- boton para guardar la ubicacion actual si el navegador lo permite;
-- fallback manual si no se puede detectar nada.
-
-# 4. Funcionalidades reales
-
-Una vez la base este limpia, empezaria a anadir valor a BadShot.
-
-Por ejemplo:
-
-- busqueda;
-- filtros (origen, tostador, puntuacion);
-- favoritos;
-- estadisticas.
-
-# 5. Backend
-
-Solo cuando el frontend este comodo.
-
-Gracias a la arquitectura que has montado, el cambio sera principalmente sustituir la implementacion de api/.
-A partir de ahora intentaria tratar BadShot como si fuera un producto de verdad.
-Cada nueva funcionalidad seguiria este orden:
-
-- Necesito cambiar el modelo (types o domain)?
-- Necesito cambiar el estado (state)?
-- Necesito cambiar la persistencia (api)?
-- Solo entonces toco los componentes (components).
-
-Es un flujo muy parecido al que se sigue en proyectos grandes y evita que la logica termine escondida dentro de React.
+## Assumptions
+- La fecha del Shot seguira siendo una sola: `createdAt`.
+- `location` se hara util pronto, pero en una version simple.
+- El infinite scroll no es prioridad frente a UI, location y filtros.
