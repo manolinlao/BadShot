@@ -128,7 +128,8 @@ export function DetailsSheet({
                     Optional details
                   </h2>
                   <p className="mt-1 text-xs text-zinc-500">
-                    Fill only what you want. The shot still works without it.
+                    Fill only what helps. You can save the shot without any of
+                    this.
                   </p>
                 </div>
 
@@ -143,9 +144,14 @@ export function DetailsSheet({
 
               <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
                 <section className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
-                  <p className="text-[11px] uppercase tracking-widest text-zinc-400">
-                    Coffee
-                  </p>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+                      Coffee
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-zinc-500">
+                      Name, origin, roaster and roast level.
+                    </p>
+                  </div>
                   <input
                     placeholder="Name"
                     value={coffeeName}
@@ -220,9 +226,14 @@ export function DetailsSheet({
                 />
 
                 <section className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
-                  <p className="text-[11px] uppercase tracking-widest text-zinc-400">
-                    Notes
-                  </p>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+                      Notes
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-zinc-500">
+                      Short tasting notes are enough.
+                    </p>
+                  </div>
                   <textarea
                     placeholder="Tasting notes..."
                     value={notes}
