@@ -1,5 +1,11 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronDown,
+  Search,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
@@ -54,8 +60,29 @@ function ShotFiltersControls({
   onClearFilters,
 }: ShotFiltersControlsProps) {
   return (
-    <div className="rounded-2xl border border-[#e2d6ca] bg-[#f8f4ef] p-3 shadow-sm sm:bg-[#f8f4ef]/95 sm:backdrop-blur-sm">
-      <div className="flex flex-wrap gap-2">
+    <div className="rounded-[28px] border border-[#e2d6ca] bg-white/95 p-4 shadow-sm backdrop-blur-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+            Search & refine
+          </p>
+          <p className="mt-1 text-sm text-[#5f4a3f]">
+            Narrow the feed without losing the overview.
+          </p>
+        </div>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={onClearFilters}
+            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+            Clear all
+          </button>
+        )}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
         {quickFilters.map((filter) => {
           const active = quickFilter === filter.value;
 
@@ -77,9 +104,11 @@ function ShotFiltersControls({
         })}
       </div>
 
-      <label className="mt-3 block">
-        <span className="sr-only">Search shots</span>
-        <div className="flex items-center gap-2 rounded-xl border border-[#e2d6ca] bg-white px-3 py-2">
+      <label className="mt-4 block">
+        <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+          Search shots
+        </span>
+        <div className="flex items-center gap-2 rounded-2xl border border-[#e2d6ca] bg-[#fffaf5] px-3 py-3">
           <Search
             className="h-4 w-4 shrink-0 text-[#7a4d2a]"
             aria-hidden="true"
@@ -104,7 +133,7 @@ function ShotFiltersControls({
         </div>
       </label>
 
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
             From
@@ -113,7 +142,7 @@ function ShotFiltersControls({
             type="date"
             value={dateFrom}
             onChange={(event) => onDateFromChange(event.target.value)}
-            className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
+            className="w-full rounded-2xl border border-[#e2d6ca] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#211a16]"
           />
         </label>
 
@@ -125,27 +154,16 @@ function ShotFiltersControls({
             type="date"
             value={dateTo}
             onChange={(event) => onDateToChange(event.target.value)}
-            className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2 text-sm outline-none transition focus:border-[#211a16]"
+            className="w-full rounded-2xl border border-[#e2d6ca] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#211a16]"
           />
         </label>
       </div>
-
-      {hasActiveFilters && (
-        <button
-          type="button"
-          onClick={onClearFilters}
-          className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
-        >
-          <X className="h-4 w-4" aria-hidden="true" />
-          Clear filters
-        </button>
-      )}
     </div>
   );
 }
 
 export function Home() {
-  const { feed, deleteShot, isCreatedShot } = useShots();
+  const { feed, createdShots, deleteShot, isCreatedShot } = useShots();
   const location = useLocation();
   const navigate = useNavigate();
   const flash = (location.state as HomeLocationState | null)?.flash;
@@ -186,6 +204,10 @@ export function Home() {
 
   const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
   const canLoadMore = visibleShotsCount < filteredFeed.length;
+  const hasResults = filteredFeed.length > 0;
+  const feedCount = feed.length;
+  const localCount = createdShots.length;
+  const shotsWithPhotos = feed.filter((shot) => shot.photoId).length;
   const activeQuickFilterLabel =
     quickFilters.find((filter) => filter.value === quickFilter)?.label ?? 'All';
   const activeEmptyStateLabel = searchQuery
@@ -312,108 +334,258 @@ export function Home() {
         </div>
       )}
 
-      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-4">
-          <div className="sticky top-16 z-10 sm:top-20">
-            <div className="flex items-center justify-between gap-3">
+      <section className="space-y-6">
+        <div className="grid gap-4 rounded-[32px] border border-[#e2d6ca] bg-[radial-gradient(circle_at_top_left,#fff4e7_0%,#fffaf5_46%,#f4e9dd_100%)] p-5 shadow-sm lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:p-6">
+          <div className="space-y-5">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white/70 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
+              Espresso journal
+              <span className="h-1.5 w-1.5 rounded-full bg-[#7a4d2a]" />
+              Frontend only
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
+                Home feed
+              </p>
+              <h1 className="max-w-xl text-3xl font-black leading-tight text-[#211a16] sm:text-4xl">
+                Your espresso shots, laid out like a real product.
+              </h1>
+              <p className="max-w-2xl text-sm leading-6 text-[#5f4a3f] sm:text-base">
+                Browse the live feed, refine it in a couple of taps, or jump
+                straight into creating a new shot when you want to log a cup.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => navigate('/create')}
+                className="inline-flex items-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+              >
+                Create shot
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
               <button
                 type="button"
                 onClick={() => setFiltersOpen((current) => !current)}
-                className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+                className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white/80 px-4 py-2.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
               >
                 <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
                 {filtersOpen ? 'Hide filters' : 'Show filters'}
                 {hasActiveFilters && (
-                  <span className="ml-1 rounded-full bg-[#211a16] px-2 py-0.5 text-[11px] font-bold text-white">
+                  <span className="rounded-full bg-[#211a16] px-2 py-0.5 text-[11px] font-bold text-white">
                     {activeFiltersCount}
                   </span>
                 )}
               </button>
             </div>
+          </div>
 
-            {filtersOpen && (
-              <div className="mt-3">
-                <ShotFiltersControls
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  quickFilter={quickFilter}
-                  setQuickFilter={setQuickFilter}
-                  dateFrom={dateFrom}
-                  dateTo={dateTo}
-                  onDateFromChange={handleDateFromChange}
-                  onDateToChange={handleDateToChange}
-                  hasActiveFilters={hasActiveFilters}
-                  onClearFilters={handleClearFilters}
-                />
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            <div className="rounded-3xl border border-white/60 bg-white/80 p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                Shots in feed
+              </p>
+              <p className="mt-2 text-3xl font-black text-[#211a16]">
+                {feedCount}
+              </p>
+              <p className="mt-1 text-sm text-[#5f4a3f]">
+                Mock data plus shots saved in this browser.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-white/60 bg-white/80 p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                Local shots
+              </p>
+              <p className="mt-2 text-3xl font-black text-[#211a16]">
+                {localCount}
+              </p>
+              <p className="mt-1 text-sm text-[#5f4a3f]">
+                Created and edited inside this frontend.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-white/60 bg-white/80 p-4 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                With photo
+              </p>
+              <p className="mt-2 text-3xl font-black text-[#211a16]">
+                {shotsWithPhotos}
+              </p>
+              <p className="mt-1 text-sm text-[#5f4a3f]">
+                Image-driven shots are easier to scan at a glance.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="space-y-4">
+            <div className="sticky top-16 z-10 sm:top-20">
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen((current) => !current)}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+                >
+                  <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                  {filtersOpen ? 'Hide filters' : 'Show filters'}
+                  {hasActiveFilters && (
+                    <span className="ml-1 rounded-full bg-[#211a16] px-2 py-0.5 text-[11px] font-bold text-white">
+                      {activeFiltersCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {filtersOpen && (
+                <div className="mt-3">
+                  <ShotFiltersControls
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    quickFilter={quickFilter}
+                    setQuickFilter={setQuickFilter}
+                    dateFrom={dateFrom}
+                    dateTo={dateTo}
+                    onDateFromChange={handleDateFromChange}
+                    onDateToChange={handleDateToChange}
+                    hasActiveFilters={hasActiveFilters}
+                    onClearFilters={handleClearFilters}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
+              <div>
+                <p className="font-semibold text-[#211a16]">Latest shots</p>
+                <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
+                  Browse the shots saved in this browser and the local mock
+                  feed.
+                </p>
+              </div>
+              <p className="shrink-0 rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-xs font-semibold text-[#7a4d2a]">
+                Showing {visibleFeed.length} of {filteredFeed.length}
+              </p>
+            </div>
+
+            {hasResults ? (
+              <div className="space-y-5">
+                {visibleFeed.map((shot) => (
+                  <ShotCard
+                    key={shot.id}
+                    shot={shot}
+                    onEdit={
+                      isCreatedShot(shot.id)
+                        ? () => navigate(`/edit/${shot.id}`)
+                        : undefined
+                    }
+                    onDelete={
+                      isCreatedShot(shot.id)
+                        ? () => setShotToDelete(shot)
+                        : undefined
+                    }
+                    onImageClick={
+                      shot.photoId ? () => setPreviewShot(shot) : undefined
+                    }
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-[28px] border border-dashed border-[#e2d6ca] bg-white px-5 py-8 text-center shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  No results
+                </p>
+                <h2 className="mt-2 text-2xl font-black text-[#211a16]">
+                  Nothing matches{' '}
+                  <span className="text-[#7a4d2a]">
+                    {activeEmptyStateLabel || 'the current filters'}
+                  </span>
+                  .
+                </h2>
+                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#5f4a3f]">
+                  Try clearing the filters or create a new shot so the feed has
+                  something fresh to show.
+                </p>
+
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleClearFilters}
+                    className="inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+                  >
+                    Clear filters
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/create')}
+                    className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-4 py-2.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+                  >
+                    Create shot
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {canLoadMore && (
+              <div className="rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-sm">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-[#211a16]">
+                      {visibleFeed.length} shown of {filteredFeed.length}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
+                      Keep loading to reveal older shots in the feed.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2f2621]"
+                  >
+                    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                    Load more
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
-            <div>
-              <p className="font-semibold text-[#211a16]">Latest shots</p>
-              <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
-                Browse the shots saved in this browser and the local mock feed.
-              </p>
+          <aside className="h-fit rounded-[28px] border border-[#e2d6ca] bg-[#fffaf5] p-5 shadow-sm">
+            <p className="mb-3 text-sm font-bold uppercase text-[#7a4d2a]">
+              BadShot
+            </p>
+            <h2 className="text-3xl font-black leading-tight text-[#211a16]">
+              Keep the feed readable, even while it stays local-first.
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-[#4a3a31]">
+              This page now gives you a clearer overview of what is in the feed,
+              what is stored in the browser and how many shots already include a
+              photo.
+            </p>
+
+            <div className="mt-5 grid gap-3">
+              <div className="rounded-2xl border border-[#eadfd6] bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  Current filter
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[#211a16]">
+                  {hasActiveFilters ? `${activeFiltersCount} active` : 'None'}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#eadfd6] bg-white p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  Feed mode
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[#211a16]">
+                  Mixed mock and local shots
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="space-y-5">
-            {visibleFeed.map((shot) => (
-              <ShotCard
-                key={shot.id}
-                shot={shot}
-                onEdit={
-                  isCreatedShot(shot.id)
-                    ? () => navigate(`/edit/${shot.id}`)
-                    : undefined
-                }
-                onDelete={
-                  isCreatedShot(shot.id)
-                    ? () => setShotToDelete(shot)
-                    : undefined
-                }
-                onImageClick={
-                  shot.photoId ? () => setPreviewShot(shot) : undefined
-                }
-              />
-            ))}
-          </div>
-
-          {hasActiveFilters && filteredFeed.length === 0 && (
-            <div className="rounded-xl border border-dashed border-[#e2d6ca] bg-white px-4 py-6 text-center text-sm text-[#6f5b50]">
-              No shots match{' '}
-              <span className="font-semibold text-[#211a16]">
-                {activeEmptyStateLabel}
-              </span>
-              .
-            </div>
-          )}
-
-          {canLoadMore && (
-            <button
-              type="button"
-              onClick={handleLoadMore}
-              className="mx-auto flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-4 py-2 text-sm font-bold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
-            >
-              <ChevronDown className="h-4 w-4" aria-hidden="true" />
-              Load more
-            </button>
-          )}
+          </aside>
         </div>
-
-        <aside className="h-fit rounded-lg border border-[#e2d6ca] bg-[#fffaf5] p-5">
-          <p className="mb-3 text-sm font-bold uppercase text-[#7a4d2a]">
-            BadShot
-          </p>
-          <h1 className="text-3xl font-black leading-tight">
-            Your espresso social journal starts here.
-          </h1>
-          <p className="mt-4 text-sm leading-6 text-[#4a3a31]">
-            This feed now includes shots created in the browser and local mock
-            data.
-          </p>
-        </aside>
       </section>
 
       {shotToDelete && (
