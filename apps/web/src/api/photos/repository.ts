@@ -58,7 +58,10 @@ function getThumbnailSize(
   originalWidth: number,
   originalHeight: number,
 ): { width: number; height: number } {
-  if (originalWidth <= THUMBNAIL_MAX_SIZE && originalHeight <= THUMBNAIL_MAX_SIZE) {
+  if (
+    originalWidth <= THUMBNAIL_MAX_SIZE &&
+    originalHeight <= THUMBNAIL_MAX_SIZE
+  ) {
     return {
       width: originalWidth,
       height: originalHeight,
@@ -76,8 +79,15 @@ function getThumbnailSize(
   };
 }
 
-function canvasToBlob(canvas: HTMLCanvasElement, type: string): Promise<Blob | null> {
+function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: string,
+): Promise<Blob | null> {
   return new Promise((resolve) => {
-    canvas.toBlob((blob) => resolve(blob), type || 'image/jpeg', THUMBNAIL_QUALITY);
+    canvas.toBlob(
+      (blob) => resolve(blob),
+      type || 'image/jpeg',
+      THUMBNAIL_QUALITY,
+    );
   });
 }

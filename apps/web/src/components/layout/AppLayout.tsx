@@ -33,11 +33,11 @@ export function AppLayout() {
                       : 'text-[#5f4a3f] hover:bg-[#efe5dc]',
                   ].join(' ')
                 }
-                >
-                  <item.icon className="h-4 w-4" aria-hidden="true" />
-                  {item.label}
-                </NavLink>
-              ))}
+              >
+                <item.icon className="h-4 w-4" aria-hidden="true" />
+                {item.label}
+              </NavLink>
+            ))}
           </div>
         </nav>
       </header>

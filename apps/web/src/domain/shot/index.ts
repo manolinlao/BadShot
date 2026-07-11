@@ -12,9 +12,7 @@ export function hasCoffeeMeta(coffee: Coffee): boolean {
   );
 }
 
-export function getShotPreviewTitle(shot: {
-  coffee: Coffee;
-}): string {
+export function getShotPreviewTitle(shot: { coffee: Coffee }): string {
   return getCoffeeTitle(shot.coffee);
 }
 
@@ -87,9 +85,7 @@ function getCalendarDateValue(isoDate: string): string {
   return `${year}-${month}-${day}`;
 }
 
-export function getShotDateValue(shot: {
-  createdAt: string;
-}): string {
+export function getShotDateValue(shot: { createdAt: string }): string {
   return getCalendarDateValue(shot.createdAt);
 }
 

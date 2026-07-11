@@ -187,8 +187,7 @@ export function Home() {
   const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
   const canLoadMore = visibleShotsCount < filteredFeed.length;
   const activeQuickFilterLabel =
-    quickFilters.find((filter) => filter.value === quickFilter)?.label ??
-    'All';
+    quickFilters.find((filter) => filter.value === quickFilter)?.label ?? 'All';
   const activeEmptyStateLabel = searchQuery
     ? searchQuery
     : quickFilter !== 'all'

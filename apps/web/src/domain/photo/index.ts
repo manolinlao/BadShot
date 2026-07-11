@@ -10,7 +10,8 @@ export async function getPhotoPreviewUrl(
 
   if (!photo) return undefined;
 
-  const blob = preferThumbnail && photo.thumbnailBlob ? photo.thumbnailBlob : photo.blob;
+  const blob =
+    preferThumbnail && photo.thumbnailBlob ? photo.thumbnailBlob : photo.blob;
 
   return createPhotoUrl(blob);
 }

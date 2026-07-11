@@ -12,7 +12,8 @@
     "dev:api": "npm run dev -w apps/api",
     "build": "npm run build -w apps/web && npm run build -w apps/api",
     "test": "npm run test --workspaces",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck:web": "npm run typecheck -w apps/web"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
