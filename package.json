@@ -13,7 +13,8 @@
     "build": "npm run build -w apps/web && npm run build -w apps/api",
     "test": "npm run test --workspaces",
     "format": "prettier --write .",
-    "typecheck:web": "npm run typecheck -w apps/web"
+    "typecheck:web": "npm run typecheck -w apps/web",
+    "lint": "npm run lint -w apps/web"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"
