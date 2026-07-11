@@ -60,13 +60,13 @@ function ShotFiltersControls({
   onClearFilters,
 }: ShotFiltersControlsProps) {
   return (
-    <div className="rounded-[28px] border border-[#e2d6ca] bg-white/95 p-4 shadow-sm backdrop-blur-sm">
+    <div className="rounded-[28px] border border-[#e2d6ca] bg-gradient-to-br from-white/95 to-[#fff7ef] p-4 shadow-[0_12px_30px_rgba(49,33,20,0.06)] backdrop-blur-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+          <div className="inline-flex items-center rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
             Search & refine
-          </p>
-          <p className="mt-1 text-sm text-[#5f4a3f]">
+          </div>
+          <p className="mt-2 text-sm text-[#5f4a3f]">
             Narrow the feed without losing the overview.
           </p>
         </div>
@@ -381,43 +381,43 @@ export function Home() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            <div className="rounded-3xl border border-white/60 bg-white/80 p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
-                Shots in feed
-              </p>
-              <p className="mt-2 text-3xl font-black text-[#211a16]">
-                {feedCount}
-              </p>
-              <p className="mt-1 text-sm text-[#5f4a3f]">
-                Mock data plus shots saved in this browser.
-              </p>
-            </div>
+            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  Shots in feed
+                </p>
+                <p className="mt-2 text-3xl font-black text-[#211a16]">
+                  {feedCount}
+                </p>
+                <p className="mt-1 text-sm text-[#5f4a3f]">
+                  Mock data plus shots saved in this browser.
+                </p>
+              </div>
 
-            <div className="rounded-3xl border border-white/60 bg-white/80 p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
-                Local shots
-              </p>
-              <p className="mt-2 text-3xl font-black text-[#211a16]">
-                {localCount}
-              </p>
-              <p className="mt-1 text-sm text-[#5f4a3f]">
-                Created and edited inside this frontend.
-              </p>
-            </div>
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  Local shots
+                </p>
+                <p className="mt-2 text-3xl font-black text-[#211a16]">
+                  {localCount}
+                </p>
+                <p className="mt-1 text-sm text-[#5f4a3f]">
+                  Created and edited inside this frontend.
+                </p>
+              </div>
 
-            <div className="rounded-3xl border border-white/60 bg-white/80 p-4 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
-                With photo
-              </p>
-              <p className="mt-2 text-3xl font-black text-[#211a16]">
-                {shotsWithPhotos}
-              </p>
-              <p className="mt-1 text-sm text-[#5f4a3f]">
-                Image-driven shots are easier to scan at a glance.
-              </p>
+              <div className="rounded-3xl border border-white/70 bg-white/80 p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  With photo
+                </p>
+                <p className="mt-2 text-3xl font-black text-[#211a16]">
+                  {shotsWithPhotos}
+                </p>
+                <p className="mt-1 text-sm text-[#5f4a3f]">
+                  Image-driven shots are easier to scan at a glance.
+                </p>
+              </div>
             </div>
-          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -471,29 +471,31 @@ export function Home() {
             </div>
 
             {hasResults ? (
-              <div className="space-y-5">
-                {visibleFeed.map((shot) => (
-                  <ShotCard
-                    key={shot.id}
-                    shot={shot}
-                    onEdit={
-                      isCreatedShot(shot.id)
-                        ? () => navigate(`/edit/${shot.id}`)
-                        : undefined
-                    }
-                    onDelete={
-                      isCreatedShot(shot.id)
-                        ? () => setShotToDelete(shot)
-                        : undefined
-                    }
-                    onImageClick={
-                      shot.photoId ? () => setPreviewShot(shot) : undefined
-                    }
-                  />
-                ))}
+              <div className="rounded-[32px] border border-[#eadfd6] bg-white/55 p-3 shadow-[0_12px_30px_rgba(49,33,20,0.04)] sm:p-4">
+                <div className="space-y-5">
+                  {visibleFeed.map((shot) => (
+                    <ShotCard
+                      key={shot.id}
+                      shot={shot}
+                      onEdit={
+                        isCreatedShot(shot.id)
+                          ? () => navigate(`/edit/${shot.id}`)
+                          : undefined
+                      }
+                      onDelete={
+                        isCreatedShot(shot.id)
+                          ? () => setShotToDelete(shot)
+                          : undefined
+                      }
+                      onImageClick={
+                        shot.photoId ? () => setPreviewShot(shot) : undefined
+                      }
+                    />
+                  ))}
+                </div>
               </div>
             ) : (
-              <div className="rounded-[28px] border border-dashed border-[#e2d6ca] bg-white px-5 py-8 text-center shadow-sm">
+              <div className="rounded-[32px] border border-dashed border-[#e2d6ca] bg-gradient-to-br from-white to-[#fff8f1] px-5 py-8 text-center shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
                   No results
                 </p>
@@ -530,7 +532,7 @@ export function Home() {
             )}
 
             {canLoadMore && (
-              <div className="rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-sm">
+              <div className="rounded-[32px] border border-[#eadfd6] bg-gradient-to-r from-white to-[#fff8f1] p-4 shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-bold text-[#211a16]">
@@ -553,11 +555,11 @@ export function Home() {
             )}
           </div>
 
-          <aside className="h-fit rounded-[28px] border border-[#e2d6ca] bg-[#fffaf5] p-5 shadow-sm">
-            <p className="mb-3 text-sm font-bold uppercase text-[#7a4d2a]">
+          <aside className="h-fit rounded-[32px] border border-[#e2d6ca] bg-[linear-gradient(180deg,#fffaf5_0%,#fff5ea_100%)] p-5 shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
+            <div className="inline-flex items-center rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
               BadShot
-            </p>
-            <h2 className="text-3xl font-black leading-tight text-[#211a16]">
+            </div>
+            <h2 className="mt-3 text-3xl font-black leading-tight text-[#211a16]">
               Keep the feed readable, even while it stays local-first.
             </h2>
             <p className="mt-4 text-sm leading-6 text-[#4a3a31]">
@@ -567,7 +569,7 @@ export function Home() {
             </p>
 
             <div className="mt-5 grid gap-3">
-              <div className="rounded-2xl border border-[#eadfd6] bg-white p-4">
+              <div className="rounded-2xl border border-[#eadfd6] bg-white/85 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
                   Current filter
                 </p>
@@ -575,7 +577,7 @@ export function Home() {
                   {hasActiveFilters ? `${activeFiltersCount} active` : 'None'}
                 </p>
               </div>
-              <div className="rounded-2xl border border-[#eadfd6] bg-white p-4">
+              <div className="rounded-2xl border border-[#eadfd6] bg-white/85 p-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
                   Feed mode
                 </p>
