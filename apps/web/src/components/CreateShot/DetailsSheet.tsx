@@ -161,7 +161,7 @@ export function DetailsSheet({
                     className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2.5 outline-none transition focus:border-[#211a16]"
                   />
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <input
                       placeholder="Origin"
                       value={origin}
@@ -181,7 +181,7 @@ export function DetailsSheet({
                     <p className="text-[11px] uppercase tracking-[0.24em] text-[#7a4d2a]">
                       Roast level
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <button
                         type="button"
                         onClick={() => setRoastLevel('')}

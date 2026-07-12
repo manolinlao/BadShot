@@ -457,7 +457,7 @@ export function Home() {
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
+            <div className="flex flex-col items-start gap-2 text-sm text-[#6f5b50] sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-semibold text-[#211a16]">Latest shots</p>
                 <p className="mt-1 text-xs leading-5 text-[#6f5b50]">

@@ -37,7 +37,7 @@ export const RecipeEditor = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <button
           type="button"
           onClick={() => setEditing('in')}
@@ -93,7 +93,7 @@ export const RecipeEditor = ({
             if (editing === 'time') setTime(num);
           }}
           onBlur={() => setEditing(null)}
-          className="mt-2 w-32 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-center outline-none transition focus:border-white/30"
+          className="mt-2 w-full rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-center outline-none transition focus:border-white/30 sm:w-32"
         />
       )}
 

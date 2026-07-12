@@ -34,7 +34,7 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
             className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,transparent_38%,rgba(0,0,0,0.36)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
               <span className="inline-flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
                 <Camera className="h-3.5 w-3.5" aria-hidden="true" />
@@ -44,7 +44,7 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
                 Tap to replace the current photo.
               </p>
             </div>
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/90 text-[#7a4d2a] shadow-sm backdrop-blur-sm">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center self-end rounded-full bg-white/90 text-[#7a4d2a] shadow-sm backdrop-blur-sm sm:self-auto">
               <ImagePlus className="h-5 w-5" aria-hidden="true" />
             </span>
           </div>
