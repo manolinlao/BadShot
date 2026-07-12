@@ -1,11 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
-import {
-  ArrowRight,
-  ChevronDown,
-  Search,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react';
+import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
@@ -390,7 +384,9 @@ export function Home() {
             </div>
 
             <div className="flex items-center justify-between gap-3 text-sm text-[#6f5b50]">
-              <p className="font-semibold text-[#211a16]">Latest shots</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
+                Feed
+              </p>
               <p className="shrink-0 rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-xs font-semibold text-[#7a4d2a]">
                 Showing {visibleFeed.length} of {filteredFeed.length}
               </p>
@@ -422,10 +418,7 @@ export function Home() {
               </div>
             ) : (
               <div className="rounded-[32px] border border-dashed border-[#e2d6ca] bg-gradient-to-br from-white to-[#fff8f1] px-5 py-8 text-center shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#7a4d2a]">
-                  No results
-                </p>
-                <h2 className="mt-2 text-2xl font-black text-[#211a16]">
+                <h2 className="text-2xl font-black text-[#211a16]">
                   Nothing matches{' '}
                   <span className="text-[#7a4d2a]">
                     {activeEmptyStateLabel || 'the current filters'}
@@ -433,11 +426,10 @@ export function Home() {
                   .
                 </h2>
                 <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#5f4a3f]">
-                  Try clearing the filters or create a new shot so the feed has
-                  something fresh to show.
+                  Try clearing the filters to bring the feed back.
                 </p>
 
-                <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <div className="mt-5 flex justify-center">
                   <button
                     type="button"
                     onClick={handleClearFilters}
@@ -445,38 +437,20 @@ export function Home() {
                   >
                     Clear filters
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/create')}
-                    className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-4 py-2.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
-                  >
-                    Create shot
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </button>
                 </div>
               </div>
             )}
 
             {canLoadMore && (
-              <div className="rounded-[32px] border border-[#eadfd6] bg-gradient-to-r from-white to-[#fff8f1] p-4 shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-bold text-[#211a16]">
-                      {visibleFeed.length} shown of {filteredFeed.length}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
-                      Keep loading to reveal older shots in the feed.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleLoadMore}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2f2621]"
-                  >
-                    <ChevronDown className="h-4 w-4" aria-hidden="true" />
-                    Load more
-                  </button>
-                </div>
+              <div className="rounded-[32px] border border-[#eadfd6] bg-gradient-to-r from-white to-[#fff8f1] p-4 text-center shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
+                <button
+                  type="button"
+                  onClick={handleLoadMore}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2f2621]"
+                >
+                  <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                  Load more
+                </button>
               </div>
             )}
           </div>
