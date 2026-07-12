@@ -424,24 +424,34 @@ export function Home() {
             ) : (
               <div className="rounded-[32px] border border-dashed border-[#e2d6ca] bg-gradient-to-br from-white to-[#fff8f1] px-5 py-8 text-center shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
                 <h2 className="text-2xl font-black text-[#211a16]">
-                  Nothing matches{' '}
-                  <span className="text-[#7a4d2a]">
-                    {activeEmptyStateLabel || 'the current filters'}
-                  </span>
-                  .
+                  {hasActiveFilters
+                    ? `Nothing matches ${activeEmptyStateLabel || 'the current filters'}.`
+                    : 'Your feed is empty.'}
                 </h2>
                 <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#5f4a3f]">
-                  Try clearing the filters to bring the feed back.
+                  {hasActiveFilters
+                    ? 'Try clearing the filters to bring the feed back.'
+                    : 'Create your first shot to start filling the feed.'}
                 </p>
 
                 <div className="mt-5 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={handleClearFilters}
-                    className="inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
-                  >
-                    Clear filters
-                  </button>
+                  {hasActiveFilters ? (
+                    <button
+                      type="button"
+                      onClick={handleClearFilters}
+                      className="inline-flex items-center gap-2 rounded-full border border-[#211a16] bg-[#211a16] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+                    >
+                      Clear filters
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => navigate('/create')}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f2621]"
+                    >
+                      Create shot
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -468,27 +478,32 @@ export function Home() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-shot-title"
+            aria-describedby="delete-shot-description"
             className="w-full max-w-sm rounded-lg border border-[#e2d6ca] bg-[#fffaf5] p-5 shadow-xl"
           >
             <h2 id="delete-shot-title" className="text-lg font-black">
               Delete this shot?
             </h2>
-            <p className="mt-2 text-sm leading-6 text-[#5f4a3f]">
-              This only deletes the shot saved in this browser.
+            <p
+              id="delete-shot-description"
+              className="mt-2 text-sm leading-6 text-[#5f4a3f]"
+            >
+              {getShotPreviewTitle(shotToDelete)} will be removed from this
+              browser only.
             </p>
 
             <div className="mt-5 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setShotToDelete(null)}
-                className="rounded px-4 py-2 text-sm font-bold text-[#5f4a3f] hover:bg-[#efe5dc]"
+                className="rounded-full px-4 py-2 text-sm font-bold text-[#5f4a3f] hover:bg-[#efe5dc]"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDelete}
-                className="rounded bg-red-700 px-4 py-2 text-sm font-bold text-white hover:bg-red-800"
+                className="rounded-full bg-red-700 px-4 py-2 text-sm font-bold text-white hover:bg-red-800"
               >
                 Delete
               </button>
