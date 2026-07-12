@@ -8,31 +8,37 @@ const navItems = [
   { to: '/login', label: 'Account', icon: UserRound },
 ];
 
+const navLinkClasses = (isActive: boolean) =>
+  [
+    'inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition',
+    isActive
+      ? 'border-[#211a16] bg-[#211a16] text-white shadow-sm'
+      : 'border-transparent text-[#5f4a3f] hover:border-[#e2d6ca] hover:bg-[#efe5dc] hover:text-[#211a16]',
+  ].join(' ');
+
 export function AppLayout() {
   return (
     <div className="min-h-screen bg-[#f8f4ef] text-[#211a16]">
       <header className="sticky top-0 z-20 border-b border-[#e2d6ca] bg-[#fffaf5]/95 backdrop-blur-sm">
         <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
-          <NavLink to="/" className="flex flex-col">
-            <span className="text-lg font-black tracking-tight">BadShot</span>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
-              Espresso journal
+          <NavLink to="/" className="flex items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#211a16_0%,#5f4a3f_100%)] text-sm font-black text-white shadow-sm">
+              B
+            </span>
+            <span className="flex flex-col">
+              <span className="text-lg font-black tracking-tight">BadShot</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
+                Espresso journal
+              </span>
             </span>
           </NavLink>
 
-          <div className="hidden items-center gap-1 sm:flex">
+          <div className="hidden items-center gap-2 sm:flex">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) =>
-                  [
-                    'inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold transition',
-                    isActive
-                      ? 'bg-[#211a16] text-white'
-                      : 'text-[#5f4a3f] hover:bg-[#efe5dc]',
-                  ].join(' ')
-                }
+                className={({ isActive }) => navLinkClasses(isActive)}
               >
                 <item.icon className="h-4 w-4" aria-hidden="true" />
                 {item.label}
@@ -57,10 +63,10 @@ export function AppLayout() {
               to={item.to}
               className={({ isActive }) =>
                 [
-                  'flex min-h-14 flex-col items-center justify-center rounded text-xs font-bold transition',
+                  'flex min-h-14 flex-col items-center justify-center rounded-full border text-xs font-bold transition',
                   isActive
-                    ? 'bg-[#211a16] text-white'
-                    : 'text-[#6f5b50] hover:bg-[#efe5dc]',
+                    ? 'border-[#211a16] bg-[#211a16] text-white shadow-sm'
+                    : 'border-transparent text-[#6f5b50] hover:border-[#e2d6ca] hover:bg-[#efe5dc] hover:text-[#211a16]',
                 ].join(' ')
               }
             >

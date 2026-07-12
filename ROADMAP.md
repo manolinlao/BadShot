@@ -1,44 +1,32 @@
-﻿# Roadmap BadShot v1
+﻿# Roadmap BadShot
 
 ## Summary
 
-Reordenar el roadmap para que siga una secuencia mas natural: primero pulir la experiencia base, despues anadir `location` simple, luego funciones reales del producto, y dejar lo avanzado y el backend para mas adelante.
+El roadmap se centra ahora en cerrar primero la experiencia visible del frontend y quitar ruido antes de abrir nuevas capas de producto.
 
-## Key Changes
+## Priority Order
 
-- **1. UI base y pulido**
-  - Mejorar layout, jerarquia visual, spacing, estados vacios y consistencia general.
-  - Dejar la app mas "producto" antes de sumar mas complejidad.
+1. **Mejorar navegacion y consistencia general**
+   - Ajustar `AppLayout`, la navegacion movil y la coherencia entre pantallas.
+   - Unificar patrones visuales para que la app se sienta mas producto y menos prototipo.
 
-- **2. Location v1 simple**
-  - Mantener solo la version basica:
-    - nombre del local
-    - ciudad
-    - pais
-  - No meter todavia mapa, geolocalizacion automatica, coordenadas ni autocompletado.
+2. **Cerrar `Profile`, `Login` y `Register`**
+   - Darles una forma minima pero coherente con el resto de la app.
+   - Evitar que queden como pantallas placeholder.
 
-- **3. Funcionalidades reales**
-  - Buscar shots
-  - Filtrar por origen, tostador y puntuacion
-  - Favoritos
-  - Estadisticas basicas
+3. **Revisar accesibilidad**
+   - Foco, contraste, labels, modales y navegacion por teclado.
+   - Corregir problemas de UX que no siempre se ven a simple vista.
 
-- **4. Navegacion del feed**
-  - Mantener paginacion o carga progresiva simple de momento.
-  - Tratar el infinite scroll como mejora posterior, no como prioridad inmediata.
+4. **Pulir estados vacios, modales y acciones secundarias**
+   - Simplificar empty states, previews, modales de borrado y botones secundarios.
+   - Quitar texto y paneles que no aportan a la experiencia principal.
 
-- **5. Backend**
-  - Posponerlo hasta que el frontend este solido y el modelo de datos este claro.
-  - Cuando llegue el momento, el cambio sera principalmente sustituir la capa `api/`.
+5. **Preparar la siguiente capa funcional**
+   - Dejar el frontend listo para ampliar busqueda, filtros, favoritos u otras funciones.
+   - Sin tocar backend todavia salvo que sea necesario mas adelante.
 
-## Test Plan
+## Notes
 
-- Revisar que el roadmap refleje una sola direccion de producto y no mezcle ideas de MVP con ideas avanzadas.
-- Comprobar que cada fase depende de la anterior de forma logica.
-- Validar que `location` queda como una feature util desde ya, pero sin sobreingenieria.
-
-## Assumptions
-
-- La fecha del Shot seguira siendo una sola: `createdAt`.
-- `location` se hara util pronto, pero en una version simple.
-- El infinite scroll no es prioridad frente a UI, location y filtros.
+- El foco actual esta en reducir ruido visual y cerrar huecos evidentes del producto.
+- Cualquier funcionalidad nueva deberia entrar solo cuando el frontend base este limpio y consistente.
