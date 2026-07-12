@@ -208,17 +208,17 @@ export function CreateShot() {
         />
       </section>
 
-      <section className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
+      <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-[#7a4d2a] text-white shadow-sm">
-            <MapPin className="h-4 w-4" aria-hidden="true" />
+          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white shadow-sm">
+            <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
               2. Location
             </p>
             <p className="mt-1 text-sm leading-6 text-[#5f4a3f]">
-              Add the local name, city or country.
+              Add the place in the fewest words that make sense.
             </p>
           </div>
         </div>
