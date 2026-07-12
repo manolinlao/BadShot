@@ -64,7 +64,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
 
   return (
     <article className="overflow-hidden rounded-[28px] border border-[#e2d6ca] bg-[#fffaf5] shadow-[0_12px_30px_rgba(49,33,20,0.06)] transition-shadow duration-200 hover:shadow-[0_16px_36px_rgba(49,33,20,0.1)]">
-      <header className="flex items-start justify-between gap-4 px-4 pb-3 pt-4">
+      <header className="flex items-start justify-between gap-3 px-4 pb-3 pt-4 sm:gap-4">
         <div className="flex min-w-0 items-center gap-3">
           {shot.user.avatarUrl ? (
             <img
@@ -91,7 +91,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           </div>
         </div>
 
-        <time className="shrink-0 text-xs font-semibold uppercase tracking-widest text-[#7a4d2a]">
+        <time className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7a4d2a] sm:text-xs sm:tracking-widest">
           {formatDate(shot.createdAt)}
         </time>
       </header>
@@ -133,12 +133,14 @@ export const ShotCard: React.FC<ShotCardProps> = ({
       <div className="space-y-4 p-4">
         <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/70 p-4">
           <div className="space-y-1">
-            <h3 className="text-xl font-black leading-tight text-[#211a16]">
+            <h3 className="text-lg font-black leading-tight text-[#211a16] sm:text-xl">
               {coffeeTitle}
             </h3>
 
             {shot.coffee.origin && shot.coffee.name && (
-              <p className="text-sm text-[#6f5b50]">{shot.coffee.origin}</p>
+              <p className="text-sm leading-6 text-[#6f5b50]">
+                {shot.coffee.origin}
+              </p>
             )}
           </div>
 
@@ -159,7 +161,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           )}
 
           {hasLocation && (
-            <div className="flex items-start gap-2 rounded-2xl bg-[#f8f2eb] px-3 py-2 text-sm text-[#5f4a3f]">
+            <div className="flex items-start gap-2 rounded-2xl bg-[#f8f2eb] px-3 py-2 text-sm leading-6 text-[#5f4a3f]">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#7a4d2a]" aria-hidden="true" />
               <p className="min-w-0 break-words">
                 <span className="font-semibold text-[#211a16]">Location:</span>{' '}
@@ -205,10 +207,10 @@ export const ShotCard: React.FC<ShotCardProps> = ({
         )}
 
         {hasFooter && (
-          <footer className="flex flex-col gap-3 border-t border-[#eadfd6] pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <footer className="flex flex-col gap-3 border-t border-[#eadfd6] pt-4">
             <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-[#5f4a3f]">
               {rating && RatingIcon && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-[#7a4d2a]">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-xs text-[#7a4d2a] sm:text-sm">
                   <RatingIcon
                     className={`h-4 w-4 ${ratingIcon[rating].color}`}
                     aria-hidden="true"
@@ -218,14 +220,14 @@ export const ShotCard: React.FC<ShotCardProps> = ({
               )}
 
               {likes > 0 && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-[#5f4a3f]">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-xs text-[#5f4a3f] sm:text-sm">
                   <Heart className="h-4 w-4 text-[#c25b47]" aria-hidden="true" />
                   {likes}
                 </span>
               )}
 
               {comments > 0 && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-[#5f4a3f]">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-xs text-[#5f4a3f] sm:text-sm">
                   <MessageCircle
                     className="h-4 w-4 text-[#7a4d2a]"
                     aria-hidden="true"

@@ -627,30 +627,30 @@ export function Home() {
 
       {previewShot?.photoId && (
         <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 px-4 py-6"
+          className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-black/80 px-3 py-3 sm:items-center sm:px-4 sm:py-6"
           role="dialog"
           aria-modal="true"
           aria-label="Shot image preview"
           onClick={() => setPreviewShot(null)}
         >
           <div
-            className="relative w-full max-w-4xl"
+            className="relative w-full max-w-4xl pt-10 sm:pt-0"
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setPreviewShot(null)}
-              className="absolute right-2 top-2 z-10 rounded-full bg-black/60 p-2 text-white transition hover:bg-black"
+              className="absolute right-1 top-1 z-10 rounded-full bg-black/60 p-2.5 text-white transition hover:bg-black sm:right-2 sm:top-2 sm:p-2"
               aria-label="Close image preview"
             >
-              <X className="h-5 w-5" aria-hidden="true" />
+              <X className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
             </button>
 
-            <div className="mb-3 rounded-2xl bg-white/10 px-4 py-3 text-white backdrop-blur-sm">
-              <h2 className="text-lg font-black leading-tight">
+            <div className="mb-3 rounded-2xl bg-white/10 px-3 py-3 text-white backdrop-blur-sm sm:px-4">
+              <h2 className="text-base font-black leading-tight sm:text-lg">
                 {getShotPreviewTitle(previewShot)}
               </h2>
-              <p className="mt-1 text-sm text-white/75">
+              <p className="mt-1 text-xs text-white/75 sm:text-sm">
                 {formatDate(previewShot.createdAt)}
               </p>
             </div>
@@ -659,7 +659,7 @@ export function Home() {
               <img
                 src={previewUrl}
                 alt="Shot preview"
-                className="max-h-[85vh] w-full rounded-2xl object-contain shadow-2xl"
+                className="max-h-[72vh] w-full rounded-2xl object-contain shadow-2xl sm:max-h-[85vh]"
               />
             )}
           </div>
