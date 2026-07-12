@@ -155,8 +155,8 @@ export function CreateShot() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-32">
-      <header className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-[radial-gradient(circle_at_top_left,#fff7eb_0%,#fffaf5_48%,#f5e9de_100%)] p-5 shadow-[0_12px_28px_rgba(49,33,20,0.05)]">
+    <div className="mx-auto max-w-2xl space-y-4 pb-28">
+      <header className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-[radial-gradient(circle_at_top_left,#fff7eb_0%,#fffaf5_48%,#f5e9de_100%)] p-4 shadow-[0_12px_28px_rgba(49,33,20,0.05)] sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <button
             type="button"
@@ -167,21 +167,22 @@ export function CreateShot() {
             Back
           </button>
 
-          <p className="rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
-            Create shot
-          </p>
+          <div className="flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white/80 px-3 py-1">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#211a16] text-[10px] font-black text-white">
+              B
+            </span>
+            <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#7a4d2a]">
+              Create
+            </span>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
-            Step by step
-          </p>
-          <h1 className="max-w-lg text-3xl font-black leading-tight text-[#211a16] sm:text-4xl">
+        <div className="space-y-2">
+          <h1 className="max-w-lg text-2xl font-black leading-tight text-[#211a16] sm:text-3xl">
             Create a new espresso shot
           </h1>
-          <p className="max-w-2xl text-sm leading-6 text-[#5f4a3f] sm:text-base">
-            Start with the photo. Then add location, rating and optional coffee
-            details if you want a fuller entry.
+          <p className="max-w-2xl text-sm leading-6 text-[#5f4a3f]">
+            Start with the photo, then add the rest only if it helps.
           </p>
         </div>
       </header>
