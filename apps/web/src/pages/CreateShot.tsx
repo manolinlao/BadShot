@@ -155,48 +155,49 @@ export function CreateShot() {
   };
 
   return (
-    <div className="mx-auto max-w-md space-y-4 pb-28">
-      <header className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
+    <div className="mx-auto max-w-2xl space-y-4 pb-32">
+      <header className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-[radial-gradient(circle_at_top_left,#fff7eb_0%,#fffaf5_48%,#f5e9de_100%)] p-5 shadow-[0_12px_28px_rgba(49,33,20,0.05)]">
         <div className="flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-1.5 text-sm font-semibold text-zinc-600 transition hover:border-zinc-900 hover:text-zinc-900"
+            className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-1.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Back
           </button>
 
-          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+          <p className="rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
             Create shot
           </p>
         </div>
 
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
             Step by step
           </p>
-          <h1 className="text-2xl font-black leading-tight text-zinc-900">
+          <h1 className="max-w-lg text-3xl font-black leading-tight text-[#211a16] sm:text-4xl">
             Create a new espresso shot
           </h1>
-          <p className="text-sm leading-6 text-zinc-500">
+          <p className="max-w-2xl text-sm leading-6 text-[#5f4a3f] sm:text-base">
             Start with the photo. Then add location, rating and optional coffee
             details if you want a fuller entry.
           </p>
         </div>
       </header>
 
-      <section className="space-y-3 rounded-2xl border border-zinc-100 bg-[linear-gradient(180deg,#fffaf5_0%,#f7efe6_100%)] p-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-900 text-white">
+      <section className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-[linear-gradient(180deg,#fffaf5_0%,#f7efe6_100%)] p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#211a16] text-white shadow-sm">
             <Camera className="h-4 w-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
               1. Photo
             </p>
-            <p className="text-sm text-zinc-600">
-              This is the first thing to add. It is required for a new shot.
+            <p className="mt-1 text-sm leading-6 text-[#5f4a3f]">
+              This is the anchor of the entry and the fastest way to make it
+              feel complete.
             </p>
           </div>
         </div>
@@ -207,63 +208,63 @@ export function CreateShot() {
         />
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
+      <section className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white">
+          <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-[#7a4d2a] text-white shadow-sm">
             <MapPin className="h-4 w-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
               2. Location
             </p>
-            <p className="mt-1 text-sm text-zinc-600">
+            <p className="mt-1 text-sm leading-6 text-[#5f4a3f]">
               Add the local name, city or country.
             </p>
           </div>
         </div>
 
-        <input
-          placeholder="Local name"
-          value={locationName}
-          onChange={(e) => setLocationName(e.target.value)}
-          className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
-        />
+        <div className="grid gap-2 sm:grid-cols-2">
+          <input
+            placeholder="Local name"
+            value={locationName}
+            onChange={(e) => setLocationName(e.target.value)}
+            className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
+          />
 
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <input
             placeholder="City"
             value={locationCity}
             onChange={(e) => setLocationCity(e.target.value)}
-            className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
-          />
-
-          <input
-            placeholder="Country"
-            value={locationCountry}
-            onChange={(e) => setLocationCountry(e.target.value)}
-            className="w-full rounded-xl border border-zinc-200 px-3 py-3 text-base outline-none transition focus:border-zinc-900"
+            className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
           />
         </div>
+
+        <input
+          placeholder="Country"
+          value={locationCountry}
+          onChange={(e) => setLocationCountry(e.target.value)}
+          className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
+        />
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
             3. Rating
           </p>
-          <p className="mt-1 text-sm text-zinc-600">
+          <p className="mt-1 text-sm leading-6 text-[#5f4a3f]">
             Use this as a quick first impression.
           </p>
         </div>
         <RatingQuick value={rating} onChange={setRating} />
       </section>
 
-      <section className="space-y-2 rounded-2xl border border-zinc-100 bg-white p-3 shadow-sm">
+      <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
             4. Optional details
           </p>
-          <p className="mt-1 text-xs leading-5 text-zinc-500">
+          <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
             Add coffee info, recipe and notes only if you want a fuller shot.
           </p>
         </div>
@@ -294,13 +295,13 @@ export function CreateShot() {
       <button
         onClick={handleSave}
         disabled={!canSave}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-3 text-white shadow-lg shadow-black/10 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 disabled:hover:bg-zinc-300"
+        className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#211a16] py-3.5 text-white shadow-[0_16px_30px_rgba(33,26,22,0.18)] transition hover:bg-[#2f2621] disabled:cursor-not-allowed disabled:bg-[#d8cec5] disabled:text-[#8f7d70] disabled:shadow-none disabled:hover:bg-[#d8cec5]"
       >
         <Sparkles className="h-4 w-4" aria-hidden="true" />
         {editing ? 'Update shot' : 'Save shot'}
       </button>
 
-      <p className="text-center text-xs text-zinc-500">
+      <p className="text-center text-xs text-[#6f5b50]">
         Your shot is saved locally in this browser.
       </p>
     </div>

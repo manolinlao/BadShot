@@ -70,22 +70,24 @@ export function DetailsSheet({
       <button
         type="button"
         onClick={onOpen}
-        className="group flex w-full items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-600 transition hover:border-zinc-900 hover:text-zinc-900"
+        className="group flex w-full items-center justify-between gap-3 rounded-[24px] border border-[#e2d6ca] bg-white px-4 py-4 text-left text-sm font-medium text-[#5f4a3f] shadow-[0_10px_24px_rgba(49,33,20,0.04)] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-900 text-white transition group-hover:scale-110">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#211a16] text-white transition group-hover:scale-110">
             <Sparkles size={13} />
           </div>
           <div>
-            <span className="block font-semibold text-zinc-900">
+            <span className="block font-semibold text-[#211a16]">
               Optional details
             </span>
-            <span className="block text-xs text-zinc-500">
+            <span className="block text-xs text-[#6f5b50]">
               Coffee info, recipe and tasting notes
             </span>
           </div>
         </div>
-        <span className="text-xs font-semibold text-zinc-400">Open</span>
+        <span className="rounded-full border border-[#eadfd6] bg-[#fbf6ef] px-3 py-1 text-xs font-semibold text-[#7a4d2a]">
+          Open
+        </span>
       </button>
 
       <AnimatePresence>
@@ -100,7 +102,7 @@ export function DetailsSheet({
             />
 
             <motion.div
-              className="relative flex max-h-[88vh] w-full flex-col rounded-t-3xl bg-white shadow-2xl"
+              className="relative flex max-h-[88vh] w-full flex-col rounded-t-[32px] bg-[linear-gradient(180deg,#fffaf5_0%,#ffffff_22%)] shadow-2xl"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -119,15 +121,15 @@ export function DetailsSheet({
               }}
             >
               <div className="py-3">
-                <div className="mx-auto h-1.5 w-12 rounded-full bg-zinc-300" />
+                <div className="mx-auto h-1.5 w-12 rounded-full bg-[#dcc7b5]" />
               </div>
 
-              <div className="flex items-center justify-between border-b border-zinc-100 px-5 pb-3">
+              <div className="flex items-center justify-between border-b border-[#eadfd6] px-5 pb-3">
                 <div>
-                  <h2 className="font-semibold text-zinc-900">
+                  <h2 className="font-semibold text-[#211a16]">
                     Optional details
                   </h2>
-                  <p className="mt-1 text-xs text-zinc-500">
+                  <p className="mt-1 text-xs text-[#6f5b50]">
                     Fill only what helps. You can save the shot without any of
                     this.
                   </p>
@@ -136,19 +138,19 @@ export function DetailsSheet({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm font-semibold text-zinc-500 transition hover:border-zinc-900 hover:text-zinc-900"
+                  className="rounded-full border border-[#e2d6ca] px-3 py-1.5 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#211a16] hover:text-[#211a16]"
                 >
                   Done
                 </button>
               </div>
 
               <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
-                <section className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+                <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/80 p-4">
                   <div>
-                    <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+                    <p className="text-[11px] uppercase tracking-[0.24em] text-[#7a4d2a]">
                       Coffee
                     </p>
-                    <p className="mt-1 text-xs leading-5 text-zinc-500">
+                    <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
                       Name, origin, roaster and roast level.
                     </p>
                   </div>
@@ -156,7 +158,7 @@ export function DetailsSheet({
                     placeholder="Name"
                     value={coffeeName}
                     onChange={(event) => setCoffeeName(event.target.value)}
-                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
+                    className="w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2.5 outline-none transition focus:border-[#211a16]"
                   />
 
                   <div className="grid grid-cols-2 gap-2">
@@ -164,19 +166,19 @@ export function DetailsSheet({
                       placeholder="Origin"
                       value={origin}
                       onChange={(event) => setOrigin(event.target.value)}
-                      className="rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
+                      className="rounded-xl border border-[#e2d6ca] bg-white px-3 py-2.5 outline-none transition focus:border-[#211a16]"
                     />
 
                     <input
                       placeholder="Roaster"
                       value={roaster}
                       onChange={(event) => setRoaster(event.target.value)}
-                      className="rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
+                      className="rounded-xl border border-[#e2d6ca] bg-white px-3 py-2.5 outline-none transition focus:border-[#211a16]"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+                    <p className="text-[11px] uppercase tracking-[0.24em] text-[#7a4d2a]">
                       Roast level
                     </p>
                     <div className="grid grid-cols-2 gap-2">
@@ -186,8 +188,8 @@ export function DetailsSheet({
                         className={[
                           'rounded-xl border px-3 py-2 text-sm font-semibold transition',
                           roastLevel === ''
-                            ? 'border-zinc-900 bg-zinc-900 text-white'
-                            : 'border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900',
+                            ? 'border-[#211a16] bg-[#211a16] text-white'
+                            : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:text-[#211a16]',
                         ].join(' ')}
                       >
                         Not sure
@@ -204,8 +206,8 @@ export function DetailsSheet({
                             className={[
                               'rounded-xl border px-3 py-2 text-sm font-semibold transition',
                               active
-                                ? 'border-zinc-900 bg-zinc-900 text-white'
-                                : 'border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900',
+                                ? 'border-[#211a16] bg-[#211a16] text-white'
+                                : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:text-[#211a16]',
                             ].join(' ')}
                           >
                             {RoastLevelLabel[option]}
@@ -225,12 +227,12 @@ export function DetailsSheet({
                   setTime={setTime}
                 />
 
-                <section className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+                <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/80 p-4">
                   <div>
-                    <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+                    <p className="text-[11px] uppercase tracking-[0.24em] text-[#7a4d2a]">
                       Notes
                     </p>
-                    <p className="mt-1 text-xs leading-5 text-zinc-500">
+                    <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
                       Short tasting notes are enough.
                     </p>
                   </div>
@@ -238,7 +240,7 @@ export function DetailsSheet({
                     placeholder="Tasting notes..."
                     value={notes}
                     onChange={(event) => setNotes(event.target.value)}
-                    className="h-28 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 outline-none transition focus:border-zinc-900"
+                    className="h-28 w-full rounded-xl border border-[#e2d6ca] bg-white px-3 py-2.5 outline-none transition focus:border-[#211a16]"
                   />
                 </section>
               </div>

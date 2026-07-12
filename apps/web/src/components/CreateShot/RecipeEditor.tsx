@@ -27,26 +27,26 @@ export const RecipeEditor = ({
       : null;
 
   return (
-    <section className="space-y-3 rounded-2xl border border-zinc-100 bg-zinc-900 p-4 text-white">
+    <section className="space-y-4 rounded-[24px] border border-[#1f1915] bg-[#211a16] p-4 text-white shadow-[0_12px_24px_rgba(49,33,20,0.14)]">
       <div className="space-y-1">
-        <p className="text-[11px] uppercase tracking-widest text-zinc-400">
+        <p className="text-[11px] uppercase tracking-[0.24em] text-[#c7b6a7]">
           Recipe
         </p>
-        <p className="text-sm text-zinc-300">
+        <p className="text-sm leading-6 text-[#e7ddd4]">
           Tap a value to edit it. The ratio updates automatically.
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-3 gap-2">
         <button
           type="button"
           onClick={() => setEditing('in')}
-          className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-left transition hover:border-white/20 hover:bg-white/15"
+          className="rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-left transition hover:border-white/20 hover:bg-white/20"
         >
           <span className="block text-lg font-semibold leading-none">
             {doseIn !== '' ? doseIn : '-'}
           </span>
-          <span className="mt-1 block text-xs uppercase tracking-[0.2em] text-zinc-400">
+          <span className="mt-1 block text-[11px] uppercase tracking-[0.22em] text-[#c7b6a7]">
             g in
           </span>
         </button>
@@ -54,12 +54,12 @@ export const RecipeEditor = ({
         <button
           type="button"
           onClick={() => setEditing('out')}
-          className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-left transition hover:border-white/20 hover:bg-white/15"
+          className="rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-left transition hover:border-white/20 hover:bg-white/20"
         >
           <span className="block text-lg font-semibold leading-none">
             {doseOut !== '' ? doseOut : '-'}
           </span>
-          <span className="mt-1 block text-xs uppercase tracking-[0.2em] text-zinc-400">
+          <span className="mt-1 block text-[11px] uppercase tracking-[0.22em] text-[#c7b6a7]">
             g out
           </span>
         </button>
@@ -67,12 +67,12 @@ export const RecipeEditor = ({
         <button
           type="button"
           onClick={() => setEditing('time')}
-          className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-left transition hover:border-white/20 hover:bg-white/15"
+          className="rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-left transition hover:border-white/20 hover:bg-white/20"
         >
           <span className="block text-lg font-semibold leading-none">
             {time !== '' ? time : '-'}
           </span>
-          <span className="mt-1 block text-xs uppercase tracking-[0.2em] text-zinc-400">
+          <span className="mt-1 block text-[11px] uppercase tracking-[0.22em] text-[#c7b6a7]">
             seconds
           </span>
         </button>
@@ -93,12 +93,12 @@ export const RecipeEditor = ({
             if (editing === 'time') setTime(num);
           }}
           onBlur={() => setEditing(null)}
-          className="mt-2 w-28 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-center outline-none transition focus:border-white/30"
+          className="mt-2 w-32 rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-center outline-none transition focus:border-white/30"
         />
       )}
 
       {ratio && (
-        <p className="text-sm font-semibold text-zinc-200">
+        <p className="text-sm font-semibold text-[#e7ddd4]">
           Ratio <span className="text-white">1:{ratio}</span>
         </p>
       )}
