@@ -18,6 +18,7 @@ interface DetailsSheetProps {
   open: boolean;
   onOpen: () => void;
   onClose: () => void;
+  sheetId: string;
   coffeeName: string;
   setCoffeeName: (value: string) => void;
   origin: string;
@@ -40,6 +41,7 @@ export function DetailsSheet({
   open,
   onOpen,
   onClose,
+  sheetId,
   coffeeName,
   setCoffeeName,
   origin,
@@ -70,6 +72,8 @@ export function DetailsSheet({
       <button
         type="button"
         onClick={onOpen}
+        aria-expanded={open}
+        aria-controls={sheetId}
         className="group flex w-full items-center justify-between gap-3 rounded-[24px] border border-[#e2d6ca] bg-white px-4 py-4 text-left text-sm font-medium text-[#5f4a3f] shadow-[0_10px_24px_rgba(49,33,20,0.04)] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
       >
         <div className="flex items-center gap-3">
@@ -102,6 +106,10 @@ export function DetailsSheet({
             />
 
             <motion.div
+              id={sheetId}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={`${sheetId}-title`}
               className="relative flex max-h-[88vh] w-full flex-col rounded-t-[32px] bg-[linear-gradient(180deg,#fffaf5_0%,#ffffff_22%)] shadow-2xl"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -126,7 +134,7 @@ export function DetailsSheet({
 
               <div className="flex items-center justify-between border-b border-[#eadfd6] px-5 pb-3">
                 <div>
-                  <h2 className="font-semibold text-[#211a16]">
+                  <h2 id={`${sheetId}-title`} className="font-semibold text-[#211a16]">
                     Optional details
                   </h2>
                   <p className="mt-1 text-xs text-[#6f5b50]">

@@ -54,7 +54,10 @@ function ShotFiltersControls({
   onClearFilters,
 }: ShotFiltersControlsProps) {
   return (
-    <div className="rounded-[28px] border border-[#e2d6ca] bg-gradient-to-br from-white/95 to-[#fff7ef] p-4 shadow-[0_12px_30px_rgba(49,33,20,0.06)] backdrop-blur-sm">
+    <div
+      id="feed-filters"
+      className="rounded-[28px] border border-[#e2d6ca] bg-gradient-to-br from-white/95 to-[#fff7ef] p-4 shadow-[0_12px_30px_rgba(49,33,20,0.06)] backdrop-blur-sm"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="inline-flex items-center rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
@@ -350,11 +353,13 @@ export function Home() {
           <div className="space-y-4">
             <div className="sticky top-16 z-10 sm:top-20">
               <div className="flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => setFiltersOpen((current) => !current)}
-                  className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
-                >
+              <button
+                type="button"
+                onClick={() => setFiltersOpen((current) => !current)}
+                aria-expanded={filtersOpen}
+                aria-controls="feed-filters"
+                className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+              >
                   <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
                   {filtersOpen ? 'Hide filters' : 'Show filters'}
                   {hasActiveFilters && (

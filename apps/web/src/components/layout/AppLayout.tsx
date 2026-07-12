@@ -19,6 +19,12 @@ const navLinkClasses = (isActive: boolean) =>
 export function AppLayout() {
   return (
     <div className="min-h-screen bg-[#f8f4ef] text-[#211a16]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-5 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[#211a16] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+      >
+        Skip to content
+      </a>
       <header className="sticky top-0 z-20 border-b border-[#e2d6ca] bg-[#fffaf5]/95 backdrop-blur-sm">
         <nav className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
           <NavLink to="/" className="flex items-center gap-3">
@@ -48,7 +54,11 @@ export function AppLayout() {
         </nav>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl px-5 pb-28 pt-8 sm:pb-10 sm:pt-10">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-5xl px-5 pb-28 pt-8 outline-none sm:pb-10 sm:pt-10"
+      >
         <Outlet />
       </main>
 

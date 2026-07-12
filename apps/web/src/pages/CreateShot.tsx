@@ -273,6 +273,7 @@ export function CreateShot() {
           open={sheetOpen}
           onOpen={() => setSheetOpen(true)}
           onClose={() => setSheetOpen(false)}
+          sheetId="optional-details-sheet"
           coffeeName={coffeeName}
           setCoffeeName={setCoffeeName}
           origin={origin}
