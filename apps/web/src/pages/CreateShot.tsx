@@ -187,18 +187,17 @@ export function CreateShot() {
         </div>
       </header>
 
-      <section className="space-y-4 rounded-[28px] border border-[#e2d6ca] bg-[linear-gradient(180deg,#fffaf5_0%,#f7efe6_100%)] p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
+      <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-[linear-gradient(180deg,#fffaf5_0%,#f7efe6_100%)] p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#211a16] text-white shadow-sm">
-            <Camera className="h-4 w-4" aria-hidden="true" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#211a16] text-white shadow-sm">
+            <Camera className="h-3.5 w-3.5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
               1. Photo
             </p>
             <p className="mt-1 text-sm leading-6 text-[#5f4a3f]">
-              This is the anchor of the entry and the fastest way to make it
-              feel complete.
+              Start with the photo. It sets the tone for the shot.
             </p>
           </div>
         </div>
