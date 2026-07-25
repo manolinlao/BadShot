@@ -141,3 +141,44 @@ export const mockShots: Shot[] = [
     createdAt: '2026-06-11T08:35:00.000Z',
   },
 ];
+
+export function createLargeMockShots(count: number): Shot[] {
+  return Array.from({ length: count }, (_, index) => {
+    const shotNumber = index + 1;
+    const rating = ((index % 5) + 1) as 1 | 2 | 3 | 4 | 5;
+
+    return {
+      id: `large-shot-${shotNumber}`,
+      user: {
+        displayName: `Demo barista ${shotNumber}`,
+        username: `demo_barista_${shotNumber}`,
+      },
+      coffee: {
+        name: `Test espresso ${shotNumber}`,
+        origin: 'Performance test blend',
+        roaster: 'BadShot Demo Roaster',
+        roastLevel: 'medium',
+      },
+      location:
+        index % 4 === 0
+          ? undefined
+          : {
+              name: `Demo cafe ${((index % 20) + 1)}`,
+              city: 'Test city',
+              country: 'Spain',
+            },
+      recipe: {
+        doseIn: 18,
+        doseOut: 38,
+        time: 28,
+      },
+      tastingNotes: 'Generated data for feed pagination testing.',
+      rating,
+      likesCount: shotNumber,
+      commentsCount: index % 12,
+      createdAt: new Date(
+        Date.now() - index * 60 * 60 * 1000,
+      ).toISOString(),
+    } satisfies Shot;
+  });
+}

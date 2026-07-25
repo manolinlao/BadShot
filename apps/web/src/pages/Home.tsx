@@ -3,7 +3,9 @@ import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
+import { usePaginatedItems } from '../hooks/usePaginatedItems';
 import type { Shot } from '../domain/shot/types';
+import { createLargeMockShots } from '../data/mockShots';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
 import { ratingIcon, ratingOptions, type Rating } from '../domain/coffee';
@@ -222,17 +224,23 @@ function ShotFiltersControls({
 }
 
 export function Home() {
-  const { feed, deleteShot, isCreatedShot } = useShots();
   const location = useLocation();
   const navigate = useNavigate();
+  const largeFeedEnabled =
+    import.meta.env.DEV &&
+    new URLSearchParams(location.search).get('feed') === 'large';
+  const additionalMockShots = useMemo(
+    () => (largeFeedEnabled ? createLargeMockShots(1000) : []),
+    [largeFeedEnabled],
+  );
+  const { feed, deleteShot, isCreatedShot, isLoading } = useShots({
+    additionalMockShots,
+  });
   const flash = (location.state as HomeLocationState | null)?.flash;
   const [visibleFlash, setVisibleFlash] = useState(flash);
   const [shotToDelete, setShotToDelete] = useState<Shot | null>(null);
   const [previewShot, setPreviewShot] = useState<Shot | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>();
-  const [visibleShotsCount, setVisibleShotsCount] = useState(
-    INITIAL_VISIBLE_SHOTS,
-  );
   const [searchQuery, setSearchQuery] = useState('');
   const [quickFiltersSelected, setQuickFiltersSelected] = useState<
     ShotQuickFilter[]
@@ -265,8 +273,22 @@ export function Home() {
     [feed, quickFiltersSelected, searchQuery, dateRange, selectedRatings],
   );
 
-  const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
-  const canLoadMore = visibleShotsCount < filteredFeed.length;
+  const paginationResetKey = [
+    dateFrom,
+    dateTo,
+    searchQuery,
+    quickFiltersSelected.join(','),
+    selectedRatings.join(','),
+  ].join('|');
+  const {
+    visibleItems: visibleFeed,
+    hasMore: canLoadMore,
+    loadMore,
+  } = usePaginatedItems(filteredFeed, {
+    initialPageSize: INITIAL_VISIBLE_SHOTS,
+    pageSize: LOAD_MORE_STEP,
+    resetKey: paginationResetKey,
+  });
   const hasResults = filteredFeed.length > 0;
   const activeQuickFilterLabel =
     selectedRatings.length > 0
@@ -330,31 +352,12 @@ export function Home() {
     void loadPreview();
   }, [previewShot]);
 
-  useEffect(() => {
-    setVisibleShotsCount((currentVisibleShots) =>
-      Math.min(
-        currentVisibleShots,
-        Math.max(feed.length, INITIAL_VISIBLE_SHOTS),
-      ),
-    );
-  }, [feed.length]);
-
-  useEffect(() => {
-    setVisibleShotsCount(INITIAL_VISIBLE_SHOTS);
-  }, [dateFrom, dateTo, quickFiltersSelected, searchQuery, selectedRatings]);
-
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
 
     deleteShot(shotToDelete);
     setShotToDelete(null);
     setVisibleFlash('Shot deleted');
-  };
-
-  const handleLoadMore = () => {
-    setVisibleShotsCount(
-      (currentVisibleShots) => currentVisibleShots + LOAD_MORE_STEP,
-    );
   };
 
   const handleClearFilters = () => {
@@ -470,7 +473,9 @@ export function Home() {
                 Feed
               </p>
               <p className="shrink-0 rounded-full border border-[#e2d6ca] bg-white px-3 py-1 text-xs font-semibold text-[#7a4d2a]">
-                Showing {visibleFeed.length} of {filteredFeed.length}
+                {isLoading
+                  ? 'Loading feed...'
+                  : `Showing ${visibleFeed.length} of ${filteredFeed.length}`}
               </p>
             </div>
 
@@ -537,7 +542,7 @@ export function Home() {
               <div className="rounded-[32px] border border-[#eadfd6] bg-gradient-to-r from-white to-[#fff8f1] p-4 text-center shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
                 <button
                   type="button"
-                  onClick={handleLoadMore}
+                  onClick={loadMore}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2f2621]"
                 >
                   <ChevronDown className="h-4 w-4" aria-hidden="true" />

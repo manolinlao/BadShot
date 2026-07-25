@@ -4,18 +4,25 @@ import { mockShots } from '../data/mockShots';
 import type { Shot } from '../domain/shot/types';
 import { shotsEffects, shotsStores } from '../state/shots';
 
-export const useShots = () => {
-  const createdShots = useUnit(shotsStores.$shots);
+type UseShotsOptions = {
+  additionalMockShots?: Shot[];
+};
+
+export const useShots = ({ additionalMockShots = [] }: UseShotsOptions = {}) => {
+  const [createdShots, isLoading] = useUnit([
+    shotsStores.$shots,
+    shotsStores.$shotsLoading,
+  ]);
 
   const feed = useMemo(() => {
-    const allShots = [...createdShots, ...mockShots];
+    const allShots = [...createdShots, ...mockShots, ...additionalMockShots];
     return allShots
       .slice()
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
-  }, [createdShots]);
+  }, [additionalMockShots, createdShots]);
 
   const addShot = async (shot: Shot) => {
     await shotsEffects.createShotFx(shot);
@@ -36,6 +43,7 @@ export const useShots = () => {
   return {
     feed,
     createdShots,
+    isLoading,
     addShot,
     updateShot,
     deleteShot,

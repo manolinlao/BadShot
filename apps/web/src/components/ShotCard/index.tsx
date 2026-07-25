@@ -70,6 +70,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({
             <img
               src={shot.user.avatarUrl}
               alt={`${displayName} avatar`}
+              loading="lazy"
+              decoding="async"
               className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-white"
             />
           ) : (
@@ -106,6 +108,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           <img
             src={photoUrl}
             alt="Espresso shot"
+            loading="lazy"
+            decoding="async"
             className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
           />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/40 to-transparent" />
