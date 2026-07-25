@@ -18,7 +18,6 @@ import {
 const INITIAL_VISIBLE_SHOTS = 10;
 const LOAD_MORE_STEP = 10;
 const quickFilters: Array<{ value: ShotQuickFilter; label: string }> = [
-  { value: 'all', label: 'All' },
   { value: 'top-rated', label: '4+ rating' },
   { value: 'with-photo', label: 'With photo' },
   { value: 'with-location', label: 'Has location' },
@@ -31,8 +30,8 @@ type HomeLocationState = {
 type ShotFiltersControlsProps = {
   searchQuery: string;
   setSearchQuery: (value: string) => void;
-  quickFilter: ShotQuickFilter;
-  setQuickFilter: (value: ShotQuickFilter) => void;
+  quickFiltersSelected: ShotQuickFilter[];
+  setQuickFiltersSelected: (value: ShotQuickFilter[]) => void;
   dateFrom: string;
   dateTo: string;
   onDateFromChange: (value: string) => void;
@@ -44,8 +43,8 @@ type ShotFiltersControlsProps = {
 function ShotFiltersControls({
   searchQuery,
   setSearchQuery,
-  quickFilter,
-  setQuickFilter,
+  quickFiltersSelected,
+  setQuickFiltersSelected,
   dateFrom,
   dateTo,
   onDateFromChange,
@@ -80,14 +79,33 @@ function ShotFiltersControls({
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setQuickFiltersSelected([])}
+          className={[
+            'rounded-full border px-3 py-1.5 text-sm font-semibold transition',
+            quickFiltersSelected.length === 0
+              ? 'border-[#211a16] bg-[#211a16] text-white'
+              : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a] hover:text-[#211a16]',
+          ].join(' ')}
+        >
+          All
+        </button>
+
         {quickFilters.map((filter) => {
-          const active = quickFilter === filter.value;
+          const active = quickFiltersSelected.includes(filter.value);
 
           return (
             <button
               key={filter.value}
               type="button"
-              onClick={() => setQuickFilter(filter.value)}
+              onClick={() =>
+                setQuickFiltersSelected(
+                  active
+                    ? quickFiltersSelected.filter((value) => value !== filter.value)
+                    : [...quickFiltersSelected, filter.value],
+                )
+              }
               className={[
                 'rounded-full border px-3 py-1.5 text-sm font-semibold transition',
                 active
@@ -172,7 +190,9 @@ export function Home() {
     INITIAL_VISIBLE_SHOTS,
   );
   const [searchQuery, setSearchQuery] = useState('');
-  const [quickFilter, setQuickFilter] = useState<ShotQuickFilter>('all');
+  const [quickFiltersSelected, setQuickFiltersSelected] = useState<
+    ShotQuickFilter[]
+  >([]);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -184,7 +204,7 @@ export function Home() {
   const hasDateRange = Boolean(dateFrom || dateTo);
   const activeFiltersCount =
     Number(Boolean(searchQuery)) +
-    Number(quickFilter !== 'all') +
+    quickFiltersSelected.length +
     Number(hasDateRange);
   const hasActiveFilters = activeFiltersCount > 0;
 
@@ -193,20 +213,26 @@ export function Home() {
       feed.filter(
         (shot) =>
           matchesShotSearchQuery(shot, searchQuery) &&
-          matchesShotQuickFilter(shot, quickFilter) &&
+          matchesShotQuickFilter(shot, quickFiltersSelected) &&
           matchesShotDateRange(shot, dateRange),
       ),
-    [feed, quickFilter, searchQuery, dateRange],
+    [feed, quickFiltersSelected, searchQuery, dateRange],
   );
 
   const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
   const canLoadMore = visibleShotsCount < filteredFeed.length;
   const hasResults = filteredFeed.length > 0;
   const activeQuickFilterLabel =
-    quickFilters.find((filter) => filter.value === quickFilter)?.label ?? 'All';
+    quickFiltersSelected.length === 0
+      ? 'All'
+      : quickFiltersSelected.length === 1
+        ? quickFilters.find(
+            (filter) => filter.value === quickFiltersSelected[0],
+          )?.label ?? 'selected filters'
+        : `${quickFiltersSelected.length} filters`;
   const activeEmptyStateLabel = searchQuery
     ? searchQuery
-    : quickFilter !== 'all'
+    : quickFiltersSelected.length > 0
       ? activeQuickFilterLabel
       : hasDateRange
         ? 'selected dates'
@@ -267,7 +293,7 @@ export function Home() {
 
   useEffect(() => {
     setVisibleShotsCount(INITIAL_VISIBLE_SHOTS);
-  }, [dateFrom, dateTo, quickFilter, searchQuery]);
+  }, [dateFrom, dateTo, quickFiltersSelected, searchQuery]);
 
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
@@ -285,7 +311,7 @@ export function Home() {
 
   const handleClearFilters = () => {
     setSearchQuery('');
-    setQuickFilter('all');
+    setQuickFiltersSelected([]);
     setDateFrom('');
     setDateTo('');
     setFiltersOpen(false);
@@ -375,8 +401,8 @@ export function Home() {
                   <ShotFiltersControls
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
-                    quickFilter={quickFilter}
-                    setQuickFilter={setQuickFilter}
+                    quickFiltersSelected={quickFiltersSelected}
+                    setQuickFiltersSelected={setQuickFiltersSelected}
                     dateFrom={dateFrom}
                     dateTo={dateTo}
                     onDateFromChange={handleDateFromChange}

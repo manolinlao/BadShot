@@ -44,11 +44,7 @@ export function matchesShotSearchQuery(
   return haystack.includes(normalizedQuery);
 }
 
-export type ShotQuickFilter =
-  | 'all'
-  | 'top-rated'
-  | 'with-photo'
-  | 'with-location';
+export type ShotQuickFilter = 'top-rated' | 'with-photo' | 'with-location';
 
 export function matchesShotQuickFilter(
   shot: {
@@ -56,19 +52,21 @@ export function matchesShotQuickFilter(
     photoId?: string;
     location?: ShotLocation;
   },
-  filter: ShotQuickFilter,
+  filters: ShotQuickFilter[],
 ): boolean {
-  if (filter === 'all') return true;
+  if (filters.length === 0) return true;
 
-  if (filter === 'top-rated') {
-    return (shot.rating ?? 0) >= 4;
-  }
+  return filters.every((filter) => {
+    if (filter === 'top-rated') {
+      return (shot.rating ?? 0) >= 4;
+    }
 
-  if (filter === 'with-location') {
-    return Boolean(shot.location?.name?.trim());
-  }
+    if (filter === 'with-location') {
+      return Boolean(shot.location?.name?.trim());
+    }
 
-  return Boolean(shot.photoId);
+    return Boolean(shot.photoId);
+  });
 }
 
 export type ShotDateRange = {
