@@ -1,5 +1,11 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
-import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
+import {
+  ArrowUp,
+  ChevronDown,
+  Search,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
@@ -111,7 +117,9 @@ function ShotFiltersControls({
               onClick={() =>
                 setQuickFiltersSelected(
                   active
-                    ? quickFiltersSelected.filter((value) => value !== filter.value)
+                    ? quickFiltersSelected.filter(
+                        (value) => value !== filter.value,
+                      )
                     : [...quickFiltersSelected, filter.value],
                 )
               }
@@ -143,7 +151,9 @@ function ShotFiltersControls({
               onClick={() =>
                 setSelectedRatings(
                   active
-                    ? selectedRatings.filter((rating) => rating !== option.value)
+                    ? selectedRatings.filter(
+                        (rating) => rating !== option.value,
+                      )
                     : [...selectedRatings, option.value],
                 )
               }
@@ -249,6 +259,7 @@ export function Home() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   const dateRange: ShotDateRange = {
     from: dateFrom || undefined,
@@ -295,10 +306,10 @@ export function Home() {
       ? `${selectedRatings.length} ratings`
       : quickFiltersSelected.length === 0
         ? 'All'
-      : quickFiltersSelected.length === 1
-        ? quickFilters.find(
-            (filter) => filter.value === quickFiltersSelected[0],
-          )?.label ?? 'selected filters'
+        : quickFiltersSelected.length === 1
+          ? (quickFilters.find(
+              (filter) => filter.value === quickFiltersSelected[0],
+            )?.label ?? 'selected filters')
           : `${quickFiltersSelected.length} filters`;
   const activeEmptyStateLabel = searchQuery
     ? searchQuery
@@ -339,6 +350,20 @@ export function Home() {
   }, [previewShot]);
 
   useEffect(() => {
+    const updateBackToTopVisibility = () => {
+      setShowBackToTop(window.scrollY > 600);
+    };
+
+    updateBackToTopVisibility();
+    window.addEventListener('scroll', updateBackToTopVisibility, {
+      passive: true,
+    });
+
+    return () =>
+      window.removeEventListener('scroll', updateBackToTopVisibility);
+  }, []);
+
+  useEffect(() => {
     if (!previewShot?.photoId) {
       setPreviewUrl(undefined);
       return;
@@ -367,6 +392,10 @@ export function Home() {
     setDateFrom('');
     setDateTo('');
     setFiltersOpen(false);
+  };
+
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDateFromChange = (value: string) => {
@@ -419,6 +448,9 @@ export function Home() {
               <p className="truncate text-xs font-medium text-[#7a4d2a]">
                 Local espresso journal
               </p>
+              <p className="truncate text-xs font-medium text-[#ff0000]">
+                For Large Feed -- http://localhost:5173/?feed=large
+              </p>
             </div>
           </div>
 
@@ -431,13 +463,13 @@ export function Home() {
           <div className="space-y-4">
             <div className="sticky top-16 z-10 sm:top-20">
               <div className="flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => setFiltersOpen((current) => !current)}
-                aria-expanded={filtersOpen}
-                aria-controls="feed-filters"
-                className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
-              >
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen((current) => !current)}
+                  aria-expanded={filtersOpen}
+                  aria-controls="feed-filters"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white px-3 py-2 text-sm font-semibold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]"
+                >
                   <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
                   {filtersOpen ? 'Hide filters' : 'Show filters'}
                   {hasActiveFilters && (
@@ -633,6 +665,18 @@ export function Home() {
             )}
           </div>
         </div>
+      )}
+
+      {showBackToTop && (
+        <button
+          type="button"
+          onClick={handleBackToTop}
+          className="fixed bottom-5 right-5 z-20 inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-[#211a16] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(33,26,22,0.24)] transition hover:bg-[#2f2621]"
+          aria-label="Back to top"
+        >
+          <ArrowUp className="h-4 w-4" aria-hidden="true" />
+          <span className="hidden sm:inline">Back to top</span>
+        </button>
       )}
     </>
   );
