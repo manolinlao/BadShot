@@ -1,4 +1,5 @@
 import type { Coffee } from '../coffee/types';
+import type { Rating } from '../coffee';
 import type { ShotLocation } from '../location/types';
 import type { ShotCreationInput } from './types';
 
@@ -44,7 +45,7 @@ export function matchesShotSearchQuery(
   return haystack.includes(normalizedQuery);
 }
 
-export type ShotQuickFilter = 'top-rated' | 'with-photo' | 'with-location';
+export type ShotQuickFilter = 'with-photo' | 'with-location';
 
 export function matchesShotQuickFilter(
   shot: {
@@ -53,14 +54,18 @@ export function matchesShotQuickFilter(
     location?: ShotLocation;
   },
   filters: ShotQuickFilter[],
+  selectedRatings: Rating[],
 ): boolean {
+  if (
+    selectedRatings.length > 0 &&
+    (shot.rating === undefined || !selectedRatings.some((rating) => rating === shot.rating))
+  ) {
+    return false;
+  }
+
   if (filters.length === 0) return true;
 
   return filters.every((filter) => {
-    if (filter === 'top-rated') {
-      return (shot.rating ?? 0) >= 4;
-    }
-
     if (filter === 'with-location') {
       return Boolean(shot.location?.name?.trim());
     }

@@ -6,6 +6,7 @@ import { useShots } from '../hooks/useShots';
 import type { Shot } from '../domain/shot/types';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
+import { ratingIcon, ratingOptions, type Rating } from '../domain/coffee';
 import {
   getShotPreviewTitle,
   matchesShotDateRange,
@@ -18,7 +19,6 @@ import {
 const INITIAL_VISIBLE_SHOTS = 10;
 const LOAD_MORE_STEP = 10;
 const quickFilters: Array<{ value: ShotQuickFilter; label: string }> = [
-  { value: 'top-rated', label: '4+ rating' },
   { value: 'with-photo', label: 'With photo' },
   { value: 'with-location', label: 'Has location' },
 ];
@@ -32,6 +32,8 @@ type ShotFiltersControlsProps = {
   setSearchQuery: (value: string) => void;
   quickFiltersSelected: ShotQuickFilter[];
   setQuickFiltersSelected: (value: ShotQuickFilter[]) => void;
+  selectedRatings: Rating[];
+  setSelectedRatings: (value: Rating[]) => void;
   dateFrom: string;
   dateTo: string;
   onDateFromChange: (value: string) => void;
@@ -45,6 +47,8 @@ function ShotFiltersControls({
   setSearchQuery,
   quickFiltersSelected,
   setQuickFiltersSelected,
+  selectedRatings,
+  setSelectedRatings,
   dateFrom,
   dateTo,
   onDateFromChange,
@@ -81,10 +85,13 @@ function ShotFiltersControls({
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={() => setQuickFiltersSelected([])}
+          onClick={() => {
+            setQuickFiltersSelected([]);
+            setSelectedRatings([]);
+          }}
           className={[
             'rounded-full border px-3 py-1.5 text-sm font-semibold transition',
-            quickFiltersSelected.length === 0
+            quickFiltersSelected.length === 0 && selectedRatings.length === 0
               ? 'border-[#211a16] bg-[#211a16] text-white'
               : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a] hover:text-[#211a16]',
           ].join(' ')}
@@ -114,6 +121,43 @@ function ShotFiltersControls({
               ].join(' ')}
             >
               {filter.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="mr-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#7a4d2a]">
+          Rating
+        </span>
+        {ratingOptions.map((option) => {
+          const active = selectedRatings.includes(option.value);
+          const Icon = ratingIcon[option.value].icon;
+
+          return (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() =>
+                setSelectedRatings(
+                  active
+                    ? selectedRatings.filter((rating) => rating !== option.value)
+                    : [...selectedRatings, option.value],
+                )
+              }
+              aria-label={`Filter by rating ${option.value}`}
+              title={`Rating ${option.value}`}
+              className={[
+                'inline-flex h-9 w-9 items-center justify-center rounded-full border transition',
+                active
+                  ? 'border-[#211a16] bg-[#211a16] text-white'
+                  : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a] hover:text-[#211a16]',
+              ].join(' ')}
+            >
+              <Icon
+                className={`h-4 w-4 ${active ? 'text-white' : ratingIcon[option.value].color}`}
+                aria-hidden="true"
+              />
             </button>
           );
         })}
@@ -193,6 +237,7 @@ export function Home() {
   const [quickFiltersSelected, setQuickFiltersSelected] = useState<
     ShotQuickFilter[]
   >([]);
+  const [selectedRatings, setSelectedRatings] = useState<Rating[]>([]);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -205,6 +250,7 @@ export function Home() {
   const activeFiltersCount =
     Number(Boolean(searchQuery)) +
     quickFiltersSelected.length +
+    Number(selectedRatings.length > 0) +
     Number(hasDateRange);
   const hasActiveFilters = activeFiltersCount > 0;
 
@@ -213,26 +259,28 @@ export function Home() {
       feed.filter(
         (shot) =>
           matchesShotSearchQuery(shot, searchQuery) &&
-          matchesShotQuickFilter(shot, quickFiltersSelected) &&
+          matchesShotQuickFilter(shot, quickFiltersSelected, selectedRatings) &&
           matchesShotDateRange(shot, dateRange),
       ),
-    [feed, quickFiltersSelected, searchQuery, dateRange],
+    [feed, quickFiltersSelected, searchQuery, dateRange, selectedRatings],
   );
 
   const visibleFeed = filteredFeed.slice(0, visibleShotsCount);
   const canLoadMore = visibleShotsCount < filteredFeed.length;
   const hasResults = filteredFeed.length > 0;
   const activeQuickFilterLabel =
-    quickFiltersSelected.length === 0
-      ? 'All'
+    selectedRatings.length > 0
+      ? `${selectedRatings.length} ratings`
+      : quickFiltersSelected.length === 0
+        ? 'All'
       : quickFiltersSelected.length === 1
         ? quickFilters.find(
             (filter) => filter.value === quickFiltersSelected[0],
           )?.label ?? 'selected filters'
-        : `${quickFiltersSelected.length} filters`;
+          : `${quickFiltersSelected.length} filters`;
   const activeEmptyStateLabel = searchQuery
     ? searchQuery
-    : quickFiltersSelected.length > 0
+    : selectedRatings.length > 0 || quickFiltersSelected.length > 0
       ? activeQuickFilterLabel
       : hasDateRange
         ? 'selected dates'
@@ -293,7 +341,7 @@ export function Home() {
 
   useEffect(() => {
     setVisibleShotsCount(INITIAL_VISIBLE_SHOTS);
-  }, [dateFrom, dateTo, quickFiltersSelected, searchQuery]);
+  }, [dateFrom, dateTo, quickFiltersSelected, searchQuery, selectedRatings]);
 
   const handleConfirmDelete = () => {
     if (!shotToDelete) return;
@@ -312,6 +360,7 @@ export function Home() {
   const handleClearFilters = () => {
     setSearchQuery('');
     setQuickFiltersSelected([]);
+    setSelectedRatings([]);
     setDateFrom('');
     setDateTo('');
     setFiltersOpen(false);
@@ -403,6 +452,8 @@ export function Home() {
                     setSearchQuery={setSearchQuery}
                     quickFiltersSelected={quickFiltersSelected}
                     setQuickFiltersSelected={setQuickFiltersSelected}
+                    selectedRatings={selectedRatings}
+                    setSelectedRatings={setSelectedRatings}
                     dateFrom={dateFrom}
                     dateTo={dateTo}
                     onDateFromChange={handleDateFromChange}
