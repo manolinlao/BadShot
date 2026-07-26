@@ -123,94 +123,84 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
 
   return (
     <div className="space-y-3">
-      <button
-        type="button"
-        onClick={openCamera}
-        className="group block w-full overflow-hidden rounded-[28px] border border-[#e2d6ca] bg-[#fffaf5] text-left shadow-[0_10px_24px_rgba(49,33,20,0.05)] transition hover:border-[#7a4d2a] hover:shadow-[0_14px_28px_rgba(49,33,20,0.08)]"
-        aria-label={imageUrl ? 'Replace shot photo' : 'Open camera'}
-      >
-        {imageUrl ? (
-          <div className="relative">
-            <img
-              src={imageUrl}
-              alt="Selected espresso shot"
-              className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,transparent_38%,rgba(0,0,0,0.36)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="min-w-0">
-                <span className="inline-flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
-                  <Camera className="h-3.5 w-3.5" aria-hidden="true" />
-                  Photo ready
-                </span>
-                <p className="mt-2 max-w-xs text-sm font-semibold text-white">
-                  Tap to open the camera again.
-                </p>
-              </div>
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center self-end rounded-full bg-white/90 text-[#7a4d2a] shadow-sm backdrop-blur-sm sm:self-auto">
-                <RotateCcw className="h-5 w-5" aria-hidden="true" />
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 border-2 border-dashed border-[#dcc7b5] bg-[radial-gradient(circle_at_top,#fffdfb_0%,#fff5ea_55%,#f2e2d4_100%)] px-6 py-8 text-center text-[#5f4a3f]">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#211a16] text-white shadow-sm transition group-hover:scale-105">
-              <Camera className="h-6 w-6" aria-hidden="true" />
-            </div>
-            <div className="space-y-1">
-              <span className="block text-base font-black text-[#211a16]">
-                Open camera
-              </span>
-              <span className="block text-sm leading-6 text-[#6f5b50]">
-                Take a photo now, or fall back to your library if the camera
-                is not available.
-              </span>
-            </div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white/80 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[#7a4d2a]">
-              Camera first
-            </span>
-          </div>
-        )}
-      </button>
-
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className="overflow-hidden rounded-[30px] border border-[#e2d6ca] bg-[linear-gradient(180deg,#fffaf5_0%,#fbf2e7_100%)] shadow-[0_12px_28px_rgba(49,33,20,0.06)]">
         <button
           type="button"
           onClick={openCamera}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#e2d6ca] bg-white px-4 py-3 text-sm font-semibold text-[#211a16] shadow-[0_10px_24px_rgba(49,33,20,0.04)] transition hover:border-[#7a4d2a] hover:bg-[#fffaf5]"
+          className="group block w-full text-left"
+          aria-label={imageUrl ? 'Replace shot photo' : 'Open camera'}
         >
-          <Camera className="h-4 w-4" aria-hidden="true" />
-          Take photo
+          {imageUrl ? (
+            <div className="relative">
+              <img
+                src={imageUrl}
+                alt="Selected espresso shot"
+                className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.015]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,transparent_40%,rgba(0,0,0,0.4)_100%)]" />
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+                <div className="min-w-0">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-black/55 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
+                    <Camera className="h-3.5 w-3.5" aria-hidden="true" />
+                    Photo ready
+                  </span>
+                  <p className="mt-2 max-w-xs text-sm font-semibold text-white">
+                    Tap to replace it with a new shot.
+                  </p>
+                </div>
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/90 text-[#7a4d2a] shadow-sm backdrop-blur-sm">
+                  <RotateCcw className="h-5 w-5" aria-hidden="true" />
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex min-h-[268px] flex-col items-center justify-center gap-4 px-6 py-8 text-center text-[#5f4a3f]">
+              <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[#211a16] text-white shadow-[0_12px_24px_rgba(33,26,22,0.18)] transition group-hover:scale-[1.02]">
+                <Camera className="h-7 w-7" aria-hidden="true" />
+              </div>
+
+              <div className="space-y-2">
+                <span className="block text-[0.95rem] font-black uppercase tracking-[0.18em] text-[#211a16]">
+                  Open camera
+                </span>
+                <p className="mx-auto max-w-sm text-sm leading-6 text-[#6f5b50]">
+                  Tap here to take a photo with your camera. If the device has
+                  no camera, we will fall back to your library.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white/85 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  Camera first
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-white/85 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[#7a4d2a]">
+                  Mobile friendly
+                </span>
+              </div>
+            </div>
+          )}
         </button>
 
-        <button
-          type="button"
-          onClick={openLibrary}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#e2d6ca] bg-white px-4 py-3 text-sm font-semibold text-[#211a16] shadow-[0_10px_24px_rgba(49,33,20,0.04)] transition hover:border-[#7a4d2a] hover:bg-[#fffaf5]"
-        >
-          <ImagePlus className="h-4 w-4" aria-hidden="true" />
-          Choose from library
-        </button>
       </div>
 
-      {cameraOpen && (
+      {cameraOpen ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm sm:items-center">
-          <div className="w-full max-w-2xl overflow-hidden rounded-[32px] bg-[#11100f] shadow-2xl">
+          <div className="w-full max-w-2xl overflow-hidden rounded-[32px] border border-white/10 bg-[#17120f] shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 text-white">
               <div>
                 <p className="text-sm font-semibold">Camera</p>
-                <p className="text-xs text-white/70">
-                  Use the camera or switch to the library if needed.
+                <p className="text-xs text-white/65">
+                  Tap capture to use the photo or switch to library.
                 </p>
               </div>
 
               <button
                 type="button"
                 onClick={() => setCameraOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
                 aria-label="Close camera"
               >
-                <X className="h-5 w-5" aria-hidden="true" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -252,13 +242,13 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
                   <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                  Use library instead
+                  Use library
                 </button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
       <input
         ref={cameraInputRef}
