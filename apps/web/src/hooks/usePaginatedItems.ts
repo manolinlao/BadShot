@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type UsePaginatedItemsOptions = {
   initialPageSize: number;
@@ -21,9 +21,9 @@ export function usePaginatedItems<T>(
     [items, visibleCount],
   );
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     setVisibleCount((currentCount) => currentCount + pageSize);
-  };
+  }, [pageSize]);
 
   return {
     visibleItems,

@@ -1,7 +1,6 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowUp,
-  ChevronDown,
   Search,
   SlidersHorizontal,
   X,
@@ -260,6 +259,7 @@ export function Home() {
   const [dateTo, setDateTo] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const loadMoreTriggerRef = useRef<HTMLDivElement>(null);
 
   const dateRange: ShotDateRange = {
     from: dateFrom || undefined,
@@ -362,6 +362,25 @@ export function Home() {
     return () =>
       window.removeEventListener('scroll', updateBackToTopVisibility);
   }, []);
+
+  useEffect(() => {
+    const trigger = loadMoreTriggerRef.current;
+
+    if (!trigger || !canLoadMore) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          loadMore();
+        }
+      },
+      { rootMargin: '480px 0px' },
+    );
+
+    observer.observe(trigger);
+
+    return () => observer.disconnect();
+  }, [canLoadMore, loadMore]);
 
   useEffect(() => {
     if (!previewShot?.photoId) {
@@ -571,15 +590,14 @@ export function Home() {
             )}
 
             {canLoadMore && (
-              <div className="rounded-[32px] border border-[#eadfd6] bg-gradient-to-r from-white to-[#fff8f1] p-4 text-center shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
-                <button
-                  type="button"
-                  onClick={loadMore}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211a16] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#2f2621]"
-                >
-                  <ChevronDown className="h-4 w-4" aria-hidden="true" />
-                  Load more
-                </button>
+              <div
+                ref={loadMoreTriggerRef}
+                className="flex justify-center py-4"
+                aria-live="polite"
+              >
+                <span className="rounded-full border border-[#eadfd6] bg-white/80 px-4 py-2 text-xs font-semibold text-[#7a4d2a] shadow-sm">
+                  Scroll for more shots
+                </span>
               </div>
             )}
           </div>
@@ -671,7 +689,7 @@ export function Home() {
         <button
           type="button"
           onClick={handleBackToTop}
-          className="fixed bottom-5 right-5 z-20 inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-[#211a16] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(33,26,22,0.24)] transition hover:bg-[#2f2621]"
+          className="fixed bottom-24 right-5 z-20 inline-flex items-center gap-2 rounded-full border border-[#e2d6ca] bg-[#211a16] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(33,26,22,0.24)] transition hover:bg-[#2f2621] sm:bottom-5"
           aria-label="Back to top"
         >
           <ArrowUp className="h-4 w-4" aria-hidden="true" />
