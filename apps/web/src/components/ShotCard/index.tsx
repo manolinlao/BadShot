@@ -90,6 +90,9 @@ export const ShotCard: React.FC<ShotCardProps> = ({
             {username && (
               <p className="truncate text-xs text-[#6f5b50]">@{username}</p>
             )}
+            <p className="mt-1 truncate text-sm font-black text-[#211a16]">
+              {coffeeTitle}
+            </p>
           </div>
         </div>
 
@@ -136,17 +139,11 @@ export const ShotCard: React.FC<ShotCardProps> = ({
 
       <div className="space-y-4 p-4">
         <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/70 p-4">
-          <div className="space-y-1">
-            <h3 className="text-lg font-black leading-tight text-[#211a16] sm:text-xl">
-              {coffeeTitle}
-            </h3>
-
-            {shot.coffee.origin && shot.coffee.name && (
-              <p className="text-sm leading-6 text-[#6f5b50]">
-                {shot.coffee.origin}
-              </p>
-            )}
-          </div>
+          {shot.coffee.origin && shot.coffee.name && (
+            <p className="text-sm leading-6 text-[#6f5b50]">
+              {shot.coffee.origin}
+            </p>
+          )}
 
           {hasCoffeeInformation && (
             <div className="flex flex-wrap items-center gap-2">

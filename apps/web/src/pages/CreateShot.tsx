@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Camera, MapPin, Sparkles } from 'lucide-react';
+import { ArrowLeft, Camera, Sparkles } from 'lucide-react';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
+import { LocationPicker } from '../components/CreateShot/LocationPicker';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import type { RoastLevel } from '../domain/coffee';
@@ -208,44 +209,14 @@ export function CreateShot() {
         />
       </section>
 
-      <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a4d2a] text-white shadow-sm">
-            <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
-              2. Location
-            </p>
-            <p className="mt-1 text-sm leading-6 text-[#5f4a3f]">
-              Add the place in the fewest words that make sense.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid gap-2 sm:grid-cols-2">
-          <input
-            placeholder="Local name"
-            value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
-            className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
-          />
-
-          <input
-            placeholder="City"
-            value={locationCity}
-            onChange={(e) => setLocationCity(e.target.value)}
-            className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
-          />
-        </div>
-
-        <input
-          placeholder="Country"
-          value={locationCountry}
-          onChange={(e) => setLocationCountry(e.target.value)}
-          className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
-        />
-      </section>
+      <LocationPicker
+        name={locationName}
+        setName={setLocationName}
+        city={locationCity}
+        setCity={setLocationCity}
+        country={locationCountry}
+        setCountry={setLocationCountry}
+      />
 
       <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
         <div>
