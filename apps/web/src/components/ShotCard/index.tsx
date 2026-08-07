@@ -25,6 +25,8 @@ import {
   getUserName,
 } from '../../domain/user';
 import { usePhoto } from '../../hooks/usePhoto';
+import { useState } from 'react';
+import { LocationMapSheet } from './LocationMapSheet';
 
 interface ShotCardProps {
   shot: Shot;
@@ -39,6 +41,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   onDelete,
   onImageClick,
 }) => {
+  const [mapOpen, setMapOpen] = useState(false);
   const photoUrl = usePhoto(shot.photoId);
 
   const recipe = shot.recipe;
@@ -162,15 +165,34 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           )}
 
           {hasLocation && (
-            <div className="flex items-start gap-2 rounded-2xl bg-[#f8f2eb] px-3 py-2 text-sm leading-6 text-[#5f4a3f]">
+            <button
+              type="button"
+              onClick={() => {
+                if (shot.location?.lat !== undefined && shot.location.lng !== undefined) {
+                  setMapOpen(true);
+                }
+              }}
+              className={`flex w-full items-start gap-2 rounded-2xl bg-[#f8f2eb] px-3 py-2 text-left text-sm leading-6 text-[#5f4a3f] ${
+                shot.location?.lat !== undefined && shot.location.lng !== undefined
+                  ? 'cursor-pointer transition hover:bg-[#f3ebe3]'
+                  : 'cursor-default'
+              }`}
+            >
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#7a4d2a]" aria-hidden="true" />
               <p className="min-w-0 break-words">
                 <span className="font-semibold text-[#211a16]">Location:</span>{' '}
                 {locationLabel}
               </p>
-            </div>
+            </button>
           )}
         </section>
+
+        {mapOpen && shot.location && (
+          <LocationMapSheet
+            location={shot.location}
+            onClose={() => setMapOpen(false)}
+          />
+        )}
 
         {showRecipeStats && (
           <section className="space-y-2 rounded-[24px] border border-[#eadfd6] bg-white/70 p-4">

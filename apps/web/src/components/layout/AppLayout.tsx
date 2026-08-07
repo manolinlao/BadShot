@@ -1,5 +1,5 @@
 import { CirclePlus, Home, User, UserRound } from 'lucide-react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, type NavLinkRenderProps } from 'react-router-dom';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
@@ -44,7 +44,7 @@ export function AppLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) => navLinkClasses(isActive)}
+                className={({ isActive }: NavLinkRenderProps) => navLinkClasses(isActive)}
               >
                 <item.icon className="h-4 w-4" aria-hidden="true" />
                 {item.label}
@@ -71,7 +71,7 @@ export function AppLayout() {
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) =>
+              className={({ isActive }: NavLinkRenderProps) =>
                 [
                   'flex min-h-14 flex-col items-center justify-center rounded-full border text-xs font-bold transition',
                   isActive

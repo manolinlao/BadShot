@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { RoastLevelLabel, type RoastLevel } from '../../domain/coffee';
 import { RecipeEditor } from './RecipeEditor';
@@ -122,11 +123,13 @@ export function DetailsSheet({
               drag="y"
               dragConstraints={{ top: 0 }}
               dragElastic={0.2}
-              onDragEnd={(_, info) => {
-                if (info.offset.y > 150) {
-                  onClose();
+              onDragEnd={
+                (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+                  if (info.offset.y > 150) {
+                    onClose();
+                  }
                 }
-              }}
+              }
             >
               <div className="py-3">
                 <div className="mx-auto h-1.5 w-12 rounded-full bg-[#dcc7b5]" />
