@@ -7,6 +7,10 @@ interface LocationPickerProps {
   setCity: (value: string) => void;
   country: string;
   setCountry: (value: string) => void;
+  hasCoordinates: boolean;
+  locating: boolean;
+  locationError: string;
+  onUseCurrentLocation: () => void;
 }
 
 export function LocationPicker({
@@ -16,6 +20,10 @@ export function LocationPicker({
   setCity,
   country,
   setCountry,
+  hasCoordinates,
+  locating,
+  locationError,
+  onUseCurrentLocation,
 }: LocationPickerProps) {
   return (
     <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
@@ -47,6 +55,32 @@ export function LocationPicker({
           className="w-full rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
         />
       </div>
+
+      <button
+        type="button"
+        onClick={onUseCurrentLocation}
+        disabled={locating}
+        className="inline-flex items-center gap-2 rounded-full border border-[#7a4d2a] bg-[#fff8f1] px-4 py-2.5 text-sm font-semibold text-[#7a4d2a] transition hover:bg-[#f3ebe3] disabled:cursor-wait disabled:opacity-60"
+      >
+        <MapPin className="h-4 w-4" aria-hidden="true" />
+        {locating ? 'Finding your location…' : 'Use my current location'}
+      </button>
+
+      {hasCoordinates && !locationError && (
+        <p className="text-xs font-semibold text-[#5f7a55]">
+          Location added from your device.
+        </p>
+      )}
+
+      {locationError && (
+        <p role="alert" className="text-xs font-semibold text-[#a24d3e]">
+          {locationError}
+        </p>
+      )}
+
+      <p className="text-[11px] leading-5 text-[#8a6f5d]">
+        Location data by OpenStreetMap contributors.
+      </p>
 
       <input
         placeholder="Country"

@@ -5,6 +5,8 @@ import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { LocationPicker } from '../components/CreateShot/LocationPicker';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
+import { reverseGeocode } from '../api/location/nominatim';
+import type { ShotLocation } from '../domain/location/types';
 import type { RoastLevel } from '../domain/coffee';
 import { getPhotoPreviewUrl, revokePhotoUrl } from '../domain/photo';
 import { createShot } from '../domain/shot';
@@ -31,6 +33,11 @@ export function CreateShot() {
   const [locationName, setLocationName] = useState('');
   const [locationCity, setLocationCity] = useState('');
   const [locationCountry, setLocationCountry] = useState('');
+  const [locationCoordinates, setLocationCoordinates] = useState<
+    Pick<ShotLocation, 'lat' | 'lng'>
+  >({});
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState('');
 
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
@@ -58,6 +65,10 @@ export function CreateShot() {
       setLocationName(editingShot.location?.name ?? '');
       setLocationCity(editingShot.location?.city ?? '');
       setLocationCountry(editingShot.location?.country ?? '');
+      setLocationCoordinates({
+        lat: editingShot.location?.lat,
+        lng: editingShot.location?.lng,
+      });
       setCoffeeName(editingShot.coffee.name ?? '');
       setOrigin(editingShot.coffee.origin ?? '');
       setRoaster(editingShot.coffee.roaster ?? '');
@@ -99,7 +110,51 @@ export function CreateShot() {
       name: name || city || country,
       ...(city ? { city } : {}),
       ...(country ? { country } : {}),
+      ...(locationCoordinates.lat !== undefined
+        ? { lat: locationCoordinates.lat }
+        : {}),
+      ...(locationCoordinates.lng !== undefined
+        ? { lng: locationCoordinates.lng }
+        : {}),
     };
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Your browser does not support location.');
+      return;
+    }
+
+    setLocating(true);
+    setLocationError('');
+
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          const location = await reverseGeocode(coords.latitude, coords.longitude);
+          setLocationName(location.name);
+          setLocationCity(location.city ?? '');
+          setLocationCountry(location.country ?? '');
+          setLocationCoordinates({ lat: location.lat, lng: location.lng });
+        } catch {
+          setLocationCoordinates({ lat: coords.latitude, lng: coords.longitude });
+          setLocationError(
+            'Coordinates found, but we could not identify the place. You can enter it manually.',
+          );
+        } finally {
+          setLocating(false);
+        }
+      },
+      (error) => {
+        setLocating(false);
+        setLocationError(
+          error.code === error.PERMISSION_DENIED
+            ? 'Location permission was denied. You can enter the place manually.'
+            : 'We could not get your location. Try again or enter it manually.',
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
+    );
   };
 
   const handleSave = async () => {
@@ -216,6 +271,13 @@ export function CreateShot() {
         setCity={setLocationCity}
         country={locationCountry}
         setCountry={setLocationCountry}
+        hasCoordinates={
+          locationCoordinates.lat !== undefined &&
+          locationCoordinates.lng !== undefined
+        }
+        locating={locating}
+        locationError={locationError}
+        onUseCurrentLocation={handleUseCurrentLocation}
       />
 
       <section className="space-y-3 rounded-[28px] border border-[#e2d6ca] bg-white p-4 shadow-[0_12px_24px_rgba(49,33,20,0.04)]">
