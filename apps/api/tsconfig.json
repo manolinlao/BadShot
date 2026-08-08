@@ -4,14 +4,15 @@
     "module": "node16",
     "moduleResolution": "node16",
     "lib": ["ES2023"],
+    "types": ["node"],
     "strict": true,
     "skipLibCheck": true,
     "noEmit": false,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "prisma.config.ts"]
 }
