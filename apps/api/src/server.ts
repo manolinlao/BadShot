@@ -43,10 +43,20 @@ app.get('/health', (_request, response) => {
 app.post('/demo', (request, response) => {
   const { name } = request.body as { name?: string };
 
+  if (typeof name !== 'string' || name.trim().length === 0) {
+    response.status(400).json({
+      success: false,
+      error: {
+        message: 'name es obligatorio',
+      },
+    });
+    return;
+  }
+
   response.json({
     success: true,
     data: {
-      message: `Hola, ${name ?? 'persona'}`,
+      message: `Hola, ${name.trim()}`,
     },
   });
 });
