@@ -1,3 +1,29 @@
+# PostgreSQL runs inside Docker.
+#
+# The database's real data is stored in the `postgres_data` Docker volume.
+# The volume is persistent, but it is NOT a backup.
+#
+# IMPORTANT:
+# - `docker compose down`       -> containers stop, data remains.
+# - `docker compose up -d`      -> containers start again with the same data.
+# - `docker compose down -v`    -> deletes the volume and its data.
+#
+# For production/important data, we must also create regular PostgreSQL
+# backups and store them somewhere outside this computer.
+
+# PostgreSQL stores all BadShot data in this Docker volume.
+#
+# This includes the actual application data:
+# users, shots, coffees, ratings, etc.
+#
+# The data survives `docker compose down`.
+#
+# ⚠️ This volume is NOT a backup.
+# If the computer or Docker volume is lost/corrupted,
+# the application data can be lost.
+#
+# We should create regular PostgreSQL backups and store
+# them somewhere outside this computer.
 services:
   postgres:
     image: postgres:17
@@ -8,7 +34,18 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # Docker volume where PostgreSQL stores the REAL application data.
+      #
+      # The volume survives `docker compose down`, so stopping/recreating
+      # the container does NOT delete the database data.
+      #
+      # IMPORTANT:
+      # This is NOT a backup. If the computer is lost or the volume is
+      # corrupted, the data may be lost.
+      #
+      # We should periodically create PostgreSQL backups (e.g. .sql files)
+      # and store them somewhere outside this computer.
+      - postgres_data:/var/lib/postgresql/data.
 
 volumes:
   postgres_data:
