@@ -58,7 +58,7 @@ API
   ↓ incorrecto: devuelve 401
 ```
 
-Actualmente el login todavía no mantiene una sesión.
+El login crea un JWT y lo guarda en una cookie `HttpOnly` llamada `access_token`.
 
 ## Próximo paso: JWT
 
@@ -118,13 +118,18 @@ POST /api/auth/register
 
 POST /api/auth/login
   → verifica la contraseña
-  → devuelve un accessToken JWT
+  → crea JWT
+  → guarda JWT en cookie HttpOnly
 
 GET /api/auth/me
-  → requiere Authorization: Bearer <JWT>
+  → recibe cookie access_token
   → verifica el JWT
   → busca el usuario por userId
   → devuelve sus datos públicos
+
+POST /api/auth/logout
+  → elimina la cookie access_token
+  → cierra la sesión del navegador
 ```
 
 Sin JWT, `/api/auth/me` responde:
@@ -158,7 +163,9 @@ Login correcto
   ↓
 API crea JWT
   ↓
-Cliente lo envía en futuras peticiones
+API lo guarda en cookie HttpOnly
+  ↓
+Navegador envía cookie en futuras peticiones
   ↓
 Middleware verifica el JWT
   ↓
@@ -200,4 +207,8 @@ Petición protegida
   → obtener userId
   → comprobar permisos
   → ejecutar operación
+
+Logout
+  → eliminar cookie
+  → sesión cerrada
 ```

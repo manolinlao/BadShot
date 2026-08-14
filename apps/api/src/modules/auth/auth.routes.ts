@@ -118,3 +118,18 @@ authRouter.get('/me', requireAuth, async (_request, response, next) => {
     next(error);
   }
 });
+
+authRouter.post('/logout', (_request, response) => {
+  response.clearCookie('access_token', {
+    httpOnly: true,
+    secure: env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+
+  response.json({
+    success: true,
+    data: {
+      message: 'Sesión cerrada',
+    },
+  });
+});

@@ -96,21 +96,21 @@ Las siguientes peticiones ya no están autenticadas
 
 ## Situación actual de BadShot
 
-Ahora mismo:
+El login ya guarda el JWT en una cookie `HttpOnly` llamada `access_token`.
 
-```text
-Login → JWT devuelto en JSON
+Para probarlo con `curl`:
+
+```bash
+curl -c /tmp/badshot-cookies.txt \
+  -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"manuel@example.com","password":"cafetera123"}'
+
+curl -b /tmp/badshot-cookies.txt \
+  http://localhost:3000/api/auth/me
 ```
 
-Esto nos sirve para aprender y probar con `curl`.
-
-Más adelante:
-
-```text
-Login → JWT guardado en cookie HttpOnly
-```
-
-Antes de conectarlo al frontend cambiaremos al segundo sistema.
+El middleware acepta la cookie y también el header `Authorization: Bearer <JWT>` para pruebas.
 
 ## Importante
 
