@@ -96,6 +96,20 @@ Secreto:   JWT_SECRET en apps/api/.env
 
 El secreto nunca debe escribirse directamente en el código ni compartirse.
 
+El middleware que verifica el token está en:
+
+```text
+apps/api/src/modules/auth/auth.middleware.ts
+```
+
+Espera la cabecera HTTP:
+
+```http
+Authorization: Bearer <JWT>
+```
+
+Si el token es válido, guarda el `userId` para la ruta siguiente. Si falta, es inválido o ha caducado, responde `401`.
+
 Un JWT es una credencial firmada que representa al usuario durante un tiempo limitado:
 
 ```json
