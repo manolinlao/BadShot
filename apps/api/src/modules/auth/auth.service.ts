@@ -2,7 +2,7 @@
 // Aunque el archivo fuente sea .ts, TypeScript lo compilará a .js.
 // Por eso los imports relativos se escriben con .js.
 import { prisma } from '../../db/prisma.js';
-import { hashPassword } from '../../security/password.js';
+import { hashPassword, verifyPassword } from '../../security/password.js';
 
 type RegisterUserInput = {
   email: string;
@@ -29,4 +29,48 @@ export async function registerUser(input: RegisterUserInput) {
       updatedAt: true,
     },
   });
+}
+
+type LoginUserInput = {
+  email: string;
+  password: string;
+};
+
+export async function loginUser(input: LoginUserInput) {
+  const email = input.email.trim().toLowerCase();
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+      email: true,
+      displayName: true,
+      passwordHash: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+
+  const passwordIsValid = await verifyPassword(
+    input.password,
+    user.passwordHash,
+  );
+
+  if (!passwordIsValid) {
+    return null;
+  }
+
+  return {
+    id: user.id,
+    email: user.email,
+    displayName: user.displayName,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
 }
