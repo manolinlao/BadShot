@@ -1,4 +1,5 @@
 import express from 'express';
+import { prisma } from './db/prisma.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
@@ -12,6 +13,29 @@ app.get('/health', (_request, response) => {
       status: 'ok',
     },
   });
+});
+
+app.get('/health/db', async (_request, response) => {
+  try {
+    const userCount = await prisma.user.count();
+
+    response.json({
+      success: true,
+      data: {
+        database: 'connected',
+        users: userCount,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    response.status(500).json({
+      success: false,
+      error: {
+        message: 'No se pudo conectar con la base de datos',
+      },
+    });
+  }
 });
 
 /** para probar esto desde un terminal de bash hacer
