@@ -3,6 +3,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { prisma } from './db/prisma.js';
+import { errorMiddleware } from './middleware/error.middleware.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 
 const app = express();
@@ -90,6 +91,8 @@ app.post('/demo', (request, response) => {
     },
   });
 });
+
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);
