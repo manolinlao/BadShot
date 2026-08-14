@@ -3,6 +3,7 @@
 // Por eso los imports relativos se escriben con .js.
 import { prisma } from '../../db/prisma.js';
 import { hashPassword, verifyPassword } from '../../security/password.js';
+import { createAccessToken } from '../../security/jwt.js';
 
 type RegisterUserInput = {
   email: string;
@@ -66,11 +67,16 @@ export async function loginUser(input: LoginUserInput) {
     return null;
   }
 
+  const accessToken = await createAccessToken(user.id);
+
   return {
-    id: user.id,
-    email: user.email,
-    displayName: user.displayName,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    user: {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    },
+    accessToken,
   };
 }
