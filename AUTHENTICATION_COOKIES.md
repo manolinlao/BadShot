@@ -59,7 +59,8 @@ Esto ayuda a proteger el token si algún script malicioso se ejecuta en la pági
 ## Opciones importantes de la cookie
 
 ```text
-HttpOnly → JavaScript no puede leerla
+HttpOnly
+→ JavaScript no puede leerla
 Secure   → solo se envía por HTTPS en producción
 SameSite → reduce peticiones externas no deseadas
 ```
@@ -96,21 +97,21 @@ Las siguientes peticiones ya no están autenticadas
 
 ## Situación actual de BadShot
 
-El login ya guarda el JWT en una cookie `HttpOnly` llamada `access_token`.
+Ahora mismo:
 
-Para probarlo con `curl`:
-
-```bash
-curl -c /tmp/badshot-cookies.txt \
-  -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"manuel@example.com","password":"cafetera123"}'
-
-curl -b /tmp/badshot-cookies.txt \
-  http://localhost:3000/api/auth/me
+```text
+Login → JWT devuelto en JSON
 ```
 
-El middleware acepta la cookie y también el header `Authorization: Bearer <JWT>` para pruebas.
+Esto nos sirve para aprender y probar con `curl`.
+
+Más adelante:
+
+```text
+Login → JWT guardado en cookie HttpOnly
+```
+
+Antes de conectarlo al frontend cambiaremos al segundo sistema.
 
 ## Importante
 
