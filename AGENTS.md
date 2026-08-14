@@ -8,7 +8,7 @@ BadShot is a social network for specialty coffee espresso enthusiasts.
 
 ### Frontend
 
-- React 18
+- React 19
 - TypeScript
 - Vite + PWA
 - Tailwind CSS
