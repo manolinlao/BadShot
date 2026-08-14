@@ -1,3 +1,6 @@
+// Los archivos fuente son .ts, pero Node ejecutará los archivos compilados .js.
+// Por eso los imports locales del backend terminan en .js.
+
 import express from 'express';
 import { prisma } from './db/prisma.js';
 
