@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getUserById, loginUser, registerUser } from './auth.service.js';
 import { requireAuth } from './auth.middleware.js';
+import { env } from 'node:process';
 
 export const authRouter = Router();
 
@@ -78,9 +79,16 @@ authRouter.post('/login', async (request, response, next) => {
       return;
     }
 
+    response.cookie('access_token', user.accessToken, {
+      httpOnly: true,
+      secure: env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000,
+    });
+
     response.json({
       success: true,
-      data: user,
+      data: user.user,
     });
   } catch (error) {
     next(error);

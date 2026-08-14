@@ -12,7 +12,8 @@
     "rootDir": ".",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true
   },
   "include": ["src", "prisma.config.ts"]
 }

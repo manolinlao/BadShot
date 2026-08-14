@@ -3,9 +3,12 @@ import { verifyAccessToken } from '../../security/jwt.js';
 
 export const requireAuth: RequestHandler = async (request, response, next) => {
   const authorization = request.header('Authorization');
-  const [scheme, token] = authorization?.split(' ') ?? [];
+  const [scheme, headerToken] = authorization?.split(' ') ?? [];
+  const cookieToken = request.cookies?.access_token;
 
-  if (scheme !== 'Bearer' || !token) {
+  const token = scheme === 'Bearer' && headerToken ? headerToken : cookieToken;
+
+  if (!token) {
     response.status(401).json({
       success: false,
       error: {

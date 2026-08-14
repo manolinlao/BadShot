@@ -1,6 +1,7 @@
 // Los archivos fuente son .ts, pero Node ejecutará los archivos compilados .js.
 // Por eso los imports locales del backend terminan en .js.
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { prisma } from './db/prisma.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 
@@ -8,6 +9,7 @@ const app = express();
 const port = Number(process.env.PORT ?? 3000);
 
 app.use(express.json());
+app.use(cookieParser());
 app.use('/api/auth', authRouter);
 
 app.get('/health', (_request, response) => {
