@@ -64,6 +64,38 @@ Actualmente el login todavía no mantiene una sesión.
 
 Después de un login correcto, el backend creará un JWT.
 
+Para generarlos y verificarlos usaremos la librería `jose`:
+
+```bash
+npm install -w apps/api jose
+```
+
+La dependencia ya está instalada, pero todavía no hemos creado ni conectado ningún JWT.
+
+La utilidad está en:
+
+```text
+apps/api/src/security/jwt.ts
+```
+
+Funciones disponibles:
+
+```text
+createAccessToken(userId) → genera un JWT
+verifyAccessToken(token)  → verifica firma, caducidad y devuelve userId
+```
+
+Configuración actual:
+
+```text
+Algoritmo: HS256
+Duración:  15 minutos
+Identidad: userId dentro de subject (sub)
+Secreto:   JWT_SECRET en apps/api/.env
+```
+
+El secreto nunca debe escribirse directamente en el código ni compartirse.
+
 Un JWT es una credencial firmada que representa al usuario durante un tiempo limitado:
 
 ```json
