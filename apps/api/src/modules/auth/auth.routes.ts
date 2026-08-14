@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { loginUser, registerUser } from './auth.service.js';
+import { getUserById, loginUser, registerUser } from './auth.service.js';
+import { requireAuth } from './auth.middleware.js';
 
 export const authRouter = Router();
 
@@ -72,6 +73,30 @@ authRouter.post('/login', async (request, response, next) => {
         success: false,
         error: {
           message: 'Email o contraseña incorrectos',
+        },
+      });
+      return;
+    }
+
+    response.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.get('/me', requireAuth, async (_request, response, next) => {
+  try {
+    const userId = response.locals.userId as string;
+    const user = await getUserById(userId);
+
+    if (!user) {
+      response.status(401).json({
+        success: false,
+        error: {
+          message: 'Usuario no encontrado',
         },
       });
       return;

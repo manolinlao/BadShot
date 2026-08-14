@@ -110,6 +110,29 @@ Authorization: Bearer <JWT>
 
 Si el token es válido, guarda el `userId` para la ruta siguiente. Si falta, es inválido o ha caducado, responde `401`.
 
+## Flujo probado actualmente
+
+```text
+POST /api/auth/register
+  → crea el usuario en PostgreSQL
+
+POST /api/auth/login
+  → verifica la contraseña
+  → devuelve un accessToken JWT
+
+GET /api/auth/me
+  → requiere Authorization: Bearer <JWT>
+  → verifica el JWT
+  → busca el usuario por userId
+  → devuelve sus datos públicos
+```
+
+Sin JWT, `/api/auth/me` responde:
+
+```text
+401 Unauthorized
+```
+
 Un JWT es una credencial firmada que representa al usuario durante un tiempo limitado:
 
 ```json
