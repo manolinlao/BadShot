@@ -179,7 +179,73 @@ El puerto permite que el API se comunique con PostgreSQL:
 localhost:5432 → PostgreSQL
 ```
 
-## 10. Errores habituales
+## 10. Entrar en PostgreSQL dentro de Docker
+
+Docker ejecuta PostgreSQL dentro del contenedor `postgres`. Para abrir su consola desde la raíz del proyecto:
+
+```bash
+docker compose exec postgres psql -U badshot -d badshot
+```
+
+Significado:
+
+```text
+docker compose exec  → ejecutar un comando dentro de un contenedor
+postgres              → nombre del servicio en docker-compose.yml
+psql                  → consola de PostgreSQL
+-U badshot            → usuario de PostgreSQL
+-d badshot            → base de datos
+```
+
+Después del comando aparecerá un prompt parecido a:
+
+```text
+badshot=#
+```
+
+Ahora estamos dentro de PostgreSQL, no en la terminal normal de macOS.
+
+### Ver las tablas
+
+Dentro de `psql`:
+
+```sql
+\dt
+```
+
+Debería aparecer la tabla `User`.
+
+### Ver la estructura de `User`
+
+```sql
+\d "User"
+```
+
+Muestra sus columnas, tipos y restricciones.
+
+### Ver los usuarios
+
+```sql
+SELECT "email", "displayName", "passwordHash" FROM "User";
+```
+
+El campo `passwordHash` debe empezar por algo parecido a:
+
+```text
+$argon2id$
+```
+
+Eso confirma que no guardamos la contraseña original.
+
+### Salir de PostgreSQL
+
+```sql
+\q
+```
+
+Esto solo cierra la consola. No detiene Docker ni borra datos.
+
+## 11. Errores habituales
 
 ### `Cannot connect to the Docker daemon`
 
@@ -205,6 +271,6 @@ Ejecutar:
 docker compose ps
 ```
 
-## 11. Importante
+## 12. Importante
 
 Los valores `badshot` son solo para desarrollo local. Antes de publicar la aplicación cambiaremos las credenciales y las moveremos a variables de entorno seguras.
