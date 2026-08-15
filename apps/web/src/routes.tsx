@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-
+import { RequireAuth } from './components/auth/RequireAuth';
 import { AppLayout } from './components/layout/AppLayout';
 import { CreateShot } from './pages/CreateShot';
 import { Home } from './pages/Home';
@@ -14,10 +14,6 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        index: true,
-        element: <Home />,
-      },
-      {
         path: 'login',
         element: <Login />,
       },
@@ -26,16 +22,25 @@ export const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: 'create',
-        element: <CreateShot />,
-      },
-      {
-        path: 'edit/:shotId',
-        element: <CreateShot />,
-      },
-      {
-        path: 'profile',
-        element: <Profile />,
+        element: <RequireAuth />,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: 'create',
+            element: <CreateShot />,
+          },
+          {
+            path: 'edit/:shotId',
+            element: <CreateShot />,
+          },
+          {
+            path: 'profile',
+            element: <Profile />,
+          },
+        ],
       },
       {
         path: '*',

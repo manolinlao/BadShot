@@ -1,7 +1,13 @@
 import { CirclePlus, Home, User, UserRound } from 'lucide-react';
-import { NavLink, Outlet, type NavLinkRenderProps } from 'react-router-dom';
+import {
+  NavLink,
+  Outlet,
+  useNavigate,
+  type NavLinkRenderProps,
+} from 'react-router-dom';
 import { useUnit } from 'effector-react';
-import { authStores } from '../../state/auth';
+import { authStores, authEvents } from '../../state/auth';
+import { logout } from '../../api/auth/client';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
@@ -19,7 +25,18 @@ const navLinkClasses = (isActive: boolean) =>
   ].join(' ');
 
 export function AppLayout() {
-  const currentUser = useUnit(authStores.$currentUser);
+  const navigate = useNavigate();
+
+  const { currentUser, userLoggedOut } = useUnit({
+    currentUser: authStores.$currentUser,
+    userLoggedOut: authEvents.userLoggedOut,
+  });
+
+  async function handleLogout() {
+    await logout();
+    userLoggedOut();
+    navigate('/login');
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f4ef] text-[#211a16]">
@@ -38,9 +55,19 @@ export function AppLayout() {
             <span className="flex flex-col">
               <span className="text-lg font-black tracking-tight">BadShot</span>
               {currentUser && (
-                <span className="text-sm font-semibold text-[#7a4d2a]">
-                  Hola, {currentUser.displayName}
-                </span>
+                <>
+                  <span className="text-sm font-semibold text-[#7a4d2a]">
+                    Hola, {currentUser.displayName}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => void handleLogout()}
+                    className="rounded-full border border-[#e2d6ca] px-3 py-2 text-sm font-semibold text-[#5f4a3f] hover:border-[#7a4d2a]"
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
               )}
               <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
                 Espresso journal

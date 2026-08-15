@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../api/auth/client';
+import { authEvents } from '../state/auth';
 
 export function Login() {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ export function Login() {
     setIsSubmitting(true);
 
     try {
-      await login({ email, password });
+      const user = await login({ email, password });
+      authEvents.userLoggedIn(user);
       navigate('/');
     } catch (error) {
       setError(

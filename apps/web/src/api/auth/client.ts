@@ -65,3 +65,22 @@ export async function getMe(): Promise<AuthUser> {
 
   return payload.data;
 }
+
+export async function logout(): Promise<void> {
+  const response = await fetch(`${API_URL}/api/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: null }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+}
