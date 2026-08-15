@@ -42,7 +42,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   onImageClick,
 }) => {
   const [mapOpen, setMapOpen] = useState(false);
-  const photoUrl = usePhoto(shot.photoId);
+  const localPhotoUrl = usePhoto(shot.photoId);
+  const photoUrl = shot.photoUrl ?? localPhotoUrl;
 
   const recipe = shot.recipe;
   const ratio = getRecipeRatio(recipe);

@@ -1,3 +1,7 @@
+import type { Coffee } from '../../domain/coffee/types';
+import type { Recipe } from '../../domain/recipe/types';
+import type { ShotLocation } from '../../domain/location/types';
+
 type JsonObject = object;
 
 export type ApiShot = {
@@ -8,9 +12,10 @@ export type ApiShot = {
     email: string;
     displayName: string;
   };
-  coffee: JsonObject | null;
-  recipe: JsonObject | null;
-  location: JsonObject | null;
+  coffee: Coffee | null;
+  recipe: Recipe | null;
+  location: ShotLocation | null;
+  photoUrl: string | null;
   tastingNotes: string | null;
   rating: number | null;
   likesCount: number;
@@ -38,6 +43,10 @@ type ApiErrorResponse = {
 };
 
 const API_URL = 'http://localhost:3000';
+
+export function getApiAssetUrl(path: string): string {
+  return `${API_URL}${path}`;
+}
 
 export async function getMyShots(): Promise<ApiShot[]> {
   const response = await fetch(`${API_URL}/api/shots`, {
@@ -116,6 +125,34 @@ export async function updateApiShot(
     },
     credentials: 'include',
     body: JSON.stringify(input),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: ApiShot }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
+}
+
+export async function uploadApiShotImage(
+  shotId: string,
+  file: File,
+): Promise<ApiShot> {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const response = await fetch(`${API_URL}/api/shots/${shotId}/image`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
   });
 
   const payload = (await response.json()) as

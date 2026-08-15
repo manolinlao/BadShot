@@ -23,6 +23,7 @@ model Shot {
   coffee         Json?
   recipe         Json?
   location       Json?
+  photoUrl       String?
   tastingNotes   String?
   rating         Int?
   likesCount     Int      @default(0)

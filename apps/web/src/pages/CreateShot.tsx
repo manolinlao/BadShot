@@ -240,12 +240,34 @@ export function CreateShot() {
         rating,
       });
 
+      let syncedServerShot = serverShot;
+      let imageSynced = true;
+
+      if (selectedFile) {
+        try {
+          syncedServerShot =
+            await serverShotsEffects.uploadServerShotImageFx({
+              serverId: serverShot.id,
+              file: selectedFile,
+            });
+        } catch {
+          imageSynced = false;
+        }
+      }
+
       await updateShot({
         ...shot,
         serverId: serverShot.id,
+        photoUrl: syncedServerShot.photoUrl ?? undefined,
       });
 
-      navigate('/', { state: { flash: 'Shot saved and synced' } });
+      navigate('/', {
+        state: {
+          flash: imageSynced
+            ? 'Shot saved and synced'
+            : 'Shot saved, but image sync failed',
+        },
+      });
     } catch {
       navigate('/', { state: { flash: 'Shot saved locally' } });
     }

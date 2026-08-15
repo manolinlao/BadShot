@@ -6,10 +6,13 @@ import {
   createApiShot,
   deleteApiShot,
   getMyShots,
+  uploadApiShotImage,
   updateApiShot,
   type ApiShot,
   type UpdateApiShotInput,
 } from '../../api/shots/client';
+import { getApiAssetUrl } from '../../api/shots/client';
+import type { Shot } from '../../domain/shot/types';
 
 const loadServerShotsFx = createEffect(getMyShots);
 const createServerShotFx = createEffect(createApiShot);
@@ -21,6 +24,10 @@ const updateServerShotFx = createEffect(
   async (input: { serverId: string; data: UpdateApiShotInput }) =>
     updateApiShot(input.serverId, input.data),
 );
+const uploadServerShotImageFx = createEffect(
+  async (input: { serverId: string; file: File }) =>
+    uploadApiShotImage(input.serverId, input.file),
+);
 
 const $serverShots = createStore<ApiShot[]>([])
   .on(loadServerShotsFx, () => [])
@@ -31,9 +38,34 @@ const $serverShots = createStore<ApiShot[]>([])
   )
   .on(updateServerShotFx.doneData, (shots, updatedShot) =>
     shots.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot)),
+  )
+  .on(uploadServerShotImageFx.doneData, (shots, updatedShot) =>
+    shots.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot)),
   );
 
 const $serverShotsLoading = loadServerShotsFx.pending;
+
+export function mapApiShotToShot(apiShot: ApiShot): Shot {
+  return {
+    id: apiShot.id,
+    serverId: apiShot.id,
+    user: {
+      displayName: apiShot.user.displayName,
+      username: apiShot.user.email.split('@')[0],
+    },
+    coffee: apiShot.coffee ?? {},
+    recipe: apiShot.recipe ?? undefined,
+    location: apiShot.location ?? undefined,
+    tastingNotes: apiShot.tastingNotes ?? undefined,
+    rating: apiShot.rating ?? undefined,
+    likesCount: apiShot.likesCount,
+    commentsCount: apiShot.commentsCount,
+    createdAt: apiShot.createdAt,
+    photoUrl: apiShot.photoUrl
+      ? getApiAssetUrl(apiShot.photoUrl)
+      : undefined,
+  };
+}
 
 export const serverShotsStores = {
   $serverShots,
@@ -45,4 +77,5 @@ export const serverShotsEffects = {
   createServerShotFx,
   deleteServerShotFx,
   updateServerShotFx,
+  uploadServerShotImageFx,
 };

@@ -115,6 +115,37 @@ export async function updateShotForUser(
   });
 }
 
+export async function updateShotPhotoForUser(
+  userId: string,
+  shotId: string,
+  photoUrl: string,
+) {
+  const result = await prisma.shot.updateMany({
+    where: {
+      id: shotId,
+      userId,
+    },
+    data: {
+      photoUrl,
+    },
+  });
+
+  if (result.count === 0) {
+    return null;
+  }
+
+  return prisma.shot.findUnique({
+    where: {
+      id: shotId,
+    },
+    include: {
+      user: {
+        select: publicUserSelect,
+      },
+    },
+  });
+}
+
 export async function deleteShotForUser(
   userId: string,
   shotId: string,

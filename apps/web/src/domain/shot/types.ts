@@ -6,6 +6,7 @@ import type { ShotUser } from '../user/types';
 export interface Shot {
   id: string;
   serverId?: string;
+  photoUrl?: string;
   user: ShotUser;
   coffee: Coffee;
   location?: ShotLocation;
@@ -21,6 +22,7 @@ export interface Shot {
 export interface ShotCreationInput {
   id: string;
   serverId?: string;
+  photoUrl?: string;
   user?: ShotUser;
   coffee: Coffee;
   location?: ShotLocation;

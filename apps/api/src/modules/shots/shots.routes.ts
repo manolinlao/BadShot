@@ -4,10 +4,12 @@ import {
   createShotForUser,
   deleteShotForUser,
   getShotsByUserId,
+  updateShotPhotoForUser,
   updateShotForUser,
   type CreateShotInput,
   type UpdateShotInput,
 } from './shots.service.js';
+import { shotImageUpload } from './upload.js';
 
 const router = Router();
 
@@ -108,6 +110,64 @@ router.patch('/:shotId', requireAuth, async (request, response, next) => {
     next(error);
   }
 });
+
+router.post(
+  '/:shotId/image',
+  requireAuth,
+  shotImageUpload.single('image'),
+  async (request, response, next) => {
+    try {
+      const { shotId } = request.params;
+
+      if (typeof shotId !== 'string') {
+        response.status(400).json({
+          success: false,
+          error: {
+            message: 'Identificador de shot inválido',
+            code: 'INVALID_SHOT_ID',
+          },
+        });
+        return;
+      }
+
+      if (!request.file) {
+        response.status(400).json({
+          success: false,
+          error: {
+            message: 'La imagen es obligatoria',
+            code: 'IMAGE_REQUIRED',
+          },
+        });
+        return;
+      }
+
+      const userId = response.locals.userId as string;
+      const shot = await updateShotPhotoForUser(
+        userId,
+        shotId,
+        `/uploads/${request.file.filename}`,
+      );
+
+      if (!shot) {
+        response.status(404).json({
+          success: false,
+          error: {
+            message: 'Shot no encontrado',
+            code: 'SHOT_NOT_FOUND',
+          },
+        });
+        return;
+      }
+
+      response.json({
+        success: true,
+        data: shot,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.delete('/:shotId', requireAuth, async (request, response, next) => {
   try {

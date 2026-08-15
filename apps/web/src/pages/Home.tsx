@@ -10,6 +10,7 @@ import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
 import { ratingIcon, ratingOptions, type Rating } from '../domain/coffee';
 import { serverShotsEffects } from '../state/serverShots';
+import { mapApiShotToShot } from '../state/serverShots';
 import {
   getShotPreviewTitle,
   matchesShotDateRange,
@@ -232,12 +233,33 @@ function ShotFiltersControls({
 export function Home() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { feed, deleteShot, isCreatedShot, isLoading } = useShots();
+  const {
+    feed: localFeed,
+    deleteShot,
+    isCreatedShot,
+    isLoading,
+  } = useShots();
 
   const { serverShots, serverShotsLoading } = useUnit({
     serverShots: serverShotsStores.$serverShots,
     serverShotsLoading: serverShotsStores.$serverShotsLoading,
   });
+
+  const feed = useMemo(() => {
+    const localServerIds = new Set(
+      localFeed
+        .map((shot) => shot.serverId)
+        .filter((serverId): serverId is string => Boolean(serverId)),
+    );
+    const remoteShots = serverShots
+      .map(mapApiShotToShot)
+      .filter((shot) => !localServerIds.has(shot.id));
+
+    return [...localFeed, ...remoteShots].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }, [localFeed, serverShots]);
 
   const flash = (location.state as HomeLocationState | null)?.flash;
   const [visibleFlash, setVisibleFlash] = useState(flash);

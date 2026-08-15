@@ -115,6 +115,7 @@ export function createShot(input: ShotCreationInput) {
   return {
     id: input.id,
     serverId: input.serverId,
+    photoUrl: input.photoUrl,
     user: input.user ?? { displayName: 'You', username: 'local' },
     coffee: input.coffee,
     location: input.location,
