@@ -214,6 +214,9 @@ export function CreateShot() {
         await serverShotsEffects.updateServerShotFx({
           serverId: editingShot.serverId,
           data: {
+            coffee: shot.coffee,
+            recipe: shot.recipe,
+            location: shot.location,
             tastingNotes: notes,
             rating,
           },
@@ -230,6 +233,9 @@ export function CreateShot() {
 
     try {
       const serverShot = await serverShotsEffects.createServerShotFx({
+        coffee: shot.coffee,
+        recipe: shot.recipe,
+        location: shot.location,
         tastingNotes: notes,
         rating,
       });

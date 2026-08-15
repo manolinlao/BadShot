@@ -1,13 +1,28 @@
+type JsonObject = object;
+
 export type ApiShot = {
   id: string;
   userId: string;
+  user: {
+    id: string;
+    email: string;
+    displayName: string;
+  };
+  coffee: JsonObject | null;
+  recipe: JsonObject | null;
+  location: JsonObject | null;
   tastingNotes: string | null;
   rating: number | null;
+  likesCount: number;
+  commentsCount: number;
   createdAt: string;
   updatedAt: string;
 };
 
 export type CreateApiShotInput = {
+  coffee?: JsonObject;
+  recipe?: JsonObject;
+  location?: JsonObject;
   tastingNotes?: string;
   rating?: number;
 };

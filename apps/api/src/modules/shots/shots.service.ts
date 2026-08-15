@@ -1,9 +1,23 @@
+import { Prisma } from '../../generated/prisma/client.js';
 import { prisma } from '../../db/prisma.js';
 
+type JsonObject = Record<string, unknown>;
+
 export type CreateShotInput = {
+  coffee?: JsonObject;
+  recipe?: JsonObject;
+  location?: JsonObject;
   tastingNotes?: string;
   rating?: number;
+  likesCount?: number;
+  commentsCount?: number;
 };
+
+const publicUserSelect = {
+  id: true,
+  email: true,
+  displayName: true,
+} as const;
 
 export async function getShotsByUserId(userId: string) {
   return prisma.shot.findMany({
@@ -12,6 +26,11 @@ export async function getShotsByUserId(userId: string) {
     },
     orderBy: {
       createdAt: 'desc',
+    },
+    include: {
+      user: {
+        select: publicUserSelect,
+      },
     },
   });
 }
@@ -23,13 +42,32 @@ export async function createShotForUser(
   return prisma.shot.create({
     data: {
       userId,
+      ...(input.coffee
+        ? { coffee: input.coffee as Prisma.InputJsonValue }
+        : {}),
+      ...(input.recipe
+        ? { recipe: input.recipe as Prisma.InputJsonValue }
+        : {}),
+      ...(input.location
+        ? { location: input.location as Prisma.InputJsonValue }
+        : {}),
       tastingNotes: input.tastingNotes?.trim() || null,
       rating: input.rating ?? null,
+      likesCount: input.likesCount ?? 0,
+      commentsCount: input.commentsCount ?? 0,
+    },
+    include: {
+      user: {
+        select: publicUserSelect,
+      },
     },
   });
 }
 
 export type UpdateShotInput = {
+  coffee?: JsonObject;
+  recipe?: JsonObject;
+  location?: JsonObject;
   tastingNotes?: string;
   rating?: number;
 };
@@ -45,8 +83,19 @@ export async function updateShotForUser(
       userId,
     },
     data: {
-      tastingNotes: input.tastingNotes?.trim() || null,
-      rating: input.rating ?? null,
+      ...(input.coffee
+        ? { coffee: input.coffee as Prisma.InputJsonValue }
+        : {}),
+      ...(input.recipe
+        ? { recipe: input.recipe as Prisma.InputJsonValue }
+        : {}),
+      ...(input.location
+        ? { location: input.location as Prisma.InputJsonValue }
+        : {}),
+      ...(input.tastingNotes !== undefined
+        ? { tastingNotes: input.tastingNotes.trim() || null }
+        : {}),
+      ...(input.rating !== undefined ? { rating: input.rating } : {}),
     },
   });
 
@@ -57,6 +106,11 @@ export async function updateShotForUser(
   return prisma.shot.findUnique({
     where: {
       id: shotId,
+    },
+    include: {
+      user: {
+        select: publicUserSelect,
+      },
     },
   });
 }
