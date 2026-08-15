@@ -180,6 +180,7 @@ export function CreateShot() {
 
     const shot = createShot({
       id: shotId,
+      serverId: editingShot?.serverId,
       user: editingShot?.user,
       rating,
       location: buildLocation(),
@@ -202,17 +203,40 @@ export function CreateShot() {
     });
 
     if (editingShot) {
-      updateShot(shot);
-      navigate('/', { state: { flash: 'Shot updated' } });
+      await updateShot(shot);
+
+      if (!editingShot.serverId) {
+        navigate('/', { state: { flash: 'Shot updated locally' } });
+        return;
+      }
+
+      try {
+        await serverShotsEffects.updateServerShotFx({
+          serverId: editingShot.serverId,
+          data: {
+            tastingNotes: notes,
+            rating,
+          },
+        });
+        navigate('/', { state: { flash: 'Shot updated and synced' } });
+      } catch {
+        navigate('/', { state: { flash: 'Shot updated locally' } });
+      }
+
       return;
     }
 
     addShot(shot);
 
     try {
-      await serverShotsEffects.createServerShotFx({
+      const serverShot = await serverShotsEffects.createServerShotFx({
         tastingNotes: notes,
         rating,
+      });
+
+      await updateShot({
+        ...shot,
+        serverId: serverShot.id,
       });
 
       navigate('/', { state: { flash: 'Shot saved and synced' } });

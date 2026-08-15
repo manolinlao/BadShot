@@ -10,6 +10,7 @@ import { createLargeMockShots } from '../data/mockShots';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
 import { ratingIcon, ratingOptions, type Rating } from '../domain/coffee';
+import { serverShotsEffects } from '../state/serverShots';
 import {
   getShotPreviewTitle,
   matchesShotDateRange,
@@ -399,12 +400,20 @@ export function Home() {
     void loadPreview();
   }, [previewShot]);
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!shotToDelete) return;
 
-    deleteShot(shotToDelete);
-    setShotToDelete(null);
-    setVisibleFlash('Shot deleted');
+    try {
+      if (shotToDelete.serverId) {
+        await serverShotsEffects.deleteServerShotFx(shotToDelete.serverId);
+      }
+
+      await deleteShot(shotToDelete);
+      setShotToDelete(null);
+      setVisibleFlash('Shot deleted');
+    } catch {
+      setVisibleFlash('Could not delete shot from the server');
+    }
   };
 
   const handleClearFilters = () => {

@@ -114,6 +114,7 @@ export function matchesShotDateRange(
 export function createShot(input: ShotCreationInput) {
   return {
     id: input.id,
+    serverId: input.serverId,
     user: input.user ?? { displayName: 'You', username: 'local' },
     coffee: input.coffee,
     location: input.location,

@@ -12,6 +12,8 @@ export type CreateApiShotInput = {
   rating?: number;
 };
 
+export type UpdateApiShotInput = CreateApiShotInput;
+
 type ApiErrorResponse = {
   success: false;
   error: {
@@ -47,6 +49,53 @@ export async function createApiShot(
 ): Promise<ApiShot> {
   const response = await fetch(`${API_URL}/api/shots`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(input),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: ApiShot }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
+}
+
+export async function deleteApiShot(shotId: string): Promise<void> {
+  const response = await fetch(`${API_URL}/api/shots/${shotId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: null }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+}
+
+export async function updateApiShot(
+  shotId: string,
+  input: UpdateApiShotInput,
+): Promise<ApiShot> {
+  const response = await fetch(`${API_URL}/api/shots/${shotId}`, {
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },

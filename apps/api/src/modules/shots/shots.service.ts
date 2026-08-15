@@ -28,3 +28,49 @@ export async function createShotForUser(
     },
   });
 }
+
+export type UpdateShotInput = {
+  tastingNotes?: string;
+  rating?: number;
+};
+
+export async function updateShotForUser(
+  userId: string,
+  shotId: string,
+  input: UpdateShotInput,
+) {
+  const result = await prisma.shot.updateMany({
+    where: {
+      id: shotId,
+      userId,
+    },
+    data: {
+      tastingNotes: input.tastingNotes?.trim() || null,
+      rating: input.rating ?? null,
+    },
+  });
+
+  if (result.count === 0) {
+    return null;
+  }
+
+  return prisma.shot.findUnique({
+    where: {
+      id: shotId,
+    },
+  });
+}
+
+export async function deleteShotForUser(
+  userId: string,
+  shotId: string,
+): Promise<boolean> {
+  const result = await prisma.shot.deleteMany({
+    where: {
+      id: shotId,
+      userId,
+    },
+  });
+
+  return result.count > 0;
+}
