@@ -1,5 +1,7 @@
 import { CirclePlus, Home, User, UserRound } from 'lucide-react';
 import { NavLink, Outlet, type NavLinkRenderProps } from 'react-router-dom';
+import { useUnit } from 'effector-react';
+import { authStores } from '../../state/auth';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
@@ -17,6 +19,8 @@ const navLinkClasses = (isActive: boolean) =>
   ].join(' ');
 
 export function AppLayout() {
+  const currentUser = useUnit(authStores.$currentUser);
+
   return (
     <div className="min-h-screen bg-[#f8f4ef] text-[#211a16]">
       <a
@@ -33,6 +37,11 @@ export function AppLayout() {
             </span>
             <span className="flex flex-col">
               <span className="text-lg font-black tracking-tight">BadShot</span>
+              {currentUser && (
+                <span className="text-sm font-semibold text-[#7a4d2a]">
+                  Hola, {currentUser.displayName}
+                </span>
+              )}
               <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#7a4d2a]">
                 Espresso journal
               </span>
@@ -44,7 +53,9 @@ export function AppLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }: NavLinkRenderProps) => navLinkClasses(isActive)}
+                className={({ isActive }: NavLinkRenderProps) =>
+                  navLinkClasses(isActive)
+                }
               >
                 <item.icon className="h-4 w-4" aria-hidden="true" />
                 {item.label}

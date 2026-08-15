@@ -45,3 +45,23 @@ export async function login(input: LoginInput): Promise<AuthUser> {
 
   return payload.data;
 }
+
+export async function getMe(): Promise<AuthUser> {
+  const response = await fetch(`${API_URL}/api/auth/me`, {
+    credentials: 'include',
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: AuthUser }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
+}
