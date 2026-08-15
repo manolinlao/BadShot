@@ -650,8 +650,8 @@ export function Home() {
               id="delete-shot-description"
               className="mt-2 text-sm leading-6 text-[#5f4a3f]"
             >
-              {getShotPreviewTitle(shotToDelete)} will be removed from this
-              browser only.
+              {getShotPreviewTitle(shotToDelete)} will be removed from your
+              account and this device.
             </p>
 
             <div className="mt-5 flex justify-end gap-2">
