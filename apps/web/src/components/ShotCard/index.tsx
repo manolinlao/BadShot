@@ -25,6 +25,7 @@ import {
   getUserName,
 } from '../../domain/user';
 import { usePhoto } from '../../hooks/usePhoto';
+import { getApiAssetUrl } from '../../api/shots/client';
 import { useState } from 'react';
 import { LocationMapSheet } from './LocationMapSheet';
 
@@ -43,7 +44,10 @@ export const ShotCard: React.FC<ShotCardProps> = ({
 }) => {
   const [mapOpen, setMapOpen] = useState(false);
   const localPhotoUrl = usePhoto(shot.photoId);
-  const photoUrl = shot.photoUrl ?? localPhotoUrl;
+  const remotePhotoUrl = shot.photoUrl?.startsWith('/')
+    ? getApiAssetUrl(shot.photoUrl)
+    : shot.photoUrl;
+  const photoUrl = remotePhotoUrl ?? localPhotoUrl;
 
   const recipe = shot.recipe;
   const ratio = getRecipeRatio(recipe);
