@@ -6,6 +6,7 @@ import cors from 'cors';
 import { prisma } from './db/prisma.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { shotsRouter } from './modules/shots/shots.routes.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
@@ -20,6 +21,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRouter);
+app.use('/api/shots', shotsRouter);
 
 app.get('/health', (_request, response) => {
   response.json({

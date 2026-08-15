@@ -14,4 +14,16 @@ model User {
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  shots        Shot[]
+}
+
+model Shot {
+  id           String   @id @default(cuid())
+  userId       String
+  tastingNotes String?
+  rating       Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

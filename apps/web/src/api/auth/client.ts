@@ -11,6 +11,12 @@ type LoginInput = {
   password: string;
 };
 
+type RegisterInput = {
+  email: string;
+  password: string;
+  displayName: string;
+};
+
 type ApiErrorResponse = {
   success: false;
   error: {
@@ -83,4 +89,28 @@ export async function logout(): Promise<void> {
   if (!response.ok) {
     throw new Error('Error inesperado del servidor');
   }
+}
+
+export async function register(input: RegisterInput): Promise<AuthUser> {
+  const response = await fetch(`${API_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: AuthUser }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
 }

@@ -223,19 +223,36 @@ Debería aparecer la tabla `User`.
 
 Muestra sus columnas, tipos y restricciones.
 
-### Ver los usuarios
+### Ver los usuarios de BadShot
+
+Los usuarios de la aplicación están en la tabla `"User"`.
+
+Para ver sus datos públicos:
 
 ```sql
-SELECT "email", "displayName", "passwordHash" FROM "User";
+SELECT id, email, "displayName", "createdAt"
+FROM "User";
 ```
 
-El campo `passwordHash` debe empezar por algo parecido a:
+Para contar cuántos usuarios hay:
+
+```sql
+SELECT COUNT(*) FROM "User";
+```
+
+### Contraseñas
+
+Las contraseñas originales no se pueden ver ni recuperar. Solo se guarda un hash seguro en `passwordHash`.
+
+Un hash puede tener un formato parecido a:
 
 ```text
-$argon2id$
+$argon2id$...
 ```
 
-Eso confirma que no guardamos la contraseña original.
+Esto no es la contraseña: es el resultado de convertirla en un valor irreversible.
+
+Si un usuario olvida su contraseña, la aplicación tendrá que ofrecer un cambio o recuperación de contraseña.
 
 ### Salir de PostgreSQL
 
