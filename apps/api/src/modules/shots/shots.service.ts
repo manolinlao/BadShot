@@ -149,13 +149,32 @@ export async function updateShotPhotoForUser(
 export async function deleteShotForUser(
   userId: string,
   shotId: string,
-): Promise<boolean> {
-  const result = await prisma.shot.deleteMany({
+): Promise<{ deleted: boolean; photoUrl: string | null }> {
+  const shot = await prisma.shot.findFirst({
     where: {
       id: shotId,
       userId,
     },
+    select: {
+      photoUrl: true,
+    },
   });
 
-  return result.count > 0;
+  if (!shot) {
+    return {
+      deleted: false,
+      photoUrl: null,
+    };
+  }
+
+  await prisma.shot.delete({
+    where: {
+      id: shotId,
+    },
+  });
+
+  return {
+    deleted: true,
+    photoUrl: shot.photoUrl,
+  };
 }

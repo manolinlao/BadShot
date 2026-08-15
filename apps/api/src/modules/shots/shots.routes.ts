@@ -1,3 +1,5 @@
+import { unlink } from 'node:fs/promises';
+import path from 'node:path';
 import { Router } from 'express';
 import { requireAuth } from '../auth/auth.middleware.js';
 import {
@@ -9,7 +11,7 @@ import {
   type CreateShotInput,
   type UpdateShotInput,
 } from './shots.service.js';
-import { shotImageUpload } from './upload.js';
+import { shotImageUpload, uploadDir } from './upload.js';
 
 const router = Router();
 
@@ -185,9 +187,9 @@ router.delete('/:shotId', requireAuth, async (request, response, next) => {
       return;
     }
 
-    const deleted = await deleteShotForUser(userId, shotId);
+    const deletion = await deleteShotForUser(userId, shotId);
 
-    if (!deleted) {
+    if (!deletion.deleted) {
       response.status(404).json({
         success: false,
         error: {
@@ -196,6 +198,16 @@ router.delete('/:shotId', requireAuth, async (request, response, next) => {
         },
       });
       return;
+    }
+
+    if (deletion.photoUrl) {
+      const filename = path.basename(deletion.photoUrl);
+
+      try {
+        await unlink(path.join(uploadDir, filename));
+      } catch (error) {
+        console.error('No se pudo eliminar el archivo de imagen', error);
+      }
     }
 
     response.json({
