@@ -6,7 +6,6 @@ import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
 import { usePaginatedItems } from '../hooks/usePaginatedItems';
 import type { Shot } from '../domain/shot/types';
-import { createLargeMockShots } from '../data/mockShots';
 import { formatDate } from '../utils/util';
 import { getPhotoPreviewUrl } from '../domain/photo';
 import { ratingIcon, ratingOptions, type Rating } from '../domain/coffee';
@@ -233,16 +232,7 @@ function ShotFiltersControls({
 export function Home() {
   const location = useLocation();
   const navigate = useNavigate();
-  const largeFeedEnabled =
-    import.meta.env.DEV &&
-    new URLSearchParams(location.search).get('feed') === 'large';
-  const additionalMockShots = useMemo(
-    () => (largeFeedEnabled ? createLargeMockShots(1000) : []),
-    [largeFeedEnabled],
-  );
-  const { feed, deleteShot, isCreatedShot, isLoading } = useShots({
-    additionalMockShots,
-  });
+  const { feed, deleteShot, isCreatedShot, isLoading } = useShots();
 
   const { serverShots, serverShotsLoading } = useUnit({
     serverShots: serverShotsStores.$serverShots,
@@ -478,9 +468,6 @@ export function Home() {
               </p>
               <p className="truncate text-xs font-medium text-[#7a4d2a]">
                 Local espresso journal
-              </p>
-              <p className="truncate text-xs font-medium text-[#ff0000]">
-                For Large Feed -- http://localhost:5173/?feed=large
               </p>
             </div>
           </div>

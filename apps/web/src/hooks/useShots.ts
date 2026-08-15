@@ -1,28 +1,22 @@
 import { useMemo } from 'react';
 import { useUnit } from 'effector-react';
-import { mockShots } from '../data/mockShots';
 import type { Shot } from '../domain/shot/types';
 import { shotsEffects, shotsStores } from '../state/shots';
 
-type UseShotsOptions = {
-  additionalMockShots?: Shot[];
-};
-
-export const useShots = ({ additionalMockShots = [] }: UseShotsOptions = {}) => {
+export const useShots = () => {
   const [createdShots, isLoading] = useUnit([
     shotsStores.$shots,
     shotsStores.$shotsLoading,
   ]);
 
   const feed = useMemo(() => {
-    const allShots = [...createdShots, ...mockShots, ...additionalMockShots];
-    return allShots
+    return createdShots
       .slice()
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
-  }, [additionalMockShots, createdShots]);
+  }, [createdShots]);
 
   const addShot = async (shot: Shot) => {
     await shotsEffects.createShotFx(shot);

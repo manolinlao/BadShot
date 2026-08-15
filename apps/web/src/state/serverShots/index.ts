@@ -23,6 +23,7 @@ const updateServerShotFx = createEffect(
 );
 
 const $serverShots = createStore<ApiShot[]>([])
+  .on(loadServerShotsFx, () => [])
   .on(loadServerShotsFx.doneData, (_, shots) => shots)
   .on(createServerShotFx.doneData, (shots, shot) => [shot, ...shots])
   .on(deleteServerShotFx.doneData, (shots, serverId) =>
