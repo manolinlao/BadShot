@@ -6,6 +6,7 @@ import { LocationPicker } from '../components/CreateShot/LocationPicker';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import { reverseGeocode } from '../api/location/nominatim';
+import { serverShotsEffects } from '../state/serverShots';
 import type { ShotLocation } from '../domain/location/types';
 import type { RoastLevel } from '../domain/coffee';
 import { getPhotoPreviewUrl, revokePhotoUrl } from '../domain/photo';
@@ -207,7 +208,17 @@ export function CreateShot() {
     }
 
     addShot(shot);
-    navigate('/', { state: { flash: 'Shot saved' } });
+
+    try {
+      await serverShotsEffects.createServerShotFx({
+        tastingNotes: notes,
+        rating,
+      });
+
+      navigate('/', { state: { flash: 'Shot saved and synced' } });
+    } catch {
+      navigate('/', { state: { flash: 'Shot saved locally' } });
+    }
   };
 
   return (

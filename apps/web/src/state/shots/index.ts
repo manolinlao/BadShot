@@ -1,3 +1,6 @@
+// serverShots → shots guardados en PostgreSQL
+// shots       → shots locales de Dexie
+
 import { createEffect, createStore } from 'effector';
 import type { Shot } from '../../domain/shot/types';
 import { deleteShot, getAllShots, saveShot } from '../../api/shots/db';

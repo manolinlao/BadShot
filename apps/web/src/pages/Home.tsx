@@ -1,10 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ArrowUp,
-  Search,
-  SlidersHorizontal,
-  X,
-} from 'lucide-react';
+import { useUnit } from 'effector-react';
+import { ArrowUp, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ShotCard } from '../components/ShotCard';
 import { useShots } from '../hooks/useShots';
@@ -22,6 +18,7 @@ import {
   type ShotDateRange,
   type ShotQuickFilter,
 } from '../domain/shot';
+import { serverShotsStores } from '../state/serverShots';
 
 const INITIAL_VISIBLE_SHOTS = 10;
 const LOAD_MORE_STEP = 10;
@@ -245,6 +242,12 @@ export function Home() {
   const { feed, deleteShot, isCreatedShot, isLoading } = useShots({
     additionalMockShots,
   });
+
+  const { serverShots, serverShotsLoading } = useUnit({
+    serverShots: serverShotsStores.$serverShots,
+    serverShotsLoading: serverShotsStores.$serverShotsLoading,
+  });
+
   const flash = (location.state as HomeLocationState | null)?.flash;
   const [visibleFlash, setVisibleFlash] = useState(flash);
   const [shotToDelete, setShotToDelete] = useState<Shot | null>(null);
@@ -473,9 +476,18 @@ export function Home() {
             </div>
           </div>
 
-          <span className="shrink-0 rounded-full border border-[#e2d6ca] bg-[#fbf6ef] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[#7a4d2a]">
-            Feed
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            <span className="rounded-full border border-[#e2d6ca] bg-[#fbf6ef] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-[#7a4d2a]">
+              Feed
+            </span>
+
+            <span className="text-xs font-semibold text-[#7a4d2a]">
+              PostgreSQL:{' '}
+              {serverShotsLoading
+                ? 'cargando...'
+                : `${serverShots.length} shots`}
+            </span>
+          </div>
         </div>
 
         <div className="grid gap-6">
