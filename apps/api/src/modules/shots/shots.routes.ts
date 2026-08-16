@@ -17,6 +17,12 @@ import {
   shotImageUpload,
   uploadDir,
 } from './upload.js';
+import {
+  emitLikeUpdated,
+  emitShotCreated,
+  emitShotDeleted,
+  emitShotUpdated,
+} from '../../realtime/realtime.js';
 
 const router = Router();
 
@@ -65,6 +71,11 @@ router.post('/:shotId/like', requireAuth, async (request, response, next) => {
     }
 
     response.json({ success: true, data: result });
+    emitLikeUpdated(
+      shotId,
+      result.likesCount,
+      response.locals.userId as string,
+    );
   } catch (error) {
     next(error);
   }
@@ -90,6 +101,7 @@ router.post('/', requireAuth, async (request, response, next) => {
 
     const userId = response.locals.userId as string;
     const shot = await createShotForUser(userId, body);
+    emitShotCreated(shot);
 
     response.status(201).json({
       success: true,
@@ -149,6 +161,7 @@ router.patch('/:shotId', requireAuth, async (request, response, next) => {
       success: true,
       data: shot,
     });
+    emitShotUpdated(shot);
   } catch (error) {
     next(error);
   }
@@ -207,6 +220,7 @@ router.post(
         success: true,
         data: shot,
       });
+      emitShotUpdated(shot);
     } catch (error) {
       next(error);
     }
@@ -256,6 +270,7 @@ router.delete('/:shotId', requireAuth, async (request, response, next) => {
       success: true,
       data: null,
     });
+    emitShotDeleted(shotId);
   } catch (error) {
     next(error);
   }

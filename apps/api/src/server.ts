@@ -1,6 +1,7 @@
 // Los archivos fuente son .ts, pero Node ejecutará los archivos compilados .js.
 // Por eso los imports locales del backend terminan en .js.
 import express from 'express';
+import { createServer } from 'node:http';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { prisma } from './db/prisma.js';
@@ -8,6 +9,7 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { shotsRouter } from './modules/shots/shots.routes.js';
 import { uploadDir } from './modules/shots/upload.js';
+import { attachRealtime } from './realtime/realtime.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
@@ -106,6 +108,9 @@ app.post('/demo', (request, response) => {
 
 app.use(errorMiddleware);
 
-app.listen(port, () => {
+const httpServer = createServer(app);
+attachRealtime(httpServer);
+
+httpServer.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);
 });
