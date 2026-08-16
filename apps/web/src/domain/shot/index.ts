@@ -118,6 +118,7 @@ export function createShot(input: ShotCreationInput) {
     photoUrl: input.photoUrl,
     user: input.user ?? { displayName: 'You', username: 'local' },
     coffee: input.coffee,
+    flavors: input.flavors,
     location: input.location,
     recipe: input.recipe,
     tastingNotes: input.tastingNotes,

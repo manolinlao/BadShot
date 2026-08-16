@@ -10,6 +10,7 @@ export interface Shot {
   photoUrl?: string;
   user: ShotUser;
   coffee: Coffee;
+  flavors?: string[];
   location?: ShotLocation;
   recipe?: Recipe;
   tastingNotes?: string;
@@ -26,6 +27,7 @@ export interface ShotCreationInput {
   photoUrl?: string;
   user?: ShotUser;
   coffee: Coffee;
+  flavors?: string[];
   location?: ShotLocation;
   recipe?: Recipe;
   tastingNotes?: string;

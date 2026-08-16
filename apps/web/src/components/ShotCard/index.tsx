@@ -16,6 +16,7 @@ import {
   RoastLevelLabel,
 } from '../../domain/coffee';
 import { getCoffeeTitle, hasCoffeeMeta } from '../../domain/shot';
+import { FlavorWheel } from '../CreateShot/FlavorWheel';
 import { getRecipeRatio, hasRecipeStats } from '../../domain/recipe';
 import { RecipeStat } from './RecipeStat';
 import {
@@ -193,6 +194,23 @@ export const ShotCard: React.FC<ShotCardProps> = ({
             </button>
           )}
         </section>
+
+        {shot.flavors && shot.flavors.length > 0 && (
+          <section className="rounded-[24px] border border-[#eadfd6] bg-[#fbf6ef] p-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8a6f5d]">
+              <span className="rounded-full bg-[#f3ebe3] px-2 py-1 text-[#7a4d2a]">
+                Flavors
+              </span>
+            </div>
+            <div className="mt-4 flex justify-center">
+              <FlavorWheel
+                flavors={shot.flavors ?? []}
+                setFlavors={() => undefined}
+                readOnly
+              />
+            </div>
+          </section>
+        )}
 
         {mapOpen && shot.location && (
           <LocationMapSheet

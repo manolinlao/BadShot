@@ -13,6 +13,7 @@ export type ApiShot = {
     displayName: string;
   };
   coffee: Coffee | null;
+  flavors: string[] | null;
   recipe: Recipe | null;
   location: ShotLocation | null;
   photoUrl: string | null;
@@ -26,6 +27,7 @@ export type ApiShot = {
 
 export type CreateApiShotInput = {
   coffee?: JsonObject;
+  flavors?: string[];
   recipe?: JsonObject;
   location?: JsonObject;
   tastingNotes?: string;

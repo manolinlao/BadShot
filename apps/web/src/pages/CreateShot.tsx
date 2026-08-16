@@ -64,6 +64,7 @@ export function CreateShot() {
   const [doseOut, setDoseOut] = useState<number | ''>('');
   const [time, setTime] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
+  const [flavors, setFlavors] = useState<string[]>([]);
   const canSave = Boolean(imageUrl || editingShot?.photoId?.length);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ export function CreateShot() {
       setDoseOut(editingShot.recipe?.doseOut ?? '');
       setTime(editingShot.recipe?.time ?? '');
       setNotes(editingShot.tastingNotes ?? '');
+      setFlavors(editingShot.flavors ?? []);
 
       setEditLoaded(true);
     };
@@ -253,6 +255,7 @@ export function CreateShot() {
         roaster,
         roastLevel: roastLevel || undefined,
       },
+      flavors,
       recipe: {
         doseIn: doseIn ? Number(doseIn) : undefined,
         doseOut: doseOut ? Number(doseOut) : undefined,
@@ -277,6 +280,7 @@ export function CreateShot() {
           serverId: editingShot.serverId,
           data: {
             coffee: shot.coffee,
+            flavors: shot.flavors,
             recipe: shot.recipe,
             location: shot.location,
             tastingNotes: notes,
@@ -296,6 +300,7 @@ export function CreateShot() {
     try {
       const serverShot = await serverShotsEffects.createServerShotFx({
         coffee: shot.coffee,
+        flavors: shot.flavors,
         recipe: shot.recipe,
         location: shot.location,
         tastingNotes: notes,
@@ -454,6 +459,8 @@ export function CreateShot() {
           setTime={setTime}
           notes={notes}
           setNotes={setNotes}
+          flavors={flavors}
+          setFlavors={setFlavors}
         />
       </section>
 

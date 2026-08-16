@@ -67,6 +67,7 @@ export function mapApiShotToShot(apiShot: ApiShot): Shot {
       username: apiShot.user.email.split('@')[0],
     },
     coffee: apiShot.coffee ?? {},
+    flavors: apiShot.flavors ?? undefined,
     recipe: apiShot.recipe ?? undefined,
     location: apiShot.location ?? undefined,
     tastingNotes: apiShot.tastingNotes ?? undefined,

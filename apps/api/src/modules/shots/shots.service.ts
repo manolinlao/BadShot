@@ -5,6 +5,7 @@ type JsonObject = Record<string, unknown>;
 
 export type CreateShotInput = {
   coffee?: JsonObject;
+  flavors?: string[];
   recipe?: JsonObject;
   location?: JsonObject;
   tastingNotes?: string;
@@ -99,6 +100,9 @@ export async function createShotForUser(
       ...(input.coffee
         ? { coffee: input.coffee as Prisma.InputJsonValue }
         : {}),
+      ...(input.flavors
+        ? { flavors: input.flavors as Prisma.InputJsonValue }
+        : {}),
       ...(input.recipe
         ? { recipe: input.recipe as Prisma.InputJsonValue }
         : {}),
@@ -119,6 +123,7 @@ export async function createShotForUser(
 
 export type UpdateShotInput = {
   coffee?: JsonObject;
+  flavors?: string[];
   recipe?: JsonObject;
   location?: JsonObject;
   tastingNotes?: string;
@@ -138,6 +143,9 @@ export async function updateShotForUser(
     data: {
       ...(input.coffee
         ? { coffee: input.coffee as Prisma.InputJsonValue }
+        : {}),
+      ...(input.flavors
+        ? { flavors: input.flavors as Prisma.InputJsonValue }
         : {}),
       ...(input.recipe
         ? { recipe: input.recipe as Prisma.InputJsonValue }

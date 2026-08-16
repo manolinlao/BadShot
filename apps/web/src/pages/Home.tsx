@@ -264,6 +264,9 @@ export function Home() {
       return {
         ...localShot,
         ...remoteShot,
+        // Home identifica las copias locales por su id propio.
+        id: localShot.id,
+        serverId: localShot.serverId ?? remoteShot.serverId,
         // La imagen local puede seguir viviendo en Dexie aunque el resto
         // del shot se haya actualizado en PostgreSQL.
         photoId: localShot.photoId,

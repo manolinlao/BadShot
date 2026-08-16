@@ -4,6 +4,7 @@ import type { PanInfo } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { RoastLevelLabel, type RoastLevel } from '../../domain/coffee';
 import { RecipeEditor } from './RecipeEditor';
+import { FlavorWheel } from './FlavorWheel';
 
 type NumberInputValue = number | '';
 type RoastLevelInputValue = RoastLevel | '';
@@ -36,6 +37,8 @@ interface DetailsSheetProps {
   setTime: (value: NumberInputValue) => void;
   notes: string;
   setNotes: (value: string) => void;
+  flavors: string[];
+  setFlavors: (value: string[]) => void;
 }
 
 export function DetailsSheet({
@@ -59,6 +62,8 @@ export function DetailsSheet({
   setTime,
   notes,
   setNotes,
+  flavors,
+  setFlavors,
 }: DetailsSheetProps) {
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -237,6 +242,19 @@ export function DetailsSheet({
                   setDoseOut={setDoseOut}
                   setTime={setTime}
                 />
+
+                <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/80 p-4">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.24em] text-[#7a4d2a]">
+                      Flavor wheel
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
+                      Select all the flavors you can identify in the cup.
+                    </p>
+                  </div>
+
+                  <FlavorWheel flavors={flavors} setFlavors={setFlavors} />
+                </section>
 
                 <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/80 p-4">
                   <div>
