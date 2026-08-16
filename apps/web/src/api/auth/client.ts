@@ -17,6 +17,15 @@ type RegisterInput = {
   displayName: string;
 };
 
+type UpdateProfileInput = {
+  displayName: string;
+};
+
+type ChangePasswordInput = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 type ApiErrorResponse = {
   success: false;
   error: {
@@ -70,6 +79,58 @@ export async function getMe(): Promise<AuthUser> {
   }
 
   return payload.data;
+}
+
+export async function updateProfile(
+  input: UpdateProfileInput,
+): Promise<AuthUser> {
+  const response = await fetch(`${API_URL}/api/auth/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(input),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: AuthUser }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
+}
+
+export async function changePassword(
+  input: ChangePasswordInput,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/api/auth/me/password`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(input),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: { message: string } }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
 }
 
 export async function logout(): Promise<void> {

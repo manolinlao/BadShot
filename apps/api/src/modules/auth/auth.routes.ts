@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { getUserById, loginUser, registerUser } from './auth.service.js';
+import {
+  getUserById,
+  changeUserPassword,
+  loginUser,
+  registerUser,
+  updateUserDisplayName,
+} from './auth.service.js';
 import { requireAuth } from './auth.middleware.js';
 import { env } from 'node:process';
 
@@ -113,6 +119,83 @@ authRouter.get('/me', requireAuth, async (_request, response, next) => {
     response.json({
       success: true,
       data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.patch('/me', requireAuth, async (request, response, next) => {
+  try {
+    const body = request.body as { displayName?: unknown };
+
+    if (
+      typeof body.displayName !== 'string' ||
+      body.displayName.trim().length === 0 ||
+      body.displayName.trim().length > 60
+    ) {
+      response.status(400).json({
+        success: false,
+        error: {
+          message: 'El nombre debe tener entre 1 y 60 caracteres',
+        },
+      });
+      return;
+    }
+
+    const user = await updateUserDisplayName(
+      response.locals.userId as string,
+      body.displayName,
+    );
+
+    response.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.patch('/me/password', requireAuth, async (request, response, next) => {
+  try {
+    const body = request.body as {
+      currentPassword?: unknown;
+      newPassword?: unknown;
+    };
+
+    if (
+      typeof body.currentPassword !== 'string' ||
+      typeof body.newPassword !== 'string' ||
+      body.currentPassword.length === 0 ||
+      body.newPassword.length < 8
+    ) {
+      response.status(400).json({
+        success: false,
+        error: {
+          message: 'La nueva contraseña debe tener al menos 8 caracteres',
+        },
+      });
+      return;
+    }
+
+    const changed = await changeUserPassword(
+      response.locals.userId as string,
+      body.currentPassword,
+      body.newPassword,
+    );
+
+    if (!changed) {
+      response.status(401).json({
+        success: false,
+        error: { message: 'La contraseña actual no es correcta' },
+      });
+      return;
+    }
+
+    response.json({
+      success: true,
+      data: { message: 'Contraseña actualizada' },
     });
   } catch (error) {
     next(error);

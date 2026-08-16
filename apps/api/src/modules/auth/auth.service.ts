@@ -95,3 +95,39 @@ export async function getUserById(userId: string) {
     },
   });
 }
+
+export async function updateUserDisplayName(userId: string, displayName: string) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { displayName: displayName.trim() },
+    select: {
+      id: true,
+      email: true,
+      displayName: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function changeUserPassword(
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { passwordHash: true },
+  });
+
+  if (!user || !(await verifyPassword(currentPassword, user.passwordHash))) {
+    return false;
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash: await hashPassword(newPassword) },
+  });
+
+  return true;
+}
