@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import heic2any from 'heic2any';
 import { ArrowLeft, Camera, Sparkles } from 'lucide-react';
 import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { LocationPicker } from '../components/CreateShot/LocationPicker';
@@ -30,6 +31,7 @@ export function CreateShot() {
 
   const [imageUrl, setImageUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState('');
   const [rating, setRating] = useState(3);
   const [locationName, setLocationName] = useState('');
   const [locationCity, setLocationCity] = useState('');
@@ -93,9 +95,46 @@ export function CreateShot() {
     };
   }, [imageUrl]);
 
-  const handlePhotoSelected = (file: File) => {
-    setSelectedFile(file);
-    setImageUrl(URL.createObjectURL(file));
+  const handlePhotoSelected = async (file: File) => {
+    setImageError('');
+
+    try {
+      let normalizedFile = file;
+
+      const isHeic =
+        file.type === 'image/heic' ||
+        file.type === 'image/heif' ||
+        /\.(heic|heif)$/i.test(file.name);
+
+      if (isHeic) {
+        const converted = await heic2any({
+          blob: file,
+          toType: 'image/jpeg',
+          quality: 0.85,
+        });
+        const convertedBlob = Array.isArray(converted)
+          ? converted[0]
+          : converted;
+
+        normalizedFile = new File(
+          [convertedBlob],
+          file.name.replace(/\.(heic|heif)$/i, '.jpg'),
+          { type: 'image/jpeg' },
+        );
+      }
+
+      setSelectedFile(normalizedFile);
+      setImageUrl(URL.createObjectURL(normalizedFile));
+    } catch (error) {
+      console.error('HEIC conversion failed', error);
+
+      const details =
+        typeof error === 'object' && error !== null && 'message' in error
+          ? String(error.message)
+          : String(error);
+
+      setImageError(`No se pudo convertir la imagen HEIC: ${details}`);
+    }
   };
 
   const buildLocation = () => {
@@ -325,6 +364,12 @@ export function CreateShot() {
           imageUrl={imageUrl}
           onImageSelected={handlePhotoSelected}
         />
+
+        {imageError && (
+          <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {imageError}
+          </p>
+        )}
       </section>
 
       <LocationPicker

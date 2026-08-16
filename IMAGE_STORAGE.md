@@ -57,7 +57,10 @@ JPG
 PNG
 WEBP
 GIF
+HEIC / HEIF
 ```
+
+Los archivos HEIC/HEIF se convierten a JPEG en el frontend antes de enviarse. Así el backend recibe un formato web compatible.
 
 Límite actual:
 

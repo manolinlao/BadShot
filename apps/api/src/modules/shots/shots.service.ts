@@ -35,6 +35,19 @@ export async function getShotsByUserId(userId: string) {
   });
 }
 
+export async function getAllShots() {
+  return prisma.shot.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      user: {
+        select: publicUserSelect,
+      },
+    },
+  });
+}
+
 export async function createShotForUser(
   userId: string,
   input: CreateShotInput,

@@ -5,20 +5,23 @@ import { requireAuth } from '../auth/auth.middleware.js';
 import {
   createShotForUser,
   deleteShotForUser,
-  getShotsByUserId,
+  getAllShots,
   updateShotPhotoForUser,
   updateShotForUser,
   type CreateShotInput,
   type UpdateShotInput,
 } from './shots.service.js';
-import { shotImageUpload, uploadDir } from './upload.js';
+import {
+  normalizeUploadedImage,
+  shotImageUpload,
+  uploadDir,
+} from './upload.js';
 
 const router = Router();
 
 router.get('/', requireAuth, async (_request, response, next) => {
   try {
-    const userId = response.locals.userId as string;
-    const shots = await getShotsByUserId(userId);
+    const shots = await getAllShots();
 
     response.json({
       success: true,
@@ -143,11 +146,12 @@ router.post(
         return;
       }
 
+      const filename = await normalizeUploadedImage(request.file);
       const userId = response.locals.userId as string;
       const shot = await updateShotPhotoForUser(
         userId,
         shotId,
-        `/uploads/${request.file.filename}`,
+        `/uploads/${filename}`,
       );
 
       if (!shot) {

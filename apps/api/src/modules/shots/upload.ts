@@ -1,7 +1,9 @@
 import fs from 'node:fs';
+import { unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import multer from 'multer';
+import sharp from 'sharp';
 
 export const uploadDir = path.resolve(process.env.UPLOAD_DIR ?? 'uploads');
 
@@ -12,6 +14,8 @@ const extensionsByMimeType: Record<string, string> = {
   'image/png': '.png',
   'image/webp': '.webp',
   'image/gif': '.gif',
+  'image/heic': '.heic',
+  'image/heif': '.heif',
 };
 
 const storage = multer.diskStorage({
@@ -38,3 +42,26 @@ export const shotImageUpload = multer({
     callback(null, true);
   },
 });
+
+export async function normalizeUploadedImage(
+  file: Express.Multer.File,
+): Promise<string> {
+  const isHeic = file.mimetype === 'image/heic' || file.mimetype === 'image/heif';
+
+  if (!isHeic) {
+    return file.filename;
+  }
+
+  const outputFilename = `${randomUUID()}.jpg`;
+  const outputPath = path.join(uploadDir, outputFilename);
+
+  try {
+    await sharp(file.path).jpeg({ quality: 85 }).toFile(outputPath);
+    await unlink(file.path);
+    return outputFilename;
+  } catch (error) {
+    await unlink(file.path).catch(() => undefined);
+    await unlink(outputPath).catch(() => undefined);
+    throw error;
+  }
+}
