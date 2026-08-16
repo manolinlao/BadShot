@@ -1,4 +1,4 @@
-import { CirclePlus, Home, User, UserRound } from 'lucide-react';
+import { CirclePlus, Home, MessageCircle, User, UserRound } from 'lucide-react';
 import {
   NavLink,
   Outlet,
@@ -8,12 +8,14 @@ import {
 import { useUnit } from 'effector-react';
 import { authStores, authEvents } from '../../state/auth';
 import { logout } from '../../api/auth/client';
+import { messagesStores } from '../../state/messages';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/create', label: 'Create', icon: CirclePlus },
   { to: '/profile', label: 'Profile', icon: User },
   { to: '/login', label: 'Account', icon: UserRound },
+  { to: '/messages', label: 'Messages', icon: MessageCircle },
 ];
 
 const navLinkClasses = (isActive: boolean) =>
@@ -31,6 +33,11 @@ export function AppLayout() {
     currentUser: authStores.$currentUser,
     userLoggedOut: authEvents.userLoggedOut,
   });
+  const conversations = useUnit(messagesStores.$conversations);
+  const unreadMessagesCount = conversations.reduce(
+    (total, conversation) => total + (conversation.unreadCount ?? 0),
+    0,
+  );
 
   async function handleLogout() {
     await logout();
@@ -86,6 +93,11 @@ export function AppLayout() {
               >
                 <item.icon className="h-4 w-4" aria-hidden="true" />
                 {item.label}
+                {item.to === '/messages' && unreadMessagesCount > 0 && (
+                  <span className="rounded-full bg-[#c25b47] px-1.5 py-0.5 text-[10px] font-black text-white">
+                    {unreadMessagesCount}
+                  </span>
+                )}
               </NavLink>
             ))}
           </div>
@@ -120,6 +132,11 @@ export function AppLayout() {
             >
               <item.icon className="mb-1 h-5 w-5" aria-hidden="true" />
               {item.label}
+              {item.to === '/messages' && unreadMessagesCount > 0 && (
+                <span className="absolute right-3 top-1 rounded-full bg-[#c25b47] px-1.5 py-0.5 text-[10px] font-black text-white">
+                  {unreadMessagesCount}
+                </span>
+              )}
             </NavLink>
           ))}
         </div>

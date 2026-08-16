@@ -7,6 +7,7 @@ import { Login } from './pages/Login';
 import { NotFound } from './pages/NotFound';
 import { Profile } from './pages/Profile';
 import { Register } from './pages/Register';
+import { Messages } from './pages/Messages';
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
           {
             path: 'profile',
             element: <Profile />,
+          },
+          {
+            path: 'messages',
+            element: <Messages />,
           },
         ],
       },

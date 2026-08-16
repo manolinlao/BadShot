@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 import type { ApiShot } from '../api/shots/client';
+import type { ApiMessage } from '../api/messages/client';
 
 const API_URL = 'http://localhost:3000';
 
@@ -14,6 +15,8 @@ type RealtimeHandlers = {
   onShotUpdated: (shot: ApiShot) => void;
   onShotDeleted: (shotId: string) => void;
   onLikeUpdated: (like: RealtimeLike) => void;
+  onMessageCreated: (message: ApiMessage) => void;
+  onConversationHidden: (conversationId: string) => void;
 };
 
 export function connectRealtime(handlers: RealtimeHandlers) {
@@ -27,6 +30,12 @@ export function connectRealtime(handlers: RealtimeHandlers) {
     handlers.onShotDeleted(shotId),
   );
   socket.on('like.updated', handlers.onLikeUpdated);
+  socket.on('message.created', handlers.onMessageCreated);
+  socket.on(
+    'conversation.hidden',
+    ({ conversationId }: { conversationId: string }) =>
+      handlers.onConversationHidden(conversationId),
+  );
 
   socket.on('connect_error', (error) => {
     console.warn('Realtime connection failed:', error.message);

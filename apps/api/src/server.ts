@@ -8,6 +8,7 @@ import { prisma } from './db/prisma.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { shotsRouter } from './modules/shots/shots.routes.js';
+import { messagesRouter } from './modules/messages/messages.routes.js';
 import { uploadDir } from './modules/shots/upload.js';
 import { attachRealtime } from './realtime/realtime.js';
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(uploadDir));
 app.use('/api/auth', authRouter);
 app.use('/api/shots', shotsRouter);
+app.use('/api/messages', messagesRouter);
 
 app.get('/health', (_request, response) => {
   response.json({

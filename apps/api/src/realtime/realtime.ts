@@ -43,6 +43,7 @@ export function attachRealtime(httpServer: HttpServer) {
   });
 
   realtimeServer.on('connection', (socket) => {
+    socket.join(`user:${socket.data.userId}`);
     console.log(`Realtime client connected: ${socket.data.userId}`);
   });
 }
@@ -65,4 +66,22 @@ export function emitLikeUpdated(
   userId: string,
 ) {
   realtimeServer?.emit('like.updated', { shotId, likesCount, userId });
+}
+
+export function emitMessageCreated(
+  message: Record<string, unknown>,
+  participantIds: string[],
+) {
+  for (const userId of participantIds) {
+    realtimeServer?.to(`user:${userId}`).emit('message.created', message);
+  }
+}
+
+export function emitConversationHidden(
+  conversationId: string,
+  userId: string,
+) {
+  realtimeServer?.to(`user:${userId}`).emit('conversation.hidden', {
+    conversationId,
+  });
 }
