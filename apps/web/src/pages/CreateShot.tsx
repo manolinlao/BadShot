@@ -8,7 +8,11 @@ import { LocationPicker } from '../components/CreateShot/LocationPicker';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import { reverseGeocode } from '../api/location/nominatim';
-import { serverShotsEffects } from '../state/serverShots';
+import {
+  mapApiShotToShot,
+  serverShotsEffects,
+  serverShotsStores,
+} from '../state/serverShots';
 import { authStores } from '../state/auth';
 import type { ShotLocation } from '../domain/location/types';
 import type { RoastLevel } from '../domain/coffee';
@@ -22,10 +26,17 @@ export function CreateShot() {
   const navigate = useNavigate();
   const { shotId } = useParams();
   const currentUser = useUnit(authStores.$currentUser);
+  const serverShots = useUnit(serverShotsStores.$serverShots);
   const { addShot, createdShots, updateShot } = useShots();
   const editingShot = useMemo(
-    () => createdShots.find((shot) => shot.id === shotId),
-    [createdShots, shotId],
+    () => {
+      const localShot = createdShots.find((shot) => shot.id === shotId);
+      if (localShot) return localShot;
+
+      const serverShot = serverShots.find((shot) => shot.id === shotId);
+      return serverShot ? mapApiShotToShot(serverShot) : undefined;
+    },
+    [createdShots, serverShots, shotId],
   );
   const editing = Boolean(shotId);
 
@@ -65,6 +76,8 @@ export function CreateShot() {
         if (previewUrl) {
           setImageUrl(previewUrl);
         }
+      } else if (editingShot.photoUrl) {
+        setImageUrl(editingShot.photoUrl);
       }
 
       setRating(editingShot.rating ?? 3);
@@ -223,6 +236,7 @@ export function CreateShot() {
     const shot = createShot({
       id: shotId,
       serverId: editingShot?.serverId,
+      photoUrl: editingShot?.photoUrl,
       user:
         editingShot?.user ??
         (currentUser

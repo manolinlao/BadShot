@@ -1,23 +1,29 @@
 import { useState } from 'react';
 import { useUnit } from 'effector-react';
+import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { authEffects, authStores } from '../state/auth';
 import {
   mapApiShotToShot,
+  serverShotsEffects,
   serverShotsStores,
 } from '../state/serverShots';
 import { getCoffeeTitle } from '../domain/shot';
 import { getRecipeRatio } from '../domain/recipe';
 import { formatLocation } from '../domain/location';
 import { formatDate } from '../utils/util';
+import { useShots } from '../hooks/useShots';
 
 export function Profile() {
+  const navigate = useNavigate();
+  const { createdShots, deleteShot } = useShots();
   const [displayName, setDisplayName] = useState('');
   const [profileMessage, setProfileMessage] = useState<string>();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState<string>();
+  const [shotMessage, setShotMessage] = useState<string>();
   const [previewShot, setPreviewShot] = useState<ReturnType<typeof mapApiShotToShot> | null>(null);
   const {
     currentUser,
@@ -76,6 +82,36 @@ export function Profile() {
     } catch (error) {
       setPasswordMessage(
         error instanceof Error ? error.message : 'Could not update password.',
+      );
+    }
+  };
+
+  const handleDeleteShot = async () => {
+    if (!previewShot) return;
+
+    const confirmed = window.confirm(
+      `${getCoffeeTitle(previewShot.coffee)} will be permanently deleted. Continue?`,
+    );
+    if (!confirmed) return;
+
+    try {
+      if (previewShot.serverId) {
+        await serverShotsEffects.deleteServerShotFx(previewShot.serverId);
+      }
+
+      const localShot = createdShots.find(
+        (shot) =>
+          shot.serverId === previewShot.id || shot.id === previewShot.id,
+      );
+      if (localShot) {
+        await deleteShot(localShot);
+      }
+
+      setPreviewShot(null);
+      setShotMessage('Shot deleted.');
+    } catch (error) {
+      setShotMessage(
+        error instanceof Error ? error.message : 'Could not delete shot.',
       );
     }
   };
@@ -350,9 +386,38 @@ export function Profile() {
                   </div>
                 )}
               </div>
+
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => void handleDeleteShot()}
+                  className="rounded-full border border-red-200 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-50"
+                >
+                  Delete shot
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const localShot = createdShots.find(
+                      (shot) =>
+                        shot.serverId === previewShot.id ||
+                        shot.id === previewShot.id,
+                    );
+                    setPreviewShot(null);
+                    navigate(`/edit/${localShot?.id ?? previewShot.id}`);
+                  }}
+                  className="rounded-full bg-[#211a16] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#4a382f]"
+                >
+                  Edit shot
+                </button>
+              </div>
             </div>
           </div>
         </div>
+      )}
+
+      {shotMessage && (
+        <p className="mt-4 text-sm text-[#5f4a3f]">{shotMessage}</p>
       )}
     </section>
   );
