@@ -9,6 +9,11 @@ export type CreateShotInput = {
   recipe?: JsonObject;
   location?: JsonObject;
   tastingNotes?: string;
+  aromaScore?: number;
+  acidityScore?: number;
+  bodyScore?: number;
+  sweetnessScore?: number;
+  finishScore?: number;
   rating?: number;
   likesCount?: number;
 };
@@ -110,6 +115,11 @@ export async function createShotForUser(
         ? { location: input.location as Prisma.InputJsonValue }
         : {}),
       tastingNotes: input.tastingNotes?.trim() || null,
+      aromaScore: input.aromaScore ?? null,
+      acidityScore: input.acidityScore ?? null,
+      bodyScore: input.bodyScore ?? null,
+      sweetnessScore: input.sweetnessScore ?? null,
+      finishScore: input.finishScore ?? null,
       rating: input.rating ?? null,
       likesCount: input.likesCount ?? 0,
     },
@@ -127,6 +137,11 @@ export type UpdateShotInput = {
   recipe?: JsonObject;
   location?: JsonObject;
   tastingNotes?: string;
+  aromaScore?: number;
+  acidityScore?: number;
+  bodyScore?: number;
+  sweetnessScore?: number;
+  finishScore?: number;
   rating?: number;
 };
 
@@ -155,6 +170,17 @@ export async function updateShotForUser(
         : {}),
       ...(input.tastingNotes !== undefined
         ? { tastingNotes: input.tastingNotes.trim() || null }
+        : {}),
+      ...(input.aromaScore !== undefined ? { aromaScore: input.aromaScore } : {}),
+      ...(input.acidityScore !== undefined
+        ? { acidityScore: input.acidityScore }
+        : {}),
+      ...(input.bodyScore !== undefined ? { bodyScore: input.bodyScore } : {}),
+      ...(input.sweetnessScore !== undefined
+        ? { sweetnessScore: input.sweetnessScore }
+        : {}),
+      ...(input.finishScore !== undefined
+        ? { finishScore: input.finishScore }
         : {}),
       ...(input.rating !== undefined ? { rating: input.rating } : {}),
     },

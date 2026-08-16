@@ -65,6 +65,11 @@ export function CreateShot() {
   const [time, setTime] = useState<number | ''>('');
   const [notes, setNotes] = useState('');
   const [flavors, setFlavors] = useState<string[]>([]);
+  const [aromaScore, setAromaScore] = useState<number | ''>('');
+  const [acidityScore, setAcidityScore] = useState<number | ''>('');
+  const [bodyScore, setBodyScore] = useState<number | ''>('');
+  const [sweetnessScore, setSweetnessScore] = useState<number | ''>('');
+  const [finishScore, setFinishScore] = useState<number | ''>('');
   const canSave = Boolean(imageUrl || editingShot?.photoId?.length);
 
   useEffect(() => {
@@ -98,6 +103,11 @@ export function CreateShot() {
       setTime(editingShot.recipe?.time ?? '');
       setNotes(editingShot.tastingNotes ?? '');
       setFlavors(editingShot.flavors ?? []);
+      setAromaScore(editingShot.aromaScore ?? '');
+      setAcidityScore(editingShot.acidityScore ?? '');
+      setBodyScore(editingShot.bodyScore ?? '');
+      setSweetnessScore(editingShot.sweetnessScore ?? '');
+      setFinishScore(editingShot.finishScore ?? '');
 
       setEditLoaded(true);
     };
@@ -256,6 +266,12 @@ export function CreateShot() {
         roastLevel: roastLevel || undefined,
       },
       flavors,
+      aromaScore: aromaScore === '' ? undefined : Number(aromaScore),
+      acidityScore: acidityScore === '' ? undefined : Number(acidityScore),
+      bodyScore: bodyScore === '' ? undefined : Number(bodyScore),
+      sweetnessScore:
+        sweetnessScore === '' ? undefined : Number(sweetnessScore),
+      finishScore: finishScore === '' ? undefined : Number(finishScore),
       recipe: {
         doseIn: doseIn ? Number(doseIn) : undefined,
         doseOut: doseOut ? Number(doseOut) : undefined,
@@ -281,6 +297,11 @@ export function CreateShot() {
           data: {
             coffee: shot.coffee,
             flavors: shot.flavors,
+            aromaScore: shot.aromaScore,
+            acidityScore: shot.acidityScore,
+            bodyScore: shot.bodyScore,
+            sweetnessScore: shot.sweetnessScore,
+            finishScore: shot.finishScore,
             recipe: shot.recipe,
             location: shot.location,
             tastingNotes: notes,
@@ -301,6 +322,11 @@ export function CreateShot() {
       const serverShot = await serverShotsEffects.createServerShotFx({
         coffee: shot.coffee,
         flavors: shot.flavors,
+        aromaScore: shot.aromaScore,
+        acidityScore: shot.acidityScore,
+        bodyScore: shot.bodyScore,
+        sweetnessScore: shot.sweetnessScore,
+        finishScore: shot.finishScore,
         recipe: shot.recipe,
         location: shot.location,
         tastingNotes: notes,
@@ -461,6 +487,16 @@ export function CreateShot() {
           setNotes={setNotes}
           flavors={flavors}
           setFlavors={setFlavors}
+          aromaScore={aromaScore}
+          setAromaScore={setAromaScore}
+          acidityScore={acidityScore}
+          setAcidityScore={setAcidityScore}
+          bodyScore={bodyScore}
+          setBodyScore={setBodyScore}
+          sweetnessScore={sweetnessScore}
+          setSweetnessScore={setSweetnessScore}
+          finishScore={finishScore}
+          setFinishScore={setFinishScore}
         />
       </section>
 

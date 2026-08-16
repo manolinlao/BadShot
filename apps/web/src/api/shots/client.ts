@@ -18,6 +18,11 @@ export type ApiShot = {
   location: ShotLocation | null;
   photoUrl: string | null;
   tastingNotes: string | null;
+  aromaScore: number | null;
+  acidityScore: number | null;
+  bodyScore: number | null;
+  sweetnessScore: number | null;
+  finishScore: number | null;
   rating: number | null;
   likesCount: number;
   likedByMe: boolean;
@@ -31,6 +36,11 @@ export type CreateApiShotInput = {
   recipe?: JsonObject;
   location?: JsonObject;
   tastingNotes?: string;
+  aromaScore?: number;
+  acidityScore?: number;
+  bodyScore?: number;
+  sweetnessScore?: number;
+  finishScore?: number;
   rating?: number;
 };
 

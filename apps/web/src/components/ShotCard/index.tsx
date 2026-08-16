@@ -68,6 +68,13 @@ export const ShotCard: React.FC<ShotCardProps> = ({
 
   const coffeeTitle = getCoffeeTitle(shot.coffee);
   const hasCoffeeInformation = hasCoffeeMeta(shot.coffee);
+  const tastingScores = [
+    ['Aroma', shot.aromaScore],
+    ['Acidity', shot.acidityScore],
+    ['Body', shot.bodyScore],
+    ['Sweetness', shot.sweetnessScore],
+    ['Finish', shot.finishScore],
+  ].filter((item): item is [string, number] => item[1] !== undefined);
 
   const hasFooter = Boolean(
     rating || likes > 0 || onEdit || onDelete || onLike,
@@ -208,6 +215,31 @@ export const ShotCard: React.FC<ShotCardProps> = ({
                 setFlavors={() => undefined}
                 readOnly
               />
+            </div>
+          </section>
+        )}
+
+        {tastingScores.length > 0 && (
+          <section className="rounded-[24px] border border-[#eadfd6] bg-white/70 p-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8a6f5d]">
+              <span className="rounded-full bg-[#f3ebe3] px-2 py-1 text-[#7a4d2a]">
+                Tasting scores
+              </span>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {tastingScores.map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-xl border border-[#e2d6ca] bg-[#fbf6ef] px-2 py-2 text-center"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-[#7a4d2a]">
+                    {label}
+                  </p>
+                  <p className="mt-1 text-lg font-black text-[#211a16]">
+                    {value}/5
+                  </p>
+                </div>
+              ))}
             </div>
           </section>
         )}

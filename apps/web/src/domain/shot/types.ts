@@ -14,6 +14,11 @@ export interface Shot {
   location?: ShotLocation;
   recipe?: Recipe;
   tastingNotes?: string;
+  aromaScore?: number;
+  acidityScore?: number;
+  bodyScore?: number;
+  sweetnessScore?: number;
+  finishScore?: number;
   rating?: number;
   likesCount?: number;
   likedByMe?: boolean;
@@ -31,6 +36,11 @@ export interface ShotCreationInput {
   location?: ShotLocation;
   recipe?: Recipe;
   tastingNotes?: string;
+  aromaScore?: number;
+  acidityScore?: number;
+  bodyScore?: number;
+  sweetnessScore?: number;
+  finishScore?: number;
   rating?: number;
   likesCount?: number;
   createdAt?: string;

@@ -27,6 +27,11 @@ model Shot {
   location       Json?
   photoUrl       String?
   tastingNotes   String?
+  aromaScore     Int?
+  acidityScore   Int?
+  bodyScore      Int?
+  sweetnessScore Int?
+  finishScore    Int?
   rating         Int?
   likesCount     Int      @default(0)
   createdAt      DateTime @default(now())

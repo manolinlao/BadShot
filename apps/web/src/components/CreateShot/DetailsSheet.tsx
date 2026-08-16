@@ -39,6 +39,16 @@ interface DetailsSheetProps {
   setNotes: (value: string) => void;
   flavors: string[];
   setFlavors: (value: string[]) => void;
+  aromaScore: NumberInputValue;
+  setAromaScore: (value: NumberInputValue) => void;
+  acidityScore: NumberInputValue;
+  setAcidityScore: (value: NumberInputValue) => void;
+  bodyScore: NumberInputValue;
+  setBodyScore: (value: NumberInputValue) => void;
+  sweetnessScore: NumberInputValue;
+  setSweetnessScore: (value: NumberInputValue) => void;
+  finishScore: NumberInputValue;
+  setFinishScore: (value: NumberInputValue) => void;
 }
 
 export function DetailsSheet({
@@ -64,7 +74,24 @@ export function DetailsSheet({
   setNotes,
   flavors,
   setFlavors,
+  aromaScore,
+  setAromaScore,
+  acidityScore,
+  setAcidityScore,
+  bodyScore,
+  setBodyScore,
+  sweetnessScore,
+  setSweetnessScore,
+  finishScore,
+  setFinishScore,
 }: DetailsSheetProps) {
+  const tastingScores = [
+    { label: 'Aroma', value: aromaScore, setValue: setAromaScore },
+    { label: 'Acidity', value: acidityScore, setValue: setAcidityScore },
+    { label: 'Body', value: bodyScore, setValue: setBodyScore },
+    { label: 'Sweetness', value: sweetnessScore, setValue: setSweetnessScore },
+    { label: 'Finish', value: finishScore, setValue: setFinishScore },
+  ];
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
 
@@ -254,6 +281,44 @@ export function DetailsSheet({
                   </div>
 
                   <FlavorWheel flavors={flavors} setFlavors={setFlavors} />
+                </section>
+
+                <section className="space-y-4 rounded-[24px] border border-[#eadfd6] bg-white/80 p-4">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.24em] text-[#7a4d2a]">
+                      Tasting scores
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-[#6f5b50]">
+                      Score each quality from 1 to 5, or leave it empty.
+                    </p>
+                  </div>
+
+                  {tastingScores.map((score) => (
+                    <div key={score.label} className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-[#211a16]">
+                        {score.label}
+                      </span>
+                      <div className="flex gap-1.5">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() =>
+                              score.setValue(score.value === value ? '' : value)
+                            }
+                            className={[
+                              'flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold transition',
+                              score.value === value
+                                ? 'border-[#211a16] bg-[#211a16] text-white'
+                                : 'border-[#e2d6ca] bg-white text-[#5f4a3f] hover:border-[#7a4d2a]',
+                            ].join(' ')}
+                          >
+                            {value}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </section>
 
                 <section className="space-y-3 rounded-[24px] border border-[#eadfd6] bg-white/80 p-4">
