@@ -6,8 +6,9 @@ import {
   mapApiShotToShot,
   serverShotsStores,
 } from '../state/serverShots';
-import { ShotCard } from '../components/ShotCard';
 import { getCoffeeTitle } from '../domain/shot';
+import { getRecipeRatio } from '../domain/recipe';
+import { formatLocation } from '../domain/location';
 import { formatDate } from '../utils/util';
 
 export function Profile() {
@@ -205,15 +206,32 @@ export function Profile() {
         <h2 className="text-lg font-black text-[#211a16]">My shots</h2>
 
         {myShots.length > 0 ? (
-          <div className="mt-4 space-y-5">
+          <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
             {myShots.map((shot) => (
-              <ShotCard
+              <button
                 key={shot.id}
-                shot={shot}
-                onImageClick={
-                  shot.photoUrl ? () => setPreviewShot(shot) : undefined
-                }
-              />
+                type="button"
+                onClick={() => setPreviewShot(shot)}
+                className="group relative aspect-square overflow-hidden rounded-2xl border border-[#e2d6ca] bg-[#f0e2d3] text-left"
+                aria-label={`View ${getCoffeeTitle(shot.coffee)}`}
+              >
+                {shot.photoUrl ? (
+                  <img
+                    src={shot.photoUrl}
+                    alt={getCoffeeTitle(shot.coffee)}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <span className="flex h-full items-center justify-center px-2 text-center text-xs font-bold text-[#7a4d2a]">
+                    No photo
+                  </span>
+                )}
+                <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/75 to-transparent px-2 pb-2 pt-6 text-xs font-bold text-white">
+                  {getCoffeeTitle(shot.coffee)}
+                </span>
+              </button>
             ))}
           </div>
         ) : (
@@ -223,22 +241,22 @@ export function Profile() {
         )}
       </div>
 
-      {previewShot?.photoUrl && (
+      {previewShot && (
         <div
-          className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-black/80 px-3 py-3 sm:items-center sm:px-4 sm:py-6"
+          className="fixed inset-0 z-40 overflow-y-auto bg-black/80 px-3 py-3 sm:px-4 sm:py-6"
           role="dialog"
           aria-modal="true"
           aria-label="Shot image preview"
           onClick={() => setPreviewShot(null)}
         >
           <div
-            className="relative w-full max-w-4xl pt-10 sm:pt-0"
+            className="relative mx-auto w-full max-w-4xl py-10 sm:py-4"
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setPreviewShot(null)}
-              className="absolute right-1 top-1 z-10 rounded-full bg-black/60 p-2.5 text-white transition hover:bg-black sm:right-2 sm:top-2 sm:p-2"
+              className="fixed right-4 top-4 z-50 rounded-full bg-black/70 p-2.5 text-white shadow-lg transition hover:bg-black sm:right-6 sm:top-6 sm:p-2"
               aria-label="Close image preview"
             >
               <X className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
@@ -253,11 +271,86 @@ export function Profile() {
               </p>
             </div>
 
-            <img
-              src={previewShot.photoUrl}
-              alt="Shot preview"
-              className="max-h-[72vh] w-full rounded-2xl object-contain shadow-2xl sm:max-h-[85vh]"
-            />
+            {previewShot.photoUrl ? (
+              <img
+                src={previewShot.photoUrl}
+                alt="Shot preview"
+                className="max-h-[52vh] w-full rounded-2xl object-contain shadow-2xl sm:max-h-[68vh]"
+              />
+            ) : (
+              <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-[#f0e2d3] text-sm font-bold text-[#7a4d2a]">
+                No photo for this shot
+              </div>
+            )}
+
+            <div className="mt-3 rounded-2xl bg-white p-4 text-[#211a16] shadow-2xl">
+              <div className="grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                    Coffee
+                  </p>
+                  <p className="mt-1 font-semibold">
+                    {getCoffeeTitle(previewShot.coffee)}
+                  </p>
+                  {previewShot.coffee.roaster && (
+                    <p className="text-[#6f5b50]">{previewShot.coffee.roaster}</p>
+                  )}
+                  {previewShot.coffee.origin && (
+                    <p className="text-[#6f5b50]">{previewShot.coffee.origin}</p>
+                  )}
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                    Recipe
+                  </p>
+                  <p className="mt-1 text-[#5f4a3f]">
+                    {previewShot.recipe?.doseIn || previewShot.recipe?.doseOut
+                      ? `${previewShot.recipe.doseIn ?? '-'}g in / ${previewShot.recipe.doseOut ?? '-'}g out`
+                      : 'No recipe data'}
+                    {previewShot.recipe?.time
+                      ? ` · ${previewShot.recipe.time}s`
+                      : ''}
+                    {getRecipeRatio(previewShot.recipe)
+                      ? ` · ratio ${getRecipeRatio(previewShot.recipe)}`
+                      : ''}
+                  </p>
+                </div>
+
+                {previewShot.tastingNotes && (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                      Tasting notes
+                    </p>
+                    <p className="mt-1 text-[#5f4a3f]">
+                      {previewShot.tastingNotes}
+                    </p>
+                  </div>
+                )}
+
+                {formatLocation(previewShot.location) && (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                      Location
+                    </p>
+                    <p className="mt-1 text-[#5f4a3f]">
+                      {formatLocation(previewShot.location)}
+                    </p>
+                  </div>
+                )}
+
+                {previewShot.rating !== undefined && (
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                      Rating
+                    </p>
+                    <p className="mt-1 text-[#5f4a3f]">
+                      {previewShot.rating}/5
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
