@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useUnit } from 'effector-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import heic2any from 'heic2any';
 import { ArrowLeft, Camera, Sparkles } from 'lucide-react';
@@ -8,6 +9,7 @@ import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
 import { reverseGeocode } from '../api/location/nominatim';
 import { serverShotsEffects } from '../state/serverShots';
+import { authStores } from '../state/auth';
 import type { ShotLocation } from '../domain/location/types';
 import type { RoastLevel } from '../domain/coffee';
 import { getPhotoPreviewUrl, revokePhotoUrl } from '../domain/photo';
@@ -19,6 +21,7 @@ import { savePhotoFromFile } from '../api/photos/repository';
 export function CreateShot() {
   const navigate = useNavigate();
   const { shotId } = useParams();
+  const currentUser = useUnit(authStores.$currentUser);
   const { addShot, createdShots, updateShot } = useShots();
   const editingShot = useMemo(
     () => createdShots.find((shot) => shot.id === shotId),
@@ -220,7 +223,14 @@ export function CreateShot() {
     const shot = createShot({
       id: shotId,
       serverId: editingShot?.serverId,
-      user: editingShot?.user,
+      user:
+        editingShot?.user ??
+        (currentUser
+          ? {
+              displayName: currentUser.displayName,
+              username: currentUser.email.split('@')[0],
+            }
+          : undefined),
       rating,
       location: buildLocation(),
       coffee: {
