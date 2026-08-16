@@ -16,7 +16,6 @@ export interface Shot {
   rating?: number;
   likesCount?: number;
   likedByMe?: boolean;
-  commentsCount?: number;
   createdAt: string;
   photoId?: string;
 }
@@ -32,7 +31,6 @@ export interface ShotCreationInput {
   tastingNotes?: string;
   rating?: number;
   likesCount?: number;
-  commentsCount?: number;
   createdAt?: string;
   photoId?: string;
 }

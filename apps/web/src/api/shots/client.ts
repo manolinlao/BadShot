@@ -20,7 +20,6 @@ export type ApiShot = {
   rating: number | null;
   likesCount: number;
   likedByMe: boolean;
-  commentsCount: number;
   createdAt: string;
   updatedAt: string;
 };

@@ -123,7 +123,6 @@ export function createShot(input: ShotCreationInput) {
     tastingNotes: input.tastingNotes,
     rating: input.rating,
     likesCount: input.likesCount ?? 0,
-    commentsCount: input.commentsCount ?? 0,
     createdAt: input.createdAt ?? new Date().toISOString(),
     photoId: input.photoId,
   };

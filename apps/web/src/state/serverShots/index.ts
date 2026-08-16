@@ -73,7 +73,6 @@ export function mapApiShotToShot(apiShot: ApiShot): Shot {
     rating: apiShot.rating ?? undefined,
     likesCount: apiShot.likesCount,
     likedByMe: apiShot.likedByMe,
-    commentsCount: apiShot.commentsCount,
     createdAt: apiShot.createdAt,
     photoUrl: apiShot.photoUrl
       ? getApiAssetUrl(apiShot.photoUrl)

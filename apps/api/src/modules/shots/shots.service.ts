@@ -10,7 +10,6 @@ export type CreateShotInput = {
   tastingNotes?: string;
   rating?: number;
   likesCount?: number;
-  commentsCount?: number;
 };
 
 const publicUserSelect = {
@@ -109,7 +108,6 @@ export async function createShotForUser(
       tastingNotes: input.tastingNotes?.trim() || null,
       rating: input.rating ?? null,
       likesCount: input.likesCount ?? 0,
-      commentsCount: input.commentsCount ?? 0,
     },
     include: {
       user: {

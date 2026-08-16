@@ -3,7 +3,6 @@ import {
   Heart,
   ImageOff,
   MapPin,
-  MessageCircle,
   Pencil,
   Trash2,
 } from 'lucide-react';
@@ -60,7 +59,6 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   const hasLocation = Boolean(locationLabel);
 
   const likes = shot.likesCount ?? 0;
-  const comments = shot.commentsCount ?? 0;
   const rating = isRating(shot.rating) ? shot.rating : null;
   const RatingIcon = rating ? ratingIcon[rating].icon : null;
   const displayName = getDisplayName(shot.user);
@@ -71,7 +69,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   const hasCoffeeInformation = hasCoffeeMeta(shot.coffee);
 
   const hasFooter = Boolean(
-    rating || likes > 0 || comments > 0 || onEdit || onDelete || onLike,
+    rating || likes > 0 || onEdit || onDelete || onLike,
   );
 
   return (
@@ -258,15 +256,6 @@ export const ShotCard: React.FC<ShotCardProps> = ({
                 </span>
               )}
 
-              {comments > 0 && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#eadfd6] bg-white px-3 py-1.5 text-xs text-[#5f4a3f] sm:text-sm">
-                  <MessageCircle
-                    className="h-4 w-4 text-[#7a4d2a]"
-                    aria-hidden="true"
-                  />
-                  {comments}
-                </span>
-              )}
 
               {onLike && (
                 <button
