@@ -6,6 +6,7 @@ import type { ShotUser } from '../user/types';
 export interface Shot {
   id: string;
   serverId?: string;
+  userId?: string;
   photoUrl?: string;
   user: ShotUser;
   coffee: Coffee;
@@ -14,6 +15,7 @@ export interface Shot {
   tastingNotes?: string;
   rating?: number;
   likesCount?: number;
+  likedByMe?: boolean;
   commentsCount?: number;
   createdAt: string;
   photoId?: string;

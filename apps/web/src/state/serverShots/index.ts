@@ -8,6 +8,7 @@ import {
   getMyShots,
   uploadApiShotImage,
   updateApiShot,
+  toggleLikeApiShot,
   type ApiShot,
   type UpdateApiShotInput,
 } from '../../api/shots/client';
@@ -28,6 +29,10 @@ const uploadServerShotImageFx = createEffect(
   async (input: { serverId: string; file: File }) =>
     uploadApiShotImage(input.serverId, input.file),
 );
+const toggleLikeFx = createEffect(async (serverId: string) => ({
+  serverId,
+  result: await toggleLikeApiShot(serverId),
+}));
 
 const $serverShots = createStore<ApiShot[]>([])
   .on(loadServerShotsFx, () => [])
@@ -41,6 +46,13 @@ const $serverShots = createStore<ApiShot[]>([])
   )
   .on(uploadServerShotImageFx.doneData, (shots, updatedShot) =>
     shots.map((shot) => (shot.id === updatedShot.id ? updatedShot : shot)),
+  )
+  .on(toggleLikeFx.doneData, (shots, { serverId, result }) =>
+    shots.map((shot) =>
+      shot.id === serverId
+        ? { ...shot, likesCount: result.likesCount, likedByMe: result.liked }
+        : shot,
+    ),
   );
 
 const $serverShotsLoading = loadServerShotsFx.pending;
@@ -49,6 +61,7 @@ export function mapApiShotToShot(apiShot: ApiShot): Shot {
   return {
     id: apiShot.id,
     serverId: apiShot.id,
+    userId: apiShot.userId,
     user: {
       displayName: apiShot.user.displayName,
       username: apiShot.user.email.split('@')[0],
@@ -59,6 +72,7 @@ export function mapApiShotToShot(apiShot: ApiShot): Shot {
     tastingNotes: apiShot.tastingNotes ?? undefined,
     rating: apiShot.rating ?? undefined,
     likesCount: apiShot.likesCount,
+    likedByMe: apiShot.likedByMe,
     commentsCount: apiShot.commentsCount,
     createdAt: apiShot.createdAt,
     photoUrl: apiShot.photoUrl
@@ -78,4 +92,5 @@ export const serverShotsEffects = {
   deleteServerShotFx,
   updateServerShotFx,
   uploadServerShotImageFx,
+  toggleLikeFx,
 };

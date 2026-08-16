@@ -34,6 +34,8 @@ interface ShotCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onImageClick?: () => void;
+  onLike?: () => void;
+  likePending?: boolean;
 }
 
 export const ShotCard: React.FC<ShotCardProps> = ({
@@ -41,6 +43,8 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   onEdit,
   onDelete,
   onImageClick,
+  onLike,
+  likePending = false,
 }) => {
   const [mapOpen, setMapOpen] = useState(false);
   const localPhotoUrl = usePhoto(shot.photoId);
@@ -67,7 +71,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   const hasCoffeeInformation = hasCoffeeMeta(shot.coffee);
 
   const hasFooter = Boolean(
-    rating || likes > 0 || comments > 0 || onEdit || onDelete,
+    rating || likes > 0 || comments > 0 || onEdit || onDelete || onLike,
   );
 
   return (
@@ -262,6 +266,25 @@ export const ShotCard: React.FC<ShotCardProps> = ({
                   />
                   {comments}
                 </span>
+              )}
+
+              {onLike && (
+                <button
+                  type="button"
+                  onClick={onLike}
+                  disabled={likePending}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition sm:text-sm ${
+                    shot.likedByMe
+                      ? 'border-[#e7a49a] bg-[#fff0ed] text-[#b94736]'
+                      : 'border-[#eadfd6] bg-white text-[#5f4a3f] hover:border-[#c25b47]'
+                  } disabled:cursor-wait disabled:opacity-60`}
+                >
+                  <Heart
+                    className={`h-4 w-4 ${shot.likedByMe ? 'fill-current' : ''}`}
+                    aria-hidden="true"
+                  />
+                  {shot.likedByMe ? 'Liked' : 'Like'}
+                </button>
               )}
             </div>
 

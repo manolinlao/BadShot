@@ -20,6 +20,7 @@ import {
   type ShotQuickFilter,
 } from '../domain/shot';
 import { serverShotsStores } from '../state/serverShots';
+import { authStores } from '../state/auth';
 
 const INITIAL_VISIBLE_SHOTS = 10;
 const LOAD_MORE_STEP = 10;
@@ -240,22 +241,44 @@ export function Home() {
     isLoading,
   } = useShots();
 
-  const { serverShots, serverShotsLoading } = useUnit({
+  const { serverShots, serverShotsLoading, currentUser } = useUnit({
     serverShots: serverShotsStores.$serverShots,
     serverShotsLoading: serverShotsStores.$serverShotsLoading,
+    currentUser: authStores.$currentUser,
   });
 
   const feed = useMemo(() => {
+    const remoteShots = serverShots.map(mapApiShotToShot);
+    const remoteById = new Map(
+      remoteShots
+        .filter((shot) => Boolean(shot.serverId))
+        .map((shot) => [shot.serverId as string, shot]),
+    );
+    const mergedLocalShots = localFeed.map((localShot) => {
+      const remoteShot = localShot.serverId
+        ? remoteById.get(localShot.serverId)
+        : undefined;
+
+      if (!remoteShot) return localShot;
+
+      return {
+        ...localShot,
+        ...remoteShot,
+        // La imagen local puede seguir viviendo en Dexie aunque el resto
+        // del shot se haya actualizado en PostgreSQL.
+        photoId: localShot.photoId,
+      };
+    });
     const localServerIds = new Set(
       localFeed
         .map((shot) => shot.serverId)
         .filter((serverId): serverId is string => Boolean(serverId)),
     );
-    const remoteShots = serverShots
-      .map(mapApiShotToShot)
-      .filter((shot) => !localServerIds.has(shot.id));
+    const newRemoteShots = remoteShots.filter(
+      (shot) => !localServerIds.has(shot.serverId ?? shot.id),
+    );
 
-    return [...localFeed, ...remoteShots].sort(
+    return [...mergedLocalShots, ...newRemoteShots].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
@@ -579,6 +602,15 @@ export function Home() {
                       }
                       onImageClick={
                         shot.photoId ? () => setPreviewShot(shot) : undefined
+                      }
+                      onLike={
+                        shot.serverId &&
+                        shot.userId !== currentUser?.id &&
+                        !isCreatedShot(shot.id)
+                          ? () => {
+                              void serverShotsEffects.toggleLikeFx(shot.serverId!);
+                            }
+                          : undefined
                       }
                     />
                   ))}

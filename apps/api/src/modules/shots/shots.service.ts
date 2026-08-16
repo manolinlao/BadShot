@@ -35,8 +35,8 @@ export async function getShotsByUserId(userId: string) {
   });
 }
 
-export async function getAllShots() {
-  return prisma.shot.findMany({
+export async function getAllShots(userId: string) {
+  const shots = await prisma.shot.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -44,8 +44,50 @@ export async function getAllShots() {
       user: {
         select: publicUserSelect,
       },
+      likes: {
+        where: { userId },
+        select: { id: true },
+      },
+      _count: {
+        select: { likes: true },
+      },
     },
   });
+
+  return shots.map(({ likes, _count, ...shot }) => ({
+    ...shot,
+    likesCount: _count.likes,
+    likedByMe: likes.length > 0,
+  }));
+}
+
+export async function toggleLikeForUser(userId: string, shotId: string) {
+  const shot = await prisma.shot.findUnique({
+    where: { id: shotId },
+    select: { id: true },
+  });
+
+  if (!shot) return null;
+
+  const existingLike = await prisma.like.findUnique({
+    where: {
+      userId_shotId: { userId, shotId },
+    },
+    select: { id: true },
+  });
+
+  if (existingLike) {
+    await prisma.like.delete({ where: { id: existingLike.id } });
+  } else {
+    await prisma.like.create({ data: { userId, shotId } });
+  }
+
+  const likesCount = await prisma.like.count({ where: { shotId } });
+
+  return {
+    liked: !existingLike,
+    likesCount,
+  };
 }
 
 export async function createShotForUser(

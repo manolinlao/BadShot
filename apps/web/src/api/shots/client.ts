@@ -19,6 +19,7 @@ export type ApiShot = {
   tastingNotes: string | null;
   rating: number | null;
   likesCount: number;
+  likedByMe: boolean;
   commentsCount: number;
   createdAt: string;
   updatedAt: string;
@@ -112,6 +113,29 @@ export async function deleteApiShot(shotId: string): Promise<void> {
   if (!response.ok) {
     throw new Error('Error inesperado del servidor');
   }
+}
+
+export async function toggleLikeApiShot(
+  shotId: string,
+): Promise<{ liked: boolean; likesCount: number }> {
+  const response = await fetch(`${API_URL}/api/shots/${shotId}/like`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: { liked: boolean; likesCount: number } }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
 }
 
 export async function updateApiShot(

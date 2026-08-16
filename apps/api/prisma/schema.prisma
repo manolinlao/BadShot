@@ -15,6 +15,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   shots        Shot[]
+  likes        Like[]
 }
 
 model Shot {
@@ -32,4 +33,18 @@ model Shot {
   updatedAt      DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes Like[]
+}
+
+model Like {
+  id      String   @id @default(cuid())
+  userId  String
+  shotId  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shot Shot @relation(fields: [shotId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, shotId])
+  @@index([shotId])
 }

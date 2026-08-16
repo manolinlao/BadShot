@@ -6,6 +6,7 @@ import {
   createShotForUser,
   deleteShotForUser,
   getAllShots,
+  toggleLikeForUser,
   updateShotPhotoForUser,
   updateShotForUser,
   type CreateShotInput,
@@ -21,12 +22,49 @@ const router = Router();
 
 router.get('/', requireAuth, async (_request, response, next) => {
   try {
-    const shots = await getAllShots();
+    const shots = await getAllShots(response.locals.userId as string);
 
     response.json({
       success: true,
       data: shots,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/:shotId/like', requireAuth, async (request, response, next) => {
+  try {
+    const { shotId } = request.params;
+
+    if (typeof shotId !== 'string') {
+      response.status(400).json({
+        success: false,
+        error: {
+          message: 'Identificador de shot inválido',
+          code: 'INVALID_SHOT_ID',
+        },
+      });
+      return;
+    }
+
+    const result = await toggleLikeForUser(
+      response.locals.userId as string,
+      shotId,
+    );
+
+    if (!result) {
+      response.status(404).json({
+        success: false,
+        error: {
+          message: 'Shot no encontrado',
+          code: 'SHOT_NOT_FOUND',
+        },
+      });
+      return;
+    }
+
+    response.json({ success: true, data: result });
   } catch (error) {
     next(error);
   }
