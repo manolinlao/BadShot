@@ -9,6 +9,7 @@ import {
   serverShotsStores,
 } from '../state/serverShots';
 import { getCoffeeTitle } from '../domain/shot';
+import { getFlavorLabel } from '../domain/flavor';
 import { getRecipeRatio } from '../domain/recipe';
 import { formatLocation } from '../domain/location';
 import { formatDate } from '../utils/util';
@@ -121,6 +122,38 @@ export function Profile() {
     (shot) => shot.userId === currentUser.id,
     )
     .map(mapApiShotToShot);
+
+  const tastingScoreItems = [
+    ['Overall', myShots.map((shot) => shot.rating)],
+    ['Aroma', myShots.map((shot) => shot.aromaScore)],
+    ['Acidity', myShots.map((shot) => shot.acidityScore)],
+    ['Body', myShots.map((shot) => shot.bodyScore)],
+    ['Sweetness', myShots.map((shot) => shot.sweetnessScore)],
+    ['Finish', myShots.map((shot) => shot.finishScore)],
+  ].map(([label, values]) => {
+    const numericValues = (values as Array<number | undefined>).filter(
+      (value): value is number => value !== undefined,
+    );
+
+    return {
+      label: label as string,
+      average:
+        numericValues.length > 0
+          ? numericValues.reduce((total, value) => total + value, 0) /
+            numericValues.length
+          : null,
+    };
+  });
+
+  const flavorCounts = new Map<string, number>();
+  for (const shot of myShots) {
+    for (const flavor of shot.flavors ?? []) {
+      flavorCounts.set(flavor, (flavorCounts.get(flavor) ?? 0) + 1);
+    }
+  }
+  const topFlavors = [...flavorCounts.entries()]
+    .sort(([, firstCount], [, secondCount]) => secondCount - firstCount)
+    .slice(0, 5);
 
   return (
     <section className="mx-auto max-w-2xl rounded-[32px] border border-[#e2d6ca] bg-white/85 p-5 shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
@@ -237,6 +270,43 @@ export function Profile() {
           </p>
         </div>
       </div>
+
+      <section className="mt-6 rounded-2xl border border-[#e2d6ca] bg-[#fbf6ef] p-4">
+        <h2 className="text-lg font-black text-[#211a16]">Tasting stats</h2>
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {tastingScoreItems.map((item) => (
+            <div
+              key={item.label}
+              className="rounded-xl border border-[#e2d6ca] bg-white px-3 py-3"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#7a4d2a]">
+                {item.label}
+              </p>
+              <p className="mt-1 text-xl font-black text-[#211a16]">
+                {item.average === null ? '—' : `${item.average.toFixed(1)}/5`}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {topFlavors.length > 0 && (
+          <div className="mt-5">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#7a4d2a]">
+              Most frequent flavors
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {topFlavors.map(([flavorId, count]) => (
+                <span
+                  key={flavorId}
+                  className="rounded-full border border-[#e2d6ca] bg-white px-3 py-1.5 text-xs font-semibold text-[#5f4a3f]"
+                >
+                  {getFlavorLabel(flavorId)} · {count}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
 
       <div className="mt-8">
         <h2 className="text-lg font-black text-[#211a16]">My shots</h2>
