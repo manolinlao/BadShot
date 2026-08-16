@@ -14,6 +14,7 @@ import { getRecipeRatio } from '../domain/recipe';
 import { formatLocation } from '../domain/location';
 import { formatDate } from '../utils/util';
 import { useShots } from '../hooks/useShots';
+import { FlavorWheel } from '../components/CreateShot/FlavorWheel';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -390,6 +391,19 @@ export function Profile() {
             )}
 
             <div className="mt-3 rounded-2xl bg-white p-4 text-[#211a16] shadow-2xl">
+              {previewShot.flavors && previewShot.flavors.length > 0 && (
+                <div className="mb-5 rounded-2xl border border-[#eadfd6] bg-[#fbf6ef] p-3">
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                    Flavors
+                  </p>
+                  <FlavorWheel
+                    flavors={previewShot.flavors}
+                    setFlavors={() => undefined}
+                    readOnly
+                  />
+                </div>
+              )}
+
               <div className="grid gap-3 text-sm sm:grid-cols-2">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
@@ -456,6 +470,39 @@ export function Profile() {
                   </div>
                 )}
               </div>
+
+              {(previewShot.aromaScore !== undefined ||
+                previewShot.acidityScore !== undefined ||
+                previewShot.bodyScore !== undefined ||
+                previewShot.sweetnessScore !== undefined ||
+                previewShot.finishScore !== undefined) && (
+                <div className="mt-4 border-t border-[#eadfd6] pt-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7a4d2a]">
+                    Tasting scores
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+                    {[
+                      ['Aroma', previewShot.aromaScore],
+                      ['Acidity', previewShot.acidityScore],
+                      ['Body', previewShot.bodyScore],
+                      ['Sweetness', previewShot.sweetnessScore],
+                      ['Finish', previewShot.finishScore],
+                    ]
+                      .filter((item): item is [string, number] => item[1] !== undefined)
+                      .map(([label, score]) => (
+                        <div
+                          key={label}
+                          className="rounded-xl border border-[#e2d6ca] bg-[#fbf6ef] px-2 py-2 text-center"
+                        >
+                          <p className="text-[10px] font-bold uppercase tracking-wide text-[#7a4d2a]">
+                            {label}
+                          </p>
+                          <p className="mt-1 text-lg font-black">{score}/5</p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
 
               <div className="mt-4 flex justify-end gap-2">
                 <button
