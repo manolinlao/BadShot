@@ -189,7 +189,29 @@ export function CreateShot() {
     };
   };
 
+  const handleManualLocationChange =
+    (setter: (value: string) => void) => (value: string) => {
+      setter(value);
+      setLocationCoordinates({});
+      setLocationError('');
+    };
+
+  const handleClearLocation = () => {
+    setLocationName('');
+    setLocationCity('');
+    setLocationCountry('');
+    setLocationCoordinates({});
+    setLocationError('');
+  };
+
   const handleUseCurrentLocation = () => {
+    if (typeof window !== 'undefined' && !window.isSecureContext) {
+      setLocationError(
+        'Location requires HTTPS or localhost. You can enter the place manually.',
+      );
+      return;
+    }
+
     if (!navigator.geolocation) {
       setLocationError('Your browser does not support location.');
       return;
@@ -443,17 +465,18 @@ export function CreateShot() {
 
       <LocationPicker
         name={locationName}
-        setName={setLocationName}
+        setName={handleManualLocationChange(setLocationName)}
         city={locationCity}
-        setCity={setLocationCity}
+        setCity={handleManualLocationChange(setLocationCity)}
         country={locationCountry}
-        setCountry={setLocationCountry}
+        setCountry={handleManualLocationChange(setLocationCountry)}
         hasCoordinates={
           locationCoordinates.lat !== undefined &&
           locationCoordinates.lng !== undefined
         }
         locating={locating}
         locationError={locationError}
+        onClear={handleClearLocation}
         onUseCurrentLocation={handleUseCurrentLocation}
       />
 

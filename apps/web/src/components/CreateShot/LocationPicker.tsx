@@ -1,4 +1,4 @@
-import { MapPin } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 
 interface LocationPickerProps {
   name: string;
@@ -10,6 +10,7 @@ interface LocationPickerProps {
   hasCoordinates: boolean;
   locating: boolean;
   locationError: string;
+  onClear: () => void;
   onUseCurrentLocation: () => void;
 }
 
@@ -23,6 +24,7 @@ export function LocationPicker({
   hasCoordinates,
   locating,
   locationError,
+  onClear,
   onUseCurrentLocation,
 }: LocationPickerProps) {
   return (
@@ -65,6 +67,17 @@ export function LocationPicker({
         <MapPin className="h-4 w-4" aria-hidden="true" />
         {locating ? 'Finding your location…' : 'Use my current location'}
       </button>
+
+      {(name || city || country || hasCoordinates) && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-[#6f5b50] transition hover:bg-[#f3ebe3] hover:text-[#211a16]"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+          Clear location
+        </button>
+      )}
 
       {hasCoordinates && !locationError && (
         <p className="text-xs font-semibold text-[#5f7a55]">
