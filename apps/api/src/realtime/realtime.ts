@@ -16,6 +16,12 @@ export type LikeUpdatedEvent = {
   likesCount: number;
 };
 
+export type ShotDeletedEvent = {
+  type: 'shot.deleted';
+  shotId: string;
+  actorUserId: string;
+};
+
 const clients = new Set<RealtimeClient>();
 
 function getCookie(request: IncomingMessage, name: string): string | undefined {
@@ -102,6 +108,18 @@ export function broadcastLikeUpdated(
   event: Omit<LikeUpdatedEvent, 'type'>,
 ): void {
   const message = JSON.stringify({ type: 'shot.like.updated', ...event });
+
+  for (const client of clients) {
+    if (client.socket.readyState === WebSocket.OPEN) {
+      client.socket.send(message);
+    }
+  }
+}
+
+export function broadcastShotDeleted(
+  event: Omit<ShotDeletedEvent, 'type'>,
+): void {
+  const message = JSON.stringify({ type: 'shot.deleted', ...event });
 
   for (const client of clients) {
     if (client.socket.readyState === WebSocket.OPEN) {

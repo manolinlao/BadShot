@@ -3,10 +3,15 @@ import { Camera, ImagePlus, RotateCcw, X } from 'lucide-react';
 
 interface PhotoPickerProps {
   imageUrl: string;
+  autoOpen?: boolean;
   onImageSelected: (file: File) => void;
 }
 
-export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
+export function PhotoPicker({
+  imageUrl,
+  autoOpen = false,
+  onImageSelected,
+}: PhotoPickerProps) {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const libraryInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -16,6 +21,10 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState('');
+
+  useEffect(() => {
+    if (autoOpen) setCameraOpen(true);
+  }, [autoOpen]);
 
   const supportsCamera =
     typeof navigator !== 'undefined' &&
@@ -88,6 +97,13 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
     let active = true;
 
     const startCamera = async () => {
+      if (!supportsCamera) {
+        setCameraError(
+          'Camera access is not available here. You can use the library instead.',
+        );
+        return;
+      }
+
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: { ideal: 'environment' } },
@@ -107,6 +123,7 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
           setCameraReady(true);
         }
       } catch {
+        stopCamera();
         setCameraError(
           'We could not open the camera. You can use the library instead.',
         );
@@ -229,6 +246,11 @@ export function PhotoPicker({ imageUrl, onImageSelected }: PhotoPickerProps) {
                 muted
                 className="h-full w-full object-cover"
               />
+              {!cameraReady && !cameraError ? (
+                <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm font-semibold text-white/75">
+                  Opening camera...
+                </div>
+              ) : null}
               <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/5" />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.24)_100%)]" />
               <canvas ref={canvasRef} className="hidden" />

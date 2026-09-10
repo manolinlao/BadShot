@@ -17,7 +17,10 @@ import {
   shotImageUpload,
   uploadDir,
 } from './upload.js';
-import { broadcastLikeUpdated } from '../../realtime/realtime.js';
+import {
+  broadcastLikeUpdated,
+  broadcastShotDeleted,
+} from '../../realtime/realtime.js';
 const router = Router();
 
 router.get('/', requireAuth, async (_request, response, next) => {
@@ -257,6 +260,11 @@ router.delete('/:shotId', requireAuth, async (request, response, next) => {
         console.error('No se pudo eliminar el archivo de imagen', error);
       }
     }
+
+    broadcastShotDeleted({
+      shotId,
+      actorUserId: userId,
+    });
 
     response.json({
       success: true,

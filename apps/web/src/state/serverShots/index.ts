@@ -13,9 +13,14 @@ import {
   type UpdateApiShotInput,
 } from '../../api/shots/client';
 import { getApiAssetUrl } from '../../api/shots/client';
+import { deleteMissingServerShots } from '../../api/shots/db';
 import type { Shot } from '../../domain/shot/types';
 
-const loadServerShotsFx = createEffect(getMyShots);
+const loadServerShotsFx = createEffect(async () => {
+  const shots = await getMyShots();
+  await deleteMissingServerShots(shots.map((shot) => shot.id));
+  return shots;
+});
 const createServerShotFx = createEffect(createApiShot);
 const deleteServerShotFx = createEffect(async (serverId: string) => {
   await deleteApiShot(serverId);

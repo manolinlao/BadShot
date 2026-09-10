@@ -22,15 +22,25 @@ export function App() {
   useEffect(() => {
     if (!currentUser) return;
 
-    void serverShotsEffects.loadServerShotsFx();
+    const syncShots = async () => {
+      await serverShotsEffects.loadServerShotsFx();
+      await shotsEffects.loadShotsFx();
+    };
+
+    void syncShots();
 
     return connectRealtime((event) => {
+      if (event.type === 'shot.deleted') {
+        void syncShots();
+        return;
+      }
+
       serverShotsEvents.likeUpdated({
         ...event,
         currentUserId: currentUser.id,
       });
     }, () => {
-      void serverShotsEffects.loadServerShotsFx();
+      void syncShots();
     });
   }, [currentUser?.id]);
 

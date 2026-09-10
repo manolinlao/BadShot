@@ -70,7 +70,9 @@ export function CreateShot() {
   const [bodyScore, setBodyScore] = useState<number | ''>('');
   const [sweetnessScore, setSweetnessScore] = useState<number | ''>('');
   const [finishScore, setFinishScore] = useState<number | ''>('');
-  const canSave = Boolean(imageUrl || editingShot?.photoId?.length);
+  const canSave = Boolean(
+    imageUrl || editingShot?.photoId?.length || editingShot?.photoUrl,
+  );
 
   useEffect(() => {
     if (!editingShot || editLoaded) return;
@@ -292,7 +294,7 @@ export function CreateShot() {
       }
 
       try {
-        await serverShotsEffects.updateServerShotFx({
+        const updatedServerShot = await serverShotsEffects.updateServerShotFx({
           serverId: editingShot.serverId,
           data: {
             coffee: shot.coffee,
@@ -308,7 +310,18 @@ export function CreateShot() {
             rating,
           },
         });
-        await updateShot(shot);
+
+        const syncedServerShot = selectedFile
+          ? await serverShotsEffects.uploadServerShotImageFx({
+              serverId: editingShot.serverId,
+              file: selectedFile,
+            })
+          : updatedServerShot;
+
+        await updateShot({
+          ...shot,
+          photoUrl: syncedServerShot.photoUrl ?? shot.photoUrl,
+        });
         navigate('/', { state: { flash: 'Shot updated and synced' } });
       } catch {
         navigate('/', { state: { flash: 'Shot could not be updated' } });
@@ -417,6 +430,7 @@ export function CreateShot() {
 
         <PhotoPicker
           imageUrl={imageUrl}
+          autoOpen={!editing}
           onImageSelected={handlePhotoSelected}
         />
 

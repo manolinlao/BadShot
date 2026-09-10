@@ -6,10 +6,18 @@ export type LikeUpdatedEvent = {
   likesCount: number;
 };
 
+export type ShotDeletedEvent = {
+  type: 'shot.deleted';
+  shotId: string;
+  actorUserId: string;
+};
+
+export type RealtimeEvent = LikeUpdatedEvent | ShotDeletedEvent;
+
 const WS_URL = 'ws://localhost:3000/ws';
 
 export function connectRealtime(
-  onEvent: (event: LikeUpdatedEvent) => void,
+  onEvent: (event: RealtimeEvent) => void,
   onReconnect?: () => void,
 ): () => void {
   let socket: WebSocket | null = null;
@@ -34,8 +42,8 @@ export function connectRealtime(
 
     socket.addEventListener('message', (message) => {
       try {
-        const event = JSON.parse(message.data) as LikeUpdatedEvent;
-        if (event.type === 'shot.like.updated') {
+        const event = JSON.parse(message.data) as RealtimeEvent;
+        if (event.type === 'shot.like.updated' || event.type === 'shot.deleted') {
           onEvent(event);
         }
       } catch {

@@ -51,6 +51,7 @@ export function matchesShotQuickFilter(
   shot: {
     rating?: number;
     photoId?: string;
+    photoUrl?: string;
     location?: ShotLocation;
   },
   filters: ShotQuickFilter[],
@@ -70,7 +71,7 @@ export function matchesShotQuickFilter(
       return Boolean(shot.location?.name?.trim());
     }
 
-    return Boolean(shot.photoId);
+    return Boolean(shot.photoId || shot.photoUrl);
   });
 }
 

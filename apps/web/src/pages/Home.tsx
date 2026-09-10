@@ -431,8 +431,13 @@ export function Home() {
       return;
     }
 
-    if (!previewShot.photoId) {
+    if (previewShot.photoUrl) {
       setPreviewUrl(previewShot.photoUrl);
+      return;
+    }
+
+    if (!previewShot.photoId) {
+      setPreviewUrl(undefined);
       return;
     }
 
