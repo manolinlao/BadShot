@@ -16,10 +16,6 @@ model User {
   updatedAt    DateTime @updatedAt
   shots        Shot[]
   likes        Like[]
-  sentMessages Message[]
-  conversationsAsFirst  Conversation[] @relation("ConversationFirstUser")
-  conversationsAsSecond Conversation[] @relation("ConversationSecondUser")
-  hiddenConversations   ConversationHidden[]
 }
 
 model Shot {
@@ -46,9 +42,9 @@ model Shot {
 }
 
 model Like {
-  id      String   @id @default(cuid())
-  userId  String
-  shotId  String
+  id        String   @id @default(cuid())
+  userId    String
+  shotId    String
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -56,47 +52,4 @@ model Like {
 
   @@unique([userId, shotId])
   @@index([shotId])
-}
-
-model Conversation {
-  id        String   @id @default(cuid())
-  userOneId String
-  userTwoId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userOne   User     @relation("ConversationFirstUser", fields: [userOneId], references: [id], onDelete: Cascade)
-  userTwo   User     @relation("ConversationSecondUser", fields: [userTwoId], references: [id], onDelete: Cascade)
-  messages  Message[]
-  hiddenFor ConversationHidden[]
-
-  @@unique([userOneId, userTwoId])
-  @@index([userOneId])
-  @@index([userTwoId])
-}
-
-model Message {
-  id             String       @id @default(cuid())
-  conversationId String
-  senderId       String
-  body           String
-  createdAt      DateTime     @default(now())
-  readAt         DateTime?
-
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
-
-  @@index([conversationId, createdAt])
-  @@index([senderId])
-}
-
-model ConversationHidden {
-  conversationId String
-  userId         String
-  hiddenAt      DateTime @default(now())
-
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([conversationId, userId])
-  @@index([userId])
 }

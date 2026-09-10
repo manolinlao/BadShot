@@ -33,14 +33,12 @@ const toggleLikeFx = createEffect(async (serverId: string) => ({
   serverId,
   result: await toggleLikeApiShot(serverId),
 }));
-
-const realtimeShotCreated = createEvent<ApiShot>();
-const realtimeShotUpdated = createEvent<ApiShot>();
-const realtimeShotDeleted = createEvent<string>();
-const realtimeLikeUpdated = createEvent<{
+const likeUpdated = createEvent<{
   shotId: string;
+  actorUserId: string;
+  currentUserId: string;
+  liked: boolean;
   likesCount: number;
-  userId: string;
 }>();
 
 const $serverShots = createStore<ApiShot[]>([])
@@ -67,28 +65,25 @@ const $serverShots = createStore<ApiShot[]>([])
   .on(toggleLikeFx.doneData, (shots, { serverId, result }) =>
     shots.map((shot) =>
       shot.id === serverId
-        ? { ...shot, likesCount: result.likesCount, likedByMe: result.liked }
+      ? { ...shot, likesCount: result.likesCount, likedByMe: result.liked }
+      : shot,
+    ),
+  )
+  .on(likeUpdated, (shots, event) =>
+    shots.map((shot) =>
+      shot.id === event.shotId
+        ? {
+            ...shot,
+            likesCount: event.likesCount,
+            likedByMe:
+              event.actorUserId === event.currentUserId
+                ? event.liked
+                : shot.likedByMe,
+          }
         : shot,
     ),
   )
-  .on(realtimeShotCreated, (shots, shot) =>
-    shots.some((current) => current.id === shot.id) ? shots : [shot, ...shots],
-  )
-  .on(realtimeShotUpdated, (shots, updatedShot) =>
-    shots.map((shot) =>
-      shot.id === updatedShot.id
-        ? { ...shot, ...updatedShot, likedByMe: shot.likedByMe }
-        : shot,
-    ),
-  )
-  .on(realtimeShotDeleted, (shots, shotId) =>
-    shots.filter((shot) => shot.id !== shotId),
-  )
-  .on(realtimeLikeUpdated, (shots, { shotId, likesCount }) =>
-    shots.map((shot) =>
-      shot.id === shotId ? { ...shot, likesCount } : shot,
-    ),
-  );
+;
 
 const $serverShotsLoading = loadServerShotsFx.pending;
 
@@ -135,9 +130,6 @@ export const serverShotsEffects = {
   toggleLikeFx,
 };
 
-export const serverShotsRealtimeEvents = {
-  realtimeShotCreated,
-  realtimeShotUpdated,
-  realtimeShotDeleted,
-  realtimeLikeUpdated,
+export const serverShotsEvents = {
+  likeUpdated,
 };

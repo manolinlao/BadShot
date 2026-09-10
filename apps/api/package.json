@@ -23,7 +23,7 @@
     "multer": "^2.2.0",
     "pg": "^8.16.3",
     "sharp": "^0.35.3",
-    "socket.io": "^4.8.3"
+    "ws": "^8.21.3"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
@@ -32,7 +32,8 @@
     "@types/multer": "^2.2.0",
     "@types/node": "^24.10.1",
     "@types/pg": "^8.15.5",
-    "prisma": "^7.5.0",
+    "@types/ws": "^8.18.1",
+    "prisma": "^7.10.0",
     "tsx": "^4.20.6",
     "typescript": "~6.0.2"
   },

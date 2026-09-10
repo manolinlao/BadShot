@@ -248,6 +248,7 @@ export function CreateShot() {
     const shot = createShot({
       id: shotId,
       serverId: editingShot?.serverId,
+      userId: editingShot?.userId ?? currentUser?.id,
       photoUrl: editingShot?.photoUrl,
       user:
         editingShot?.user ??
@@ -284,9 +285,8 @@ export function CreateShot() {
     });
 
     if (editingShot) {
-      await updateShot(shot);
-
       if (!editingShot.serverId) {
+        await updateShot(shot);
         navigate('/', { state: { flash: 'Shot updated locally' } });
         return;
       }
@@ -308,9 +308,10 @@ export function CreateShot() {
             rating,
           },
         });
+        await updateShot(shot);
         navigate('/', { state: { flash: 'Shot updated and synced' } });
       } catch {
-        navigate('/', { state: { flash: 'Shot updated locally' } });
+        navigate('/', { state: { flash: 'Shot could not be updated' } });
       }
 
       return;

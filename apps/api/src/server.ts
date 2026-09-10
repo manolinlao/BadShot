@@ -8,9 +8,8 @@ import { prisma } from './db/prisma.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { shotsRouter } from './modules/shots/shots.routes.js';
-import { messagesRouter } from './modules/messages/messages.routes.js';
 import { uploadDir } from './modules/shots/upload.js';
-import { attachRealtime } from './realtime/realtime.js';
+import { createRealtimeServer } from './realtime/realtime.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
@@ -27,7 +26,6 @@ app.use(cookieParser());
 app.use('/uploads', express.static(uploadDir));
 app.use('/api/auth', authRouter);
 app.use('/api/shots', shotsRouter);
-app.use('/api/messages', messagesRouter);
 
 app.get('/health', (_request, response) => {
   response.json({
@@ -111,7 +109,7 @@ app.post('/demo', (request, response) => {
 app.use(errorMiddleware);
 
 const httpServer = createServer(app);
-attachRealtime(httpServer);
+createRealtimeServer(httpServer);
 
 httpServer.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);

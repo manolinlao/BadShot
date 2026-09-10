@@ -17,13 +17,7 @@ import {
   shotImageUpload,
   uploadDir,
 } from './upload.js';
-import {
-  emitLikeUpdated,
-  emitShotCreated,
-  emitShotDeleted,
-  emitShotUpdated,
-} from '../../realtime/realtime.js';
-
+import { broadcastLikeUpdated } from '../../realtime/realtime.js';
 const router = Router();
 
 router.get('/', requireAuth, async (_request, response, next) => {
@@ -70,12 +64,14 @@ router.post('/:shotId/like', requireAuth, async (request, response, next) => {
       return;
     }
 
-    response.json({ success: true, data: result });
-    emitLikeUpdated(
+    broadcastLikeUpdated({
       shotId,
-      result.likesCount,
-      response.locals.userId as string,
-    );
+      actorUserId: response.locals.userId as string,
+      liked: result.liked,
+      likesCount: result.likesCount,
+    });
+
+    response.json({ success: true, data: result });
   } catch (error) {
     next(error);
   }
@@ -101,8 +97,6 @@ router.post('/', requireAuth, async (request, response, next) => {
 
     const userId = response.locals.userId as string;
     const shot = await createShotForUser(userId, body);
-    emitShotCreated(shot);
-
     response.status(201).json({
       success: true,
       data: shot,
@@ -161,7 +155,6 @@ router.patch('/:shotId', requireAuth, async (request, response, next) => {
       success: true,
       data: shot,
     });
-    emitShotUpdated(shot);
   } catch (error) {
     next(error);
   }
@@ -220,7 +213,6 @@ router.post(
         success: true,
         data: shot,
       });
-      emitShotUpdated(shot);
     } catch (error) {
       next(error);
     }
@@ -270,7 +262,6 @@ router.delete('/:shotId', requireAuth, async (request, response, next) => {
       success: true,
       data: null,
     });
-    emitShotDeleted(shotId);
   } catch (error) {
     next(error);
   }

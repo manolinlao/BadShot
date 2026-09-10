@@ -1,28 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useUnit } from 'effector-react';
 import { RouterProvider } from 'react-router-dom';
 import { shotsEffects } from './state/shots';
 import { router } from './routes';
 import { authEffects, authStores } from './state/auth';
 import { serverShotsEffects } from './state/serverShots';
-import {
-  serverShotsRealtimeEvents,
-} from './state/serverShots';
-import { connectRealtime } from './realtime/socket';
-import { messagesEvents } from './state/messages';
-import { messagesStores } from './state/messages';
-import { markConversationRead } from './api/messages/client';
+import { serverShotsEvents } from './state/serverShots';
+import { connectRealtime } from './api/realtime';
 
 export function App() {
   const currentUser = useUnit(authStores.$currentUser);
-  const activeConversationId = useUnit(
-    messagesStores.$activeConversationId,
-  );
-  const activeConversationRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    activeConversationRef.current = activeConversationId;
-  }, [activeConversationId]);
 
   useEffect(() => {
     void shotsEffects.loadShotsFx();
@@ -37,25 +24,11 @@ export function App() {
 
     void serverShotsEffects.loadServerShotsFx();
 
-    return connectRealtime({
-      onShotCreated: serverShotsRealtimeEvents.realtimeShotCreated,
-      onShotUpdated: serverShotsRealtimeEvents.realtimeShotUpdated,
-      onShotDeleted: serverShotsRealtimeEvents.realtimeShotDeleted,
-      onLikeUpdated: serverShotsRealtimeEvents.realtimeLikeUpdated,
-      onMessageCreated: (message) => {
-        messagesEvents.realtimeMessageReceived({
-          message,
-          currentUserId: currentUser.id,
-          activeConversationId: activeConversationRef.current,
-        });
-        if (
-          activeConversationRef.current === message.conversationId &&
-          message.senderId !== currentUser.id
-        ) {
-          void markConversationRead(message.conversationId);
-        }
-      },
-      onConversationHidden: messagesEvents.realtimeConversationHidden,
+    return connectRealtime((event) => {
+      serverShotsEvents.likeUpdated({
+        ...event,
+        currentUserId: currentUser.id,
+      });
     });
   }, [currentUser?.id]);
 

@@ -29,6 +29,7 @@ export interface Shot {
 export interface ShotCreationInput {
   id: string;
   serverId?: string;
+  userId?: string;
   photoUrl?: string;
   user?: ShotUser;
   coffee: Coffee;

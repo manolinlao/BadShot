@@ -1,87 +1,111 @@
-import type { Server as HttpServer } from 'node:http';
-import { Server } from 'socket.io';
+import type { IncomingMessage, Server as HttpServer } from 'node:http';
+import WebSocket, { WebSocketServer } from 'ws';
 import { verifyAccessToken } from '../security/jwt.js';
 
-type RealtimeShot = Record<string, unknown>;
+type RealtimeClient = {
+  socket: WebSocket;
+  userId: string;
+  isAlive: boolean;
+};
 
-let realtimeServer: Server | undefined;
+export type LikeUpdatedEvent = {
+  type: 'shot.like.updated';
+  shotId: string;
+  actorUserId: string;
+  liked: boolean;
+  likesCount: number;
+};
 
-function getCookieValue(cookieHeader: string | undefined, name: string) {
-  const value = cookieHeader
-    ?.split(';')
-    .map((item) => item.trim())
-    .find((item) => item.startsWith(`${name}=`));
+const clients = new Set<RealtimeClient>();
 
-  return value ? decodeURIComponent(value.slice(name.length + 1)) : undefined;
+function getCookie(request: IncomingMessage, name: string): string | undefined {
+  const cookies = request.headers.cookie?.split(';') ?? [];
+  const cookie = cookies.find((value) => value.trim().startsWith(`${name}=`));
+
+  if (!cookie) return undefined;
+
+  return decodeURIComponent(cookie.trim().slice(name.length + 1));
 }
 
-export function attachRealtime(httpServer: HttpServer) {
-  realtimeServer = new Server(httpServer, {
-    cors: {
-      origin: 'http://localhost:5173',
-      credentials: true,
-    },
-  });
+async function authenticate(request: IncomingMessage): Promise<string | null> {
+  const token = getCookie(request, 'access_token');
+  if (!token) return null;
 
-  realtimeServer.use(async (socket, next) => {
-    const token = getCookieValue(
-      socket.handshake.headers.cookie,
-      'access_token',
-    );
-
-    if (!token) {
-      next(new Error('Falta el token de autenticación'));
-      return;
-    }
-
-    try {
-      socket.data.userId = await verifyAccessToken(token);
-      next();
-    } catch {
-      next(new Error('Token inválido o caducado'));
-    }
-  });
-
-  realtimeServer.on('connection', (socket) => {
-    socket.join(`user:${socket.data.userId}`);
-    console.log(`Realtime client connected: ${socket.data.userId}`);
-  });
-}
-
-export function emitShotCreated(shot: RealtimeShot) {
-  realtimeServer?.emit('shot.created', shot);
-}
-
-export function emitShotUpdated(shot: RealtimeShot) {
-  realtimeServer?.emit('shot.updated', shot);
-}
-
-export function emitShotDeleted(shotId: string) {
-  realtimeServer?.emit('shot.deleted', { shotId });
-}
-
-export function emitLikeUpdated(
-  shotId: string,
-  likesCount: number,
-  userId: string,
-) {
-  realtimeServer?.emit('like.updated', { shotId, likesCount, userId });
-}
-
-export function emitMessageCreated(
-  message: Record<string, unknown>,
-  participantIds: string[],
-) {
-  for (const userId of participantIds) {
-    realtimeServer?.to(`user:${userId}`).emit('message.created', message);
+  try {
+    return await verifyAccessToken(token);
+  } catch {
+    return null;
   }
 }
 
-export function emitConversationHidden(
-  conversationId: string,
-  userId: string,
-) {
-  realtimeServer?.to(`user:${userId}`).emit('conversation.hidden', {
-    conversationId,
+export function createRealtimeServer(httpServer: HttpServer) {
+  const websocketServer = new WebSocketServer({ noServer: true });
+
+  httpServer.on('upgrade', (request, socket, head) => {
+    if (request.url !== '/ws') {
+      socket.destroy();
+      return;
+    }
+
+    void authenticate(request).then((userId) => {
+      if (!userId) {
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+        socket.destroy();
+        return;
+      }
+
+      websocketServer.handleUpgrade(request, socket, head, (clientSocket) => {
+        websocketServer.emit('connection', clientSocket, request, userId);
+      });
+    });
   });
+
+  websocketServer.on(
+    'connection',
+    (socket: WebSocket, _request: IncomingMessage, userId: string) => {
+      const client: RealtimeClient = { socket, userId, isAlive: true };
+      clients.add(client);
+
+      socket.on('pong', () => {
+        client.isAlive = true;
+      });
+
+      socket.on('close', () => {
+        clients.delete(client);
+      });
+
+      socket.on('error', () => {
+        clients.delete(client);
+      });
+    },
+  );
+
+  const heartbeat = setInterval(() => {
+    for (const client of clients) {
+      if (!client.isAlive) {
+        client.socket.terminate();
+        clients.delete(client);
+        continue;
+      }
+
+      client.isAlive = false;
+      client.socket.ping();
+    }
+  }, 30_000);
+
+  websocketServer.on('close', () => clearInterval(heartbeat));
+
+  return websocketServer;
+}
+
+export function broadcastLikeUpdated(
+  event: Omit<LikeUpdatedEvent, 'type'>,
+): void {
+  const message = JSON.stringify({ type: 'shot.like.updated', ...event });
+
+  for (const client of clients) {
+    if (client.socket.readyState === WebSocket.OPEN) {
+      client.socket.send(message);
+    }
+  }
 }

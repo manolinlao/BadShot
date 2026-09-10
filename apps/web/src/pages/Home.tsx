@@ -237,7 +237,6 @@ export function Home() {
   const {
     feed: localFeed,
     deleteShot,
-    isCreatedShot,
     isLoading,
   } = useShots();
 
@@ -343,6 +342,8 @@ export function Home() {
     resetKey: paginationResetKey,
   });
   const hasResults = filteredFeed.length > 0;
+  const canManageShot = (shot: Shot) =>
+    Boolean(currentUser?.id && shot.userId === currentUser.id);
   const activeQuickFilterLabel =
     selectedRatings.length > 0
       ? `${selectedRatings.length} ratings`
@@ -425,8 +426,13 @@ export function Home() {
   }, [canLoadMore, loadMore]);
 
   useEffect(() => {
-    if (!previewShot?.photoId) {
+    if (!previewShot) {
       setPreviewUrl(undefined);
+      return;
+    }
+
+    if (!previewShot.photoId) {
+      setPreviewUrl(previewShot.photoUrl);
       return;
     }
 
@@ -594,22 +600,23 @@ export function Home() {
                       key={shot.id}
                       shot={shot}
                       onEdit={
-                        isCreatedShot(shot.id)
+                        canManageShot(shot)
                           ? () => navigate(`/edit/${shot.id}`)
                           : undefined
                       }
                       onDelete={
-                        isCreatedShot(shot.id)
+                        canManageShot(shot)
                           ? () => setShotToDelete(shot)
                           : undefined
                       }
                       onImageClick={
-                        shot.photoId ? () => setPreviewShot(shot) : undefined
+                        shot.photoId || shot.photoUrl
+                          ? () => setPreviewShot(shot)
+                          : undefined
                       }
                       onLike={
                         shot.serverId &&
-                        shot.userId !== currentUser?.id &&
-                        !isCreatedShot(shot.id)
+                        shot.userId !== currentUser?.id
                           ? () => {
                               void serverShotsEffects.toggleLikeFx(shot.serverId!);
                             }
@@ -709,7 +716,7 @@ export function Home() {
         </div>
       )}
 
-      {previewShot?.photoId && (
+      {previewShot && previewUrl && (
         <div
           className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-black/80 px-3 py-3 sm:items-center sm:px-4 sm:py-6"
           role="dialog"
