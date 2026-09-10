@@ -26,7 +26,9 @@ export function Profile() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState<string>();
   const [shotMessage, setShotMessage] = useState<string>();
-  const [previewShot, setPreviewShot] = useState<ReturnType<typeof mapApiShotToShot> | null>(null);
+  const [previewShot, setPreviewShot] = useState<ReturnType<
+    typeof mapApiShotToShot
+  > | null>(null);
   const {
     currentUser,
     serverShots,
@@ -49,7 +51,9 @@ export function Profile() {
 
   const currentDisplayName = displayName || currentUser.displayName;
 
-  const handleProfileSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleProfileSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
     setProfileMessage(undefined);
 
@@ -119,9 +123,7 @@ export function Profile() {
   };
 
   const myShots = serverShots
-    .filter(
-    (shot) => shot.userId === currentUser.id,
-    )
+    .filter((shot) => shot.userId === currentUser.id)
     .map(mapApiShotToShot);
 
   const tastingScoreItems = [
@@ -178,7 +180,10 @@ export function Profile() {
         Este es tu perfil de BadShot.
       </p>
 
-      <form onSubmit={handleProfileSubmit} className="mt-6 rounded-2xl border border-[#e2d6ca] bg-[#fbf6ef] p-4">
+      <form
+        onSubmit={handleProfileSubmit}
+        className="mt-6 rounded-2xl border border-[#e2d6ca] bg-[#fbf6ef] p-4"
+      >
         <label
           htmlFor="display-name"
           className="text-xs font-bold uppercase tracking-[0.18em] text-[#7a4d2a]"
@@ -256,9 +261,7 @@ export function Profile() {
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         <div className="rounded-2xl border border-[#e2d6ca] bg-[#fbf6ef] p-4">
-          <p className="text-2xl font-black text-[#211a16]">
-            {myShots.length}
-          </p>
+          <p className="text-2xl font-black text-[#211a16]">{myShots.length}</p>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#7a4d2a]">
             Shots
           </p>
@@ -413,10 +416,14 @@ export function Profile() {
                     {getCoffeeTitle(previewShot.coffee)}
                   </p>
                   {previewShot.coffee.roaster && (
-                    <p className="text-[#6f5b50]">{previewShot.coffee.roaster}</p>
+                    <p className="text-[#6f5b50]">
+                      {previewShot.coffee.roaster}
+                    </p>
                   )}
                   {previewShot.coffee.origin && (
-                    <p className="text-[#6f5b50]">{previewShot.coffee.origin}</p>
+                    <p className="text-[#6f5b50]">
+                      {previewShot.coffee.origin}
+                    </p>
                   )}
                 </div>
 
@@ -488,7 +495,10 @@ export function Profile() {
                       ['Sweetness', previewShot.sweetnessScore],
                       ['Finish', previewShot.finishScore],
                     ]
-                      .filter((item): item is [string, number] => item[1] !== undefined)
+                      .filter(
+                        (item): item is [string, number] =>
+                          item[1] !== undefined,
+                      )
                       .map(([label, score]) => (
                         <div
                           key={label}
