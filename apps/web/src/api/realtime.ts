@@ -10,11 +10,13 @@ const WS_URL = 'ws://localhost:3000/ws';
 
 export function connectRealtime(
   onEvent: (event: LikeUpdatedEvent) => void,
+  onReconnect?: () => void,
 ): () => void {
   let socket: WebSocket | null = null;
   let reconnectTimer: number | undefined;
   let reconnectDelay = 500;
   let closed = false;
+  let hasConnected = false;
 
   const connect = () => {
     if (closed) return;
@@ -22,6 +24,11 @@ export function connectRealtime(
     socket = new WebSocket(WS_URL);
 
     socket.addEventListener('open', () => {
+      if (hasConnected) {
+        onReconnect?.();
+      }
+
+      hasConnected = true;
       reconnectDelay = 500;
     });
 

@@ -29,6 +29,8 @@ export function App() {
         ...event,
         currentUserId: currentUser.id,
       });
+    }, () => {
+      void serverShotsEffects.loadServerShotsFx();
     });
   }, [currentUser?.id]);
 
