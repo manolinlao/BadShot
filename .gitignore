@@ -1,5 +1,6 @@
 node_modules
 dist
 .env
+backups
 apps/api/src/generated/prisma
 apps/api/uploads

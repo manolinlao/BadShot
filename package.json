@@ -11,6 +11,7 @@
     "dev:web": "npm run dev -w apps/web",
     "dev:api": "npm run dev -w apps/api",
     "build": "npm run build -w apps/web && npm run build -w apps/api",
+    "backup": "bash scripts/backup.sh",
     "test": "npm run test --workspaces",
     "format": "prettier --write .",
     "typecheck:web": "npm run typecheck -w apps/web",

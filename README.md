@@ -195,6 +195,38 @@ comando puede crear y aplicar una migracion nueva y necesita PostgreSQL activo.
 No hace falta ejecutar estos dos comandos en cada arranque si no ha cambiado el
 schema ni se han descargado migraciones nuevas.
 
+## Backups
+
+El volumen Docker es persistente, pero no sustituye a un backup. Para guardar
+la base de datos y las imágenes en `backups/`:
+
+```bash
+npm run backup
+```
+
+Cada ejecución crea una carpeta con fecha que contiene:
+
+- `database.sql`: dump lógico de PostgreSQL.
+- `uploads.tar.gz`: imágenes subidas a BadShot.
+
+La carpeta `backups/` está excluida de Git. Copia esos backups también a otro
+disco o equipo; si solo están en el mismo ordenador no protegen frente a una
+avería o pérdida del disco.
+
+Para restaurar una base de datos, arranca PostgreSQL y ejecuta el dump elegido:
+
+```bash
+docker compose up -d
+cat backups/AAAA-MM-DD-HHMMSS/database.sql \
+  | docker compose exec -T postgres psql -U badshot -d badshot
+```
+
+Para restaurar las imágenes:
+
+```bash
+tar -xzf backups/AAAA-MM-DD-HHMMSS/uploads.tar.gz -C apps/api
+```
+
 Parar los contenedores sin borrar datos:
 
 ```bash
