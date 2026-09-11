@@ -1,6 +1,7 @@
 import type { Coffee } from '../../domain/coffee/types';
 import type { Recipe } from '../../domain/recipe/types';
 import type { ShotLocation } from '../../domain/location/types';
+import { appConfig } from '../../config/env';
 
 type JsonObject = object;
 
@@ -54,7 +55,7 @@ type ApiErrorResponse = {
   };
 };
 
-const API_URL = 'http://localhost:3000';
+const API_URL = appConfig.apiUrl;
 
 export function getApiAssetUrl(path: string): string {
   return `${API_URL}${path}`;

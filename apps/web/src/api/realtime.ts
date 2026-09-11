@@ -1,3 +1,5 @@
+import { appConfig } from '../config/env';
+
 export type LikeUpdatedEvent = {
   type: 'shot.like.updated';
   shotId: string;
@@ -14,7 +16,7 @@ export type ShotDeletedEvent = {
 
 export type RealtimeEvent = LikeUpdatedEvent | ShotDeletedEvent;
 
-const WS_URL = 'ws://localhost:3000/ws';
+const WS_URL = appConfig.websocketUrl;
 
 export function connectRealtime(
   onEvent: (event: RealtimeEvent) => void,

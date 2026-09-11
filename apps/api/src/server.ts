@@ -2,6 +2,8 @@
 // Por eso los imports locales del backend terminan en .js.
 import express from 'express';
 import { createServer } from 'node:http';
+import { createServer as createHttpsServer } from 'node:https';
+import { readFileSync } from 'node:fs';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { prisma } from './db/prisma.js';
@@ -13,10 +15,11 @@ import { createRealtimeServer } from './realtime/realtime.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
+const webOrigin = process.env.WEB_ORIGIN ?? 'http://localhost:5173';
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: webOrigin,
     credentials: true,
   }),
 );
@@ -108,9 +111,21 @@ app.post('/demo', (request, response) => {
 
 app.use(errorMiddleware);
 
-const httpServer = createServer(app);
-createRealtimeServer(httpServer);
+const httpsCertificatePath = process.env.HTTPS_CERT_PATH;
+const httpsKeyPath = process.env.HTTPS_KEY_PATH;
+const httpServer =
+  httpsCertificatePath && httpsKeyPath
+    ? createHttpsServer(
+        {
+          cert: readFileSync(httpsCertificatePath),
+          key: readFileSync(httpsKeyPath),
+        },
+        app,
+      )
+    : createServer(app);
+createRealtimeServer(httpServer, webOrigin);
 
 httpServer.listen(port, () => {
-  console.log(`API listening on http://localhost:${port}`);
+  const protocol = httpsCertificatePath && httpsKeyPath ? 'https' : 'http';
+  console.log(`API listening on ${protocol}://localhost:${port}`);
 });

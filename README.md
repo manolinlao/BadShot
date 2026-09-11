@@ -109,6 +109,43 @@ npm run build
 
 La configuracion del backend esta en `apps/api/.env`.
 
+La configuracion del frontend se puede copiar desde
+`apps/web/.env.example` a `apps/web/.env`:
+
+```env
+VITE_API_URL="http://localhost:3000"
+VITE_WS_URL="ws://localhost:3000/ws"
+```
+
+En el backend, `WEB_ORIGIN` indica el origen permitido del frontend:
+
+```env
+WEB_ORIGIN="http://localhost:5173"
+```
+
+En producción, sustituye estas URLs por el dominio HTTPS y el WebSocket seguro
+correspondiente. El frontend mantiene valores locales por defecto si no existe
+`apps/web/.env`.
+
+## HTTPS y WebSocket seguro
+
+En producción, configura el frontend así:
+
+```env
+VITE_API_URL="https://api.tudominio.com"
+VITE_WS_URL="wss://api.tudominio.com/ws"
+```
+
+La API permite dos formas de terminar TLS:
+
+- Recomendado: un reverse proxy como Nginx, Caddy o el balanceador del hosting
+  termina HTTPS y reenvía WebSocket a la API.
+- Directo: configura en `apps/api/.env` `HTTPS_CERT_PATH` y `HTTPS_KEY_PATH`
+  apuntando al certificado y a la clave privada.
+
+En ambos casos, `WEB_ORIGIN` debe contener el origen HTTPS exacto del frontend.
+El servidor rechaza handshakes WebSocket procedentes de otros orígenes.
+
 Si no existe, crearla desde el ejemplo:
 
 ```bash

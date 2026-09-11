@@ -1,3 +1,5 @@
+import { appConfig } from '../../config/env';
+
 export type AuthUser = {
   id: string;
   email: string;
@@ -38,7 +40,7 @@ type ApiErrorResponse = {
   };
 };
 
-const API_URL = 'http://localhost:3000';
+const API_URL = appConfig.apiUrl;
 
 export async function login(input: LoginInput): Promise<AuthUser> {
   const response = await fetch(`${API_URL}/api/auth/login`, {

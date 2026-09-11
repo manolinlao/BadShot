@@ -44,11 +44,21 @@ async function authenticate(request: IncomingMessage): Promise<string | null> {
   }
 }
 
-export function createRealtimeServer(httpServer: HttpServer) {
+export function createRealtimeServer(
+  httpServer: HttpServer,
+  allowedOrigin: string,
+) {
   const websocketServer = new WebSocketServer({ noServer: true });
 
   httpServer.on('upgrade', (request, socket, head) => {
     if (request.url !== '/ws') {
+      socket.destroy();
+      return;
+    }
+
+    const origin = request.headers.origin;
+    if (origin && origin !== allowedOrigin) {
+      socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
       socket.destroy();
       return;
     }
