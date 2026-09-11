@@ -8,8 +8,81 @@ import {
 } from './auth.service.js';
 import { requireAuth } from './auth.middleware.js';
 import { env } from 'node:process';
+import {
+  requestPasswordReset,
+  resetPassword,
+} from './password-reset.service.js';
 
 export const authRouter = Router();
+
+authRouter.post('/forgot-password', async (request, response, next) => {
+  try {
+    const body = request.body as { email?: unknown };
+
+    if (typeof body.email !== 'string' || body.email.trim().length === 0) {
+      response.status(400).json({
+        success: false,
+        error: { message: 'El email es obligatorio' },
+      });
+      return;
+    }
+
+    await requestPasswordReset(body.email);
+
+    response.json({
+      success: true,
+      data: {
+        message:
+          'Si existe una cuenta con ese email, recibirás instrucciones para recuperar la contraseña.',
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.post('/reset-password', async (request, response, next) => {
+  try {
+    const body = request.body as {
+      token?: unknown;
+      newPassword?: unknown;
+    };
+
+    if (
+      typeof body.token !== 'string' ||
+      typeof body.newPassword !== 'string' ||
+      body.token.length === 0 ||
+      body.newPassword.length < 8
+    ) {
+      response.status(400).json({
+        success: false,
+        error: {
+          message: 'El enlace o la nueva contraseña no son válidos',
+        },
+      });
+      return;
+    }
+
+    const changed = await resetPassword(body.token, body.newPassword);
+
+    if (!changed) {
+      response.status(400).json({
+        success: false,
+        error: {
+          message: 'El enlace no es válido o ha caducado',
+        },
+      });
+      return;
+    }
+
+    response.json({
+      success: true,
+      data: { message: 'Contraseña actualizada' },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 authRouter.post('/register', async (request, response, next) => {
   try {

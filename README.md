@@ -42,6 +42,24 @@ La aplicacion quedara disponible en:
 - API: http://localhost:3000
 - PostgreSQL: `localhost:5432`
 
+## Recuperar contraseña
+
+En la pantalla de login está disponible `Forgot your password?`. El enlace de
+recuperación caduca en una hora y solo puede utilizarse una vez.
+
+En desarrollo, si no se configura un proveedor de email, la API imprime el
+enlace de recuperación en la terminal del backend. Para enviar emails en
+producción, configura en `apps/api/.env`:
+
+```text
+APP_URL="https://tu-dominio.com"
+RESEND_API_KEY="re_..."
+EMAIL_FROM="BadShot <noreply@tu-dominio.com>"
+```
+
+El dominio de envío debe estar verificado en Resend. La API nunca devuelve el
+token en la respuesta HTTP ni revela si el email existe.
+
 ## Tiempo real
 
 Los cambios de likes se propagan por WebSocket en `ws://localhost:3000/ws`.

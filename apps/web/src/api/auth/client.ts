@@ -26,6 +26,10 @@ type ChangePasswordInput = {
   newPassword: string;
 };
 
+type PasswordResetResponse = {
+  message: string;
+};
+
 type ApiErrorResponse = {
   success: false;
   error: {
@@ -59,6 +63,41 @@ export async function login(input: LoginInput): Promise<AuthUser> {
   }
 
   return payload.data;
+}
+
+export async function requestPasswordReset(email: string): Promise<string> {
+  const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: PasswordResetResponse }
+    | ApiErrorResponse;
+
+  if (!payload.success) throw new Error(payload.error.message);
+  if (!response.ok) throw new Error('Error inesperado del servidor');
+
+  return payload.data.message;
+}
+
+export async function resetPassword(
+  token: string,
+  newPassword: string,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/api/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword }),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: PasswordResetResponse }
+    | ApiErrorResponse;
+
+  if (!payload.success) throw new Error(payload.error.message);
+  if (!response.ok) throw new Error('Error inesperado del servidor');
 }
 
 export async function getMe(): Promise<AuthUser> {

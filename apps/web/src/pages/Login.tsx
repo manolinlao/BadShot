@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../api/auth/client';
 import { authEvents } from '../state/auth';
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const flash = (location.state as { flash?: string } | null)?.flash;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,6 +81,19 @@ export function Login() {
           {isSubmitting ? 'Logging in...' : 'Log in'}
         </button>
       </form>
+
+      {flash ? (
+        <p className="mt-4 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          {flash}
+        </p>
+      ) : null}
+
+      <Link
+        to="/forgot-password"
+        className="mt-4 inline-flex text-sm font-semibold text-[#7a4d2a] hover:text-[#211a16]"
+      >
+        Forgot your password?
+      </Link>
 
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
