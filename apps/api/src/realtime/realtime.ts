@@ -46,7 +46,7 @@ async function authenticate(request: IncomingMessage): Promise<string | null> {
 
 export function createRealtimeServer(
   httpServer: HttpServer,
-  allowedOrigin: string,
+  allowedOrigins: string[],
 ) {
   const websocketServer = new WebSocketServer({ noServer: true });
 
@@ -57,7 +57,7 @@ export function createRealtimeServer(
     }
 
     const origin = request.headers.origin;
-    if (origin && origin !== allowedOrigin) {
+    if (origin && !allowedOrigins.includes(origin)) {
       socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
       socket.destroy();
       return;

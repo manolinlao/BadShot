@@ -1,116 +1,235 @@
 # Cloudflare y misterlao.com
 
-## Qué estoy haciendo
+## Objetivo
 
-Cloudflare se ha colocado delante de la web para gestionar los DNS, el HTTPS y, más adelante, publicar BadShot desde el ordenador de casa.
+Cloudflare gestiona los DNS y proporciona HTTPS. Un Cloudflare Tunnel conecta Cloudflare con el MacBook de casa, donde se ejecutan BadShot, la API y PostgreSQL.
 
-La situación actual es:
+No se han contratado servicios de pago.
+
+## Qué hace cada servicio
+
+- **cdmon**: mantiene la compra del dominio y el hosting/microplan de la web antigua.
+- **Cloudflare DNS**: indica a Internet a qué servicio debe dirigirse cada subdominio.
+- **Cloudflare HTTPS**: proporciona HTTPS para los dominios que pasan por Cloudflare.
+- **cloudflared**: programa instalado en el MacBook que mantiene la conexión con Cloudflare.
+- **Docker/PostgreSQL**: guarda los datos de BadShot en el MacBook.
+
+La web antigua sigue en cdmon. BadShot no sustituye a `misterlao.com`; usa un subdominio.
+
+## Arquitectura actual
 
 ```text
-Alguien escribe misterlao.com
-          |
-          v
-Cloudflare recibe la petición
-          |
-          v
-Cloudflare la reenvía al hosting de cdmon
-          |
-          v
-Se muestra la página actual de cdmon
+Internet
+    |
+    v
+Cloudflare
+    |
+    v
+Cloudflare Tunnel: badshot-home
+    |
+    v
+MacBook de casa
+    |-- localhost:5173  Frontend de BadShot
+    |-- localhost:3000  API y WebSockets
+    `-- Docker          PostgreSQL
 ```
 
-## Qué es cada servicio
-
-- **cdmon** sigue siendo el registrador del dominio. El dominio continúa comprado allí.
-- **cdmon** sigue teniendo el hosting y el microplan actuales.
-- **Cloudflare** gestiona ahora los DNS del dominio y está delante de la web.
-- **DNS** es la agenda que indica a qué servidor debe dirigirse cada dominio.
-- **Cloudflare Tunnel** será el sistema que permitirá publicar BadShot desde el ordenador de casa sin abrir puertos del router.
-
-## Qué ha cambiado
-
-Antes, cdmon respondía directamente a la pregunta:
-
-> "¿Dónde está misterlao.com?"
-
-Ahora responde Cloudflare. Cloudflare ha importado los registros DNS que existían en cdmon y, con ellos, continúa enviando la web a cdmon.
-
-No se ha movido ni borrado la web de cdmon. Solo ha cambiado quién gestiona las indicaciones DNS.
-
-## Estado actual
+Las direcciones públicas son:
 
 ```text
-Dominio:          sigue en cdmon
-Hosting actual:   sigue en cdmon
-Microplan:        sigue en cdmon
-DNS:              ahora los gestiona Cloudflare
-Web actual:       sigue alojada en cdmon
-BadShot:          todavía no está publicado en Internet
-DNSSEC:           desactivado temporalmente durante la migración
-HTTPS Cloudflare: pendiente de validación inicial
+https://badshot.misterlao.com  -> frontend en localhost:5173
+https://api.misterlao.com      -> API y WebSockets en localhost:3000
+https://misterlao.com          -> web antigua de cdmon
 ```
 
-## Por qué se desactivó DNSSEC
+## Arranque de BadShot
 
-DNSSEC protege las respuestas DNS con firmas criptográficas. Al cambiar los servidores DNS de cdmon a Cloudflare, las firmas antiguas de cdmon dejan de coincidir con las claves de Cloudflare.
+Para publicar BadShot desde el MacBook hay que mantener abiertas tres cosas. Se pueden usar tres ventanas de Terminal.
 
-Si se mantiene DNSSEC activo durante el cambio, algunos navegadores y resolvers pueden considerar el dominio inválido y devolver errores `SERVFAIL`.
+### 1. Arrancar PostgreSQL
 
-Por eso se desactivó temporalmente. Cuando Cloudflare esté completamente activo y el dominio funcione correctamente, DNSSEC se podrá volver a activar desde Cloudflare con nuevas claves.
-
-## El certificado HTTPS
-
-En Cloudflare, dentro de **SSL/TLS -> Edge Certificates**, el certificado puede aparecer inicialmente como:
-
-```text
-Pending Validation (TXT)
+```bash
+cd /Users/manolin/MANOLIN/dvlp/BadShot
+docker compose up -d
 ```
 
-Esto significa que Cloudflare todavía está validando el certificado HTTPS para `misterlao.com`. Mientras esté pendiente, puede aparecer ocasionalmente:
+Docker mantiene la base de datos local. Si el MacBook se apaga, la aplicación deja de estar disponible, pero los datos permanecen en el volumen de Docker.
 
-```text
-ERR_SSL_VERSION_OR_CIPHER_MISMATCH
+### 2. Arrancar frontend y API
+
+```bash
+cd /Users/manolin/MANOLIN/dvlp/BadShot
+npm run dev
 ```
 
-No hay que activar Advanced Certificate Manager. Para este proyecto basta el certificado Universal SSL incluido en el plan gratuito.
+La variable `WEB_ORIGIN` queda guardada en `apps/api/.env`, por eso ya no hay que escribirla en cada arranque.
 
-Hay que esperar a que el certificado pase a:
+Su valor permite que la API acepte peticiones del frontend público y del frontend local.
+
+El frontend detecta automáticamente desde dónde se abre:
 
 ```text
-Active
+http://localhost:5173
+    -> http://localhost:3000
+
+https://badshot.misterlao.com
+    -> https://api.misterlao.com
 ```
 
-## Cómo quedará BadShot
+No hay que escribir `VITE_API_URL` ni `VITE_WS_URL` al arrancar normalmente.
 
-La idea es separar la web antigua de cdmon y la aplicación nueva:
+### 3. Arrancar el túnel
+
+En otra Terminal:
+
+```bash
+cloudflared tunnel --config ~/.cloudflared/config.yml run badshot-home
+```
+
+Mientras esta Terminal siga abierta, Cloudflare puede llegar al MacBook. Si se cierra, BadShot seguirá funcionando en el MacBook, pero dejará de estar disponible desde Internet.
+
+## Qué es `config.yml`
+
+El archivo está fuera del proyecto, en:
 
 ```text
-misterlao.com
-    -> página actual alojada en cdmon
+~/.cloudflared/config.yml
+```
 
-badshot.misterlao.com
-    -> frontend de BadShot en el ordenador de casa
+Es la configuración del túnel. Le dice a `cloudflared` qué dominio debe enviar a qué servicio local:
 
+```yaml
+tunnel: 143bca8a-9f7d-47c1-8419-17a78dfa455a
+credentials-file: /Users/manolin/.cloudflared/143bca8a-9f7d-47c1-8419-17a78dfa455a.json
+
+ingress:
+  - hostname: badshot.misterlao.com
+    service: http://localhost:5173
+  - hostname: api.misterlao.com
+    service: http://localhost:3000
+  - service: http_status:404
+```
+
+La sección `ingress` significa:
+
+- Las peticiones a `badshot.misterlao.com` van al frontend.
+- Las peticiones a `api.misterlao.com` van a la API.
+- Cualquier dominio no configurado devuelve `404`.
+
+El archivo JSON indicado en `credentials-file` contiene las credenciales del túnel. No debe compartirse, subirse a Git ni publicarse.
+
+## Por qué usamos `api.misterlao.com`
+
+La primera idea era usar:
+
+```text
 api.badshot.misterlao.com
-    -> backend y WebSocket de BadShot en el ordenador de casa
 ```
 
-Así no hace falta sustituir la web actual ni tocar el hosting de cdmon.
+Pero ese es un subdominio de dos niveles. El certificado Universal SSL gratuito de Cloudflare cubre normalmente:
 
-## Qué haremos después
+```text
+*.misterlao.com
+```
 
-1. Esperar a que el certificado Universal SSL aparezca como `Active`.
-2. Crear un Cloudflare Tunnel desde el ordenador de casa.
-3. Asociar el frontend de BadShot a `badshot.misterlao.com`.
-4. Asociar la API y los WebSockets a `api.badshot.misterlao.com`.
-5. Configurar el frontend y la API para usar esas direcciones HTTPS.
-6. Probar BadShot desde un móvil conectado a Internet fuera de casa.
+Por tanto cubre:
 
-## Qué no hay que hacer
+```text
+badshot.misterlao.com
+api.misterlao.com
+```
+
+Pero no cubre necesariamente:
+
+```text
+api.badshot.misterlao.com
+```
+
+Usar `api.misterlao.com` evita el error `ERR_SSL_VERSION_OR_CIPHER_MISMATCH` sin contratar Advanced Certificate Manager.
+
+Además, `api.misterlao.com` es un nombre general que puede servir para la API principal del proyecto.
+
+## Convención para futuras aplicaciones
+
+Para nuevas aplicaciones se deben usar subdominios de un solo nivel:
+
+```text
+otraapp.misterlao.com      -> frontend de otra aplicación
+otraapp-api.misterlao.com  -> API de otra aplicación
+```
+
+También sería válido usar:
+
+```text
+api-otraapp.misterlao.com
+```
+
+Hay que evitar nombres con dos niveles, como `api.otraapp.misterlao.com`, si se quiere usar el certificado Universal SSL gratuito sin configuración adicional.
+
+## Qué ocurre al apagar algo
+
+- Si se apaga Docker, la API no podrá acceder a PostgreSQL.
+- Si se apaga `npm run dev`, dejan de funcionar frontend y API.
+- Si se apaga `cloudflared`, BadShot deja de ser accesible desde Internet.
+- Nada de esto borra los datos de PostgreSQL ni las imágenes guardadas.
+
+## DNSSEC
+
+DNSSEC se desactivó temporalmente al cambiar los servidores DNS de cdmon a Cloudflare. Las firmas antiguas de cdmon no coincidían con las claves de Cloudflare.
+
+Cuando todo esté estable, DNSSEC se puede activar desde Cloudflare con nuevas claves. No se debe activar desde cdmon con las claves antiguas.
+
+## Configuración que se usa
+
+Este proyecto usa únicamente el túnel permanente:
+
+```text
+badshot-home
+```
+
+No hay que usar Quick Tunnels ni URLs trycloudflare.com. Esas URLs fueron solo
+una prueba inicial y no forman parte del arranque normal.
+
+## Resumen rápido de arranque
+
+Desde cero, abre tres ventanas de Terminal y ejecuta:
+
+### Terminal 1
+
+```bash
+cd /Users/manolin/MANOLIN/dvlp/BadShot
+docker compose up -d
+```
+
+### Terminal 2
+
+```bash
+cd /Users/manolin/MANOLIN/dvlp/BadShot
+npm run dev
+```
+
+### Terminal 3
+
+```bash
+cloudflared tunnel --config ~/.cloudflared/config.yml run badshot-home
+```
+
+Después:
+
+```text
+En el MacBook:  http://localhost:5173
+Desde Internet: https://badshot.misterlao.com
+```
+
+Hay que mantener abiertas las tres ventanas mientras se use BadShot desde fuera
+de casa.
+
+## Qué no hacer
 
 - No cancelar el microplan de cdmon.
 - No borrar el hosting de cdmon.
-- No cambiar otra vez los servidores DNS mientras Cloudflare está validando el dominio.
-- No sustituir los registros de `misterlao.com` sin comprobar antes qué servicio apuntan.
-- No publicar todavía BadShot en el dominio raíz si queremos conservar la web actual.
-
+- No cambiar los servidores DNS otra vez.
+- No compartir el archivo JSON de credenciales del túnel.
+- No subir `~/.cloudflared/config.yml` ni sus credenciales a Git.
+- No apagar el MacBook si se quiere mantener BadShot disponible.
+- No usar `misterlao.com` para BadShot mientras se quiera conservar la web antigua de cdmon.

@@ -15,11 +15,21 @@ import { createRealtimeServer } from './realtime/realtime.js';
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
-const webOrigin = process.env.WEB_ORIGIN ?? 'http://localhost:5173';
+const webOrigins = (process.env.WEB_ORIGIN ?? 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: webOrigin,
+    origin: (origin, callback) => {
+      if (!origin || webOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error('Origin not allowed by CORS'));
+    },
     credentials: true,
   }),
 );
@@ -123,7 +133,7 @@ const httpServer =
         app,
       )
     : createServer(app);
-createRealtimeServer(httpServer, webOrigin);
+createRealtimeServer(httpServer, webOrigins);
 
 httpServer.listen(port, () => {
   const protocol = httpsCertificatePath && httpsKeyPath ? 'https' : 'http';

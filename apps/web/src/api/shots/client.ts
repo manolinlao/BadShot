@@ -58,7 +58,16 @@ type ApiErrorResponse = {
 const API_URL = appConfig.apiUrl;
 
 export function getApiAssetUrl(path: string): string {
-  return `${API_URL}${path}`;
+  if (/^https?:\/\//.test(path)) {
+    try {
+      const url = new URL(path);
+      return `${API_URL}${url.pathname}${url.search}`;
+    } catch {
+      return path;
+    }
+  }
+
+  return `${API_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
 export async function getMyShots(): Promise<ApiShot[]> {
