@@ -22,6 +22,54 @@ import { useShots } from '../hooks/useShots';
 import { deletePhoto } from '../api/photos/db';
 import { savePhotoFromFile } from '../api/photos/repository';
 
+const MAX_UPLOAD_SIZE = 7 * 1024 * 1024;
+
+async function compressLargeImage(file: File): Promise<File> {
+  if (file.size <= MAX_UPLOAD_SIZE) return file;
+
+  const objectUrl = URL.createObjectURL(file);
+
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error('No se pudo leer la imagen'));
+      element.src = objectUrl;
+    });
+
+    const maxDimension = 2400;
+    const scale = Math.min(
+      1,
+      maxDimension / Math.max(image.naturalWidth, image.naturalHeight),
+    );
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('No se pudo preparar la imagen');
+
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (result) => {
+          if (result) resolve(result);
+          else reject(new Error('No se pudo comprimir la imagen'));
+        },
+        'image/jpeg',
+        0.82,
+      );
+    });
+
+    return new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+      type: 'image/jpeg',
+    });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 export function CreateShot() {
   const navigate = useNavigate();
   const { shotId } = useParams();
@@ -152,6 +200,8 @@ export function CreateShot() {
           { type: 'image/jpeg' },
         );
       }
+
+      normalizedFile = await compressLargeImage(normalizedFile);
 
       setSelectedFile(normalizedFile);
       setImageUrl(URL.createObjectURL(normalizedFile));
