@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useUnit } from 'effector-react';
 import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { Camera, X } from 'lucide-react';
 import { authEffects, authStores } from '../state/auth';
+import { getApiAssetUrl } from '../api/shots/client';
 import {
   mapApiShotToShot,
   serverShotsEffects,
@@ -21,11 +22,13 @@ export function Profile() {
   const { createdShots, deleteShot } = useShots();
   const [displayName, setDisplayName] = useState('');
   const [profileMessage, setProfileMessage] = useState<string>();
+  const [avatarMessage, setAvatarMessage] = useState<string>();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMessage, setPasswordMessage] = useState<string>();
   const [shotMessage, setShotMessage] = useState<string>();
+  const [avatarPreviewOpen, setAvatarPreviewOpen] = useState(false);
   const [previewShot, setPreviewShot] = useState<ReturnType<
     typeof mapApiShotToShot
   > | null>(null);
@@ -33,14 +36,18 @@ export function Profile() {
     currentUser,
     serverShots,
     updateProfile,
+    uploadProfileAvatar,
     profileUpdating,
+    avatarUpdating,
     changePassword,
     passwordUpdating,
   } = useUnit({
     currentUser: authStores.$currentUser,
     serverShots: serverShotsStores.$serverShots,
     updateProfile: authEffects.updateProfileFx,
+    uploadProfileAvatar: authEffects.uploadProfileAvatarFx,
     profileUpdating: authStores.$profileUpdating,
+    avatarUpdating: authStores.$avatarUpdating,
     changePassword: authEffects.changePasswordFx,
     passwordUpdating: authStores.$passwordUpdating,
   });
@@ -50,6 +57,28 @@ export function Profile() {
   }
 
   const currentDisplayName = displayName || currentUser.displayName;
+  const avatarUrl = currentUser.avatarUrl
+    ? getApiAssetUrl(currentUser.avatarUrl)
+    : undefined;
+
+  const handleAvatarSelected = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setAvatarMessage(undefined);
+
+    try {
+      await uploadProfileAvatar(file);
+      setAvatarMessage('Profile photo updated.');
+    } catch (error) {
+      setAvatarMessage(
+        error instanceof Error ? error.message : 'Could not update photo.',
+      );
+    }
+  };
 
   const handleProfileSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
@@ -161,9 +190,24 @@ export function Profile() {
   return (
     <section className="mx-auto max-w-2xl rounded-[32px] border border-[#e2d6ca] bg-white/85 p-5 shadow-[0_12px_30px_rgba(49,33,20,0.05)]">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#211a16] text-lg font-black text-white">
-          {currentUser.displayName.charAt(0).toUpperCase()}
-        </div>
+        {avatarUrl ? (
+          <button
+            type="button"
+            onClick={() => setAvatarPreviewOpen(true)}
+            className="rounded-full transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#7a4d2a] focus:ring-offset-2"
+            aria-label="View profile photo"
+          >
+            <img
+              src={avatarUrl}
+              alt={`${currentUser.displayName} avatar`}
+              className="h-12 w-12 rounded-full object-cover ring-2 ring-[#e2d6ca]"
+            />
+          </button>
+        ) : (
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#211a16] text-lg font-black text-white">
+            {currentUser.displayName.charAt(0).toUpperCase()}
+          </div>
+        )}
 
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#7a4d2a]">
@@ -175,6 +219,52 @@ export function Profile() {
           <p className="text-sm text-[#6f5b50]">{currentUser.email}</p>
         </div>
       </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#d8c8ba] bg-[#fbf6ef] px-4 py-2 text-sm font-bold text-[#5f4a3f] transition hover:border-[#7a4d2a] hover:text-[#211a16]">
+          <Camera className="h-4 w-4" aria-hidden="true" />
+          {avatarUpdating ? 'Uploading...' : 'Change profile photo'}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
+            className="sr-only"
+            onChange={handleAvatarSelected}
+            disabled={avatarUpdating}
+          />
+        </label>
+        {avatarMessage && (
+          <p className="text-sm text-[#5f4a3f]">{avatarMessage}</p>
+        )}
+      </div>
+
+      {avatarPreviewOpen && avatarUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Profile photo preview"
+          onClick={() => setAvatarPreviewOpen(false)}
+        >
+          <div
+            className="relative max-h-[90vh] max-w-[min(90vw,42rem)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setAvatarPreviewOpen(false)}
+              className="absolute -right-2 -top-2 z-10 rounded-full bg-black/75 p-2.5 text-white shadow-lg transition hover:bg-black"
+              aria-label="Close profile photo preview"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <img
+              src={avatarUrl}
+              alt={`${currentUser.displayName} profile photo`}
+              className="max-h-[88vh] max-w-full rounded-3xl object-contain shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
 
       <p className="mt-4 text-sm leading-6 text-[#5f4a3f]">
         Este es tu perfil de BadShot.

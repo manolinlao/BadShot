@@ -4,6 +4,7 @@ export type AuthUser = {
   id: string;
   email: string;
   displayName: string;
+  avatarUrl?: string;
   role: 'USER' | 'GUEST';
   createdAt: string;
   updatedAt: string;
@@ -133,6 +134,31 @@ export async function updateProfile(
     },
     credentials: 'include',
     body: JSON.stringify(input),
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: AuthUser }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
+}
+
+export async function uploadProfileAvatar(file: File): Promise<AuthUser> {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const response = await fetch(`${API_URL}/api/auth/me/avatar`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
   });
 
   const payload = (await response.json()) as

@@ -5,6 +5,7 @@ import {
   MapPin,
   Pencil,
   Trash2,
+  X,
 } from 'lucide-react';
 import type { Shot } from '../../domain/shot/types';
 import { formatDate } from '../../utils/util';
@@ -47,6 +48,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   likePending = false,
 }) => {
   const [mapOpen, setMapOpen] = useState(false);
+  const [avatarPreviewOpen, setAvatarPreviewOpen] = useState(false);
   const localPhotoUrl = usePhoto(shot.photoId);
   const remotePhotoUrl = shot.photoUrl?.startsWith('/')
     ? getApiAssetUrl(shot.photoUrl)
@@ -85,13 +87,20 @@ export const ShotCard: React.FC<ShotCardProps> = ({
       <header className="flex items-start justify-between gap-3 px-4 pb-3 pt-4 sm:gap-4">
         <div className="flex min-w-0 items-center gap-3">
           {shot.user.avatarUrl ? (
-            <img
-              src={shot.user.avatarUrl}
-              alt={`${displayName} avatar`}
-              loading="lazy"
-              decoding="async"
-              className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-white"
-            />
+            <button
+              type="button"
+              onClick={() => setAvatarPreviewOpen(true)}
+              className="shrink-0 rounded-full transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#7a4d2a] focus:ring-offset-2"
+              aria-label={`View ${displayName} profile photo`}
+            >
+              <img
+                src={shot.user.avatarUrl}
+                alt={`${displayName} avatar`}
+                loading="lazy"
+                decoding="async"
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-white"
+              />
+            </button>
           ) : (
             <div
               aria-label={`${displayName} avatar`}
@@ -355,6 +364,35 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           </footer>
         )}
       </div>
+
+      {avatarPreviewOpen && shot.user.avatarUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${displayName} profile photo`}
+          onClick={() => setAvatarPreviewOpen(false)}
+        >
+          <div
+            className="relative max-h-[90vh] max-w-[min(90vw,42rem)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setAvatarPreviewOpen(false)}
+              className="absolute -right-2 -top-2 z-10 rounded-full bg-black/75 p-2.5 text-white shadow-lg transition hover:bg-black"
+              aria-label="Close profile photo preview"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <img
+              src={shot.user.avatarUrl}
+              alt={`${displayName} profile photo`}
+              className="max-h-[88vh] max-w-full rounded-3xl object-contain shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </article>
   );
 };

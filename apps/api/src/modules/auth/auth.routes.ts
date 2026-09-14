@@ -1,9 +1,12 @@
 import { Router } from 'express';
+import { unlink } from 'node:fs/promises';
+import path from 'node:path';
 import {
   getUserById,
   changeUserPassword,
   loginUser,
   registerUser,
+  updateUserAvatar,
   updateUserDisplayName,
 } from './auth.service.js';
 import { requireAuth, requireWritableUser } from './auth.middleware.js';
@@ -12,6 +15,11 @@ import {
   requestPasswordReset,
   resetPassword,
 } from './password-reset.service.js';
+import {
+  normalizeUploadedImage,
+  shotImageUpload,
+  uploadDir,
+} from '../shots/upload.js';
 
 export const authRouter = Router();
 
@@ -232,6 +240,41 @@ authRouter.patch(
   } catch (error) {
     next(error);
   }
+  },
+);
+
+authRouter.post(
+  '/me/avatar',
+  requireAuth,
+  requireWritableUser,
+  shotImageUpload.single('image'),
+  async (request, response, next) => {
+    try {
+      if (!request.file) {
+        response.status(400).json({
+          success: false,
+          error: { message: 'La imagen es obligatoria' },
+        });
+        return;
+      }
+
+      const filename = await normalizeUploadedImage(request.file);
+      const avatarUrl = `/uploads/${filename}`;
+      const userId = response.locals.userId as string;
+      const previousUser = await getUserById(userId);
+      const user = await updateUserAvatar(userId, avatarUrl);
+
+      if (previousUser?.avatarUrl) {
+        const previousFilename = path.basename(previousUser.avatarUrl);
+        if (previousFilename !== filename) {
+          await unlink(path.join(uploadDir, previousFilename)).catch(() => undefined);
+        }
+      }
+
+      response.json({ success: true, data: user });
+    } catch (error) {
+      next(error);
+    }
   },
 );
 

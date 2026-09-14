@@ -98,8 +98,12 @@ export function mapApiShotToShot(apiShot: ApiShot): Shot {
     serverId: apiShot.id,
     userId: apiShot.userId,
     user: {
+      id: apiShot.user.id,
       displayName: apiShot.user.displayName,
       username: apiShot.user.email.split('@')[0],
+      ...(apiShot.user.avatarUrl
+        ? { avatarUrl: getApiAssetUrl(apiShot.user.avatarUrl) }
+        : {}),
     },
     coffee: apiShot.coffee ?? {},
     flavors: apiShot.flavors ?? undefined,

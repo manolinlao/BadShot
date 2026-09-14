@@ -22,6 +22,7 @@ const publicUserSelect = {
   id: true,
   email: true,
   displayName: true,
+  avatarUrl: true,
 } as const;
 
 export async function getShotsByUserId(userId: string) {

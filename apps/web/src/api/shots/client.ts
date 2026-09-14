@@ -12,6 +12,7 @@ export type ApiShot = {
     id: string;
     email: string;
     displayName: string;
+    avatarUrl: string | null;
   };
   coffee: Coffee | null;
   flavors: string[] | null;

@@ -26,6 +26,7 @@ export async function registerUser(input: RegisterUserInput) {
       id: true,
       email: true,
       displayName: true,
+      avatarUrl: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -51,6 +52,7 @@ export async function loginUser(input: LoginUserInput) {
       id: true,
       email: true,
       displayName: true,
+      avatarUrl: true,
       passwordHash: true,
       role: true,
       createdAt: true,
@@ -70,6 +72,7 @@ export async function loginUser(input: LoginUserInput) {
         id: true,
         email: true,
         displayName: true,
+        avatarUrl: true,
         passwordHash: true,
         role: true,
         createdAt: true,
@@ -98,6 +101,7 @@ export async function loginUser(input: LoginUserInput) {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
+      avatarUrl: user.avatarUrl,
       role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -115,6 +119,7 @@ export async function getUserById(userId: string) {
       id: true,
       email: true,
       displayName: true,
+      avatarUrl: true,
       role: true,
       createdAt: true,
       updatedAt: true,
@@ -130,6 +135,23 @@ export async function updateUserDisplayName(userId: string, displayName: string)
       id: true,
       email: true,
       displayName: true,
+      avatarUrl: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function updateUserAvatar(userId: string, avatarUrl: string) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { avatarUrl },
+    select: {
+      id: true,
+      email: true,
+      displayName: true,
+      avatarUrl: true,
       role: true,
       createdAt: true,
       updatedAt: true,
