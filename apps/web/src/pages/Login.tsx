@@ -41,13 +41,15 @@ export function Login() {
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <label className="block">
-          <span className="text-sm font-semibold text-[#5f4a3f]">Email</span>
+          <span className="text-sm font-semibold text-[#5f4a3f]">
+            Email or username
+          </span>
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
-            autoComplete="email"
+            autoComplete="username"
             className="mt-2 w-full rounded-2xl border border-[#e2d6ca] bg-white px-4 py-3 text-[#211a16] outline-none focus:border-[#7a4d2a]"
           />
         </label>
@@ -87,6 +89,11 @@ export function Login() {
           {flash}
         </p>
       ) : null}
+
+      <p className="mt-5 rounded-2xl border border-[#ead8bd] bg-[#fff8e9] px-4 py-3 text-sm leading-6 text-[#6f5130]">
+        Need a read-only preview? Log in with <strong>guest</strong> /{' '}
+        <strong>guest</strong>.
+      </p>
 
       <Link
         to="/forgot-password"

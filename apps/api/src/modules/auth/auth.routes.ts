@@ -6,7 +6,7 @@ import {
   registerUser,
   updateUserDisplayName,
 } from './auth.service.js';
-import { requireAuth } from './auth.middleware.js';
+import { requireAuth, requireWritableUser } from './auth.middleware.js';
 import { env } from 'node:process';
 import {
   requestPasswordReset,
@@ -198,7 +198,11 @@ authRouter.get('/me', requireAuth, async (_request, response, next) => {
   }
 });
 
-authRouter.patch('/me', requireAuth, async (request, response, next) => {
+authRouter.patch(
+  '/me',
+  requireAuth,
+  requireWritableUser,
+  async (request, response, next) => {
   try {
     const body = request.body as { displayName?: unknown };
 
@@ -228,9 +232,14 @@ authRouter.patch('/me', requireAuth, async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-});
+  },
+);
 
-authRouter.patch('/me/password', requireAuth, async (request, response, next) => {
+authRouter.patch(
+  '/me/password',
+  requireAuth,
+  requireWritableUser,
+  async (request, response, next) => {
   try {
     const body = request.body as {
       currentPassword?: unknown;
@@ -273,7 +282,8 @@ authRouter.patch('/me/password', requireAuth, async (request, response, next) =>
   } catch (error) {
     next(error);
   }
-});
+  },
+);
 
 authRouter.post('/logout', (_request, response) => {
   response.clearCookie('access_token', {

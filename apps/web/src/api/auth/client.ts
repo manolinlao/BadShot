@@ -4,6 +4,7 @@ export type AuthUser = {
   id: string;
   email: string;
   displayName: string;
+  role: 'USER' | 'GUEST';
   createdAt: string;
   updatedAt: string;
 };

@@ -31,6 +31,10 @@ export function AppLayout() {
     currentUser: authStores.$currentUser,
     userLoggedOut: authEvents.userLoggedOut,
   });
+  const visibleNavItems =
+    currentUser?.role === 'GUEST'
+      ? navItems.filter((item) => item.to === '/' || item.to === '/login')
+      : navItems;
 
   async function handleLogout() {
     await logout();
@@ -76,7 +80,7 @@ export function AppLayout() {
           </NavLink>
 
           <div className="hidden items-center gap-2 sm:flex">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -105,7 +109,7 @@ export function AppLayout() {
         className="fixed inset-x-0 bottom-0 z-10 border-t border-[#e2d6ca] bg-[#fffaf5] px-3 py-2 shadow-[0_-8px_24px_rgba(33,26,22,0.08)] sm:hidden"
       >
         <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

@@ -342,8 +342,9 @@ export function Home() {
     resetKey: paginationResetKey,
   });
   const hasResults = filteredFeed.length > 0;
+  const isReadOnly = currentUser?.role === 'GUEST';
   const canManageShot = (shot: Shot) =>
-    Boolean(currentUser?.id && shot.userId === currentUser.id);
+    !isReadOnly && Boolean(currentUser?.id && shot.userId === currentUser.id);
   const activeQuickFilterLabel =
     selectedRatings.length > 0
       ? `${selectedRatings.length} ratings`
@@ -516,6 +517,13 @@ export function Home() {
       )}
 
       <section className="space-y-4">
+        {isReadOnly && (
+          <div className="rounded-[24px] border border-[#ead8bd] bg-[#fff8e9] px-4 py-3 text-sm leading-6 text-[#6f5130] shadow-[0_10px_24px_rgba(49,33,20,0.04)]">
+            Estás navegando como invitado. Puedes ver el feed, pero no crear,
+            editar, borrar, comentar ni dar likes.
+          </div>
+        )}
+
         <div className="flex items-center justify-between gap-3 rounded-[24px] border border-[#e2d6ca] bg-white/75 px-4 py-3 shadow-[0_10px_24px_rgba(49,33,20,0.04)] backdrop-blur-sm">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#211a16_0%,#5f4a3f_100%)] text-sm font-black text-white shadow-sm">
@@ -621,6 +629,7 @@ export function Home() {
                       }
                       onLike={
                         shot.serverId &&
+                        !isReadOnly &&
                         shot.userId !== currentUser?.id
                           ? () => {
                               void serverShotsEffects.toggleLikeFx(shot.serverId!);

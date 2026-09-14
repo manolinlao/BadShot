@@ -1,7 +1,10 @@
 import { unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { Router } from 'express';
-import { requireAuth } from '../auth/auth.middleware.js';
+import {
+  requireAuth,
+  requireWritableUser,
+} from '../auth/auth.middleware.js';
 import {
   createShotForUser,
   deleteShotForUser,
@@ -36,7 +39,11 @@ router.get('/', requireAuth, async (_request, response, next) => {
   }
 });
 
-router.post('/:shotId/like', requireAuth, async (request, response, next) => {
+router.post(
+  '/:shotId/like',
+  requireAuth,
+  requireWritableUser,
+  async (request, response, next) => {
   try {
     const { shotId } = request.params;
 
@@ -78,9 +85,10 @@ router.post('/:shotId/like', requireAuth, async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-});
+  },
+);
 
-router.post('/', requireAuth, async (request, response, next) => {
+router.post('/', requireAuth, requireWritableUser, async (request, response, next) => {
   try {
     const body = (request.body ?? {}) as CreateShotInput;
 
@@ -109,7 +117,11 @@ router.post('/', requireAuth, async (request, response, next) => {
   }
 });
 
-router.patch('/:shotId', requireAuth, async (request, response, next) => {
+router.patch(
+  '/:shotId',
+  requireAuth,
+  requireWritableUser,
+  async (request, response, next) => {
   try {
     const { shotId } = request.params;
 
@@ -161,11 +173,13 @@ router.patch('/:shotId', requireAuth, async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-});
+  },
+);
 
 router.post(
   '/:shotId/image',
   requireAuth,
+  requireWritableUser,
   shotImageUpload.single('image'),
   async (request, response, next) => {
     try {
@@ -222,7 +236,11 @@ router.post(
   },
 );
 
-router.delete('/:shotId', requireAuth, async (request, response, next) => {
+router.delete(
+  '/:shotId',
+  requireAuth,
+  requireWritableUser,
+  async (request, response, next) => {
   try {
     const userId = response.locals.userId as string;
     const { shotId } = request.params;
@@ -273,6 +291,7 @@ router.delete('/:shotId', requireAuth, async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-});
+  },
+);
 
 export { router as shotsRouter };

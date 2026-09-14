@@ -37,10 +37,13 @@ type LoginUserInput = {
   password: string;
 };
 
-export async function loginUser(input: LoginUserInput) {
-  const email = input.email.trim().toLowerCase();
+const GUEST_EMAIL = 'guest@badshot.local';
 
-  const user = await prisma.user.findUnique({
+export async function loginUser(input: LoginUserInput) {
+  const requestedEmail = input.email.trim().toLowerCase();
+  const email = requestedEmail === 'guest' ? GUEST_EMAIL : requestedEmail;
+
+  let user = await prisma.user.findUnique({
     where: {
       email,
     },
@@ -49,10 +52,31 @@ export async function loginUser(input: LoginUserInput) {
       email: true,
       displayName: true,
       passwordHash: true,
+      role: true,
       createdAt: true,
       updatedAt: true,
     },
   });
+
+  if (!user && requestedEmail === 'guest' && input.password === 'guest') {
+    user = await prisma.user.create({
+      data: {
+        email: GUEST_EMAIL,
+        displayName: 'Guest',
+        passwordHash: await hashPassword('guest'),
+        role: 'GUEST',
+      },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        passwordHash: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
 
   if (!user) {
     return null;
@@ -74,6 +98,7 @@ export async function loginUser(input: LoginUserInput) {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
+      role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     },
@@ -90,6 +115,7 @@ export async function getUserById(userId: string) {
       id: true,
       email: true,
       displayName: true,
+      role: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -104,6 +130,7 @@ export async function updateUserDisplayName(userId: string, displayName: string)
       id: true,
       email: true,
       displayName: true,
+      role: true,
       createdAt: true,
       updatedAt: true,
     },
