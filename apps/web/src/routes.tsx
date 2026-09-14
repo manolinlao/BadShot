@@ -8,6 +8,7 @@ import { Login } from './pages/Login';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { NotFound } from './pages/NotFound';
 import { Profile } from './pages/Profile';
+import { PublicProfile } from './pages/PublicProfile';
 import { Register } from './pages/Register';
 import { ResetPassword } from './pages/ResetPassword';
 
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         element: <RequireAuth />,
         children: [
+          {
+            path: 'users/:userId',
+            element: <PublicProfile />,
+          },
           {
             index: true,
             element: <Home />,

@@ -25,8 +25,8 @@ const publicUserSelect = {
   avatarUrl: true,
 } as const;
 
-export async function getShotsByUserId(userId: string) {
-  return prisma.shot.findMany({
+export async function getShotsByUserId(userId: string, viewerUserId: string) {
+  const shots = await prisma.shot.findMany({
     where: {
       userId,
     },
@@ -37,8 +37,21 @@ export async function getShotsByUserId(userId: string) {
       user: {
         select: publicUserSelect,
       },
+      likes: {
+        where: { userId: viewerUserId },
+        select: { id: true },
+      },
+      _count: {
+        select: { likes: true },
+      },
     },
   });
+
+  return shots.map(({ likes, _count, ...shot }) => ({
+    ...shot,
+    likesCount: _count.likes,
+    likedByMe: likes.length > 0,
+  }));
 }
 
 export async function getAllShots(userId: string) {

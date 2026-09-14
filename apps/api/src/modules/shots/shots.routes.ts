@@ -9,6 +9,7 @@ import {
   createShotForUser,
   deleteShotForUser,
   getAllShots,
+  getShotsByUserId,
   toggleLikeForUser,
   updateShotPhotoForUser,
   updateShotForUser,
@@ -29,6 +30,31 @@ const router = Router();
 router.get('/', requireAuth, async (_request, response, next) => {
   try {
     const shots = await getAllShots(response.locals.userId as string);
+
+    response.json({
+      success: true,
+      data: shots,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/user/:userId', requireAuth, async (request, response, next) => {
+  try {
+    const { userId } = request.params;
+    if (typeof userId !== 'string') {
+      response.status(400).json({
+        success: false,
+        error: { message: 'Identificador de usuario inválido' },
+      });
+      return;
+    }
+
+    const shots = await getShotsByUserId(
+      userId,
+      response.locals.userId as string,
+    );
 
     response.json({
       success: true,

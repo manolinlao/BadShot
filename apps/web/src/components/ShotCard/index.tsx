@@ -35,6 +35,7 @@ interface ShotCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onImageClick?: () => void;
+  onProfileClick?: () => void;
   onLike?: () => void;
   likePending?: boolean;
 }
@@ -44,6 +45,7 @@ export const ShotCard: React.FC<ShotCardProps> = ({
   onEdit,
   onDelete,
   onImageClick,
+  onProfileClick,
   onLike,
   likePending = false,
 }) => {
@@ -111,9 +113,19 @@ export const ShotCard: React.FC<ShotCardProps> = ({
           )}
 
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-bold text-[#211a16]">
-              {displayName}
-            </h2>
+            {onProfileClick ? (
+              <button
+                type="button"
+                onClick={onProfileClick}
+                className="block max-w-full truncate text-left text-sm font-bold text-[#211a16] hover:text-[#7a4d2a]"
+              >
+                {displayName}
+              </button>
+            ) : (
+              <h2 className="truncate text-sm font-bold text-[#211a16]">
+                {displayName}
+              </h2>
+            )}
             {username && (
               <p className="truncate text-xs text-[#6f5b50]">@{username}</p>
             )}

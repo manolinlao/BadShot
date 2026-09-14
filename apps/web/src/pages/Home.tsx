@@ -627,6 +627,11 @@ export function Home() {
                           ? () => setPreviewShot(shot)
                           : undefined
                       }
+                      onProfileClick={
+                        shot.user.id
+                          ? () => navigate(`/users/${shot.user.id}`)
+                          : undefined
+                      }
                       onLike={
                         shot.serverId &&
                         !isReadOnly &&

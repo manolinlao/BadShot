@@ -91,6 +91,26 @@ export async function getMyShots(): Promise<ApiShot[]> {
   return payload.data;
 }
 
+export async function getUserShots(userId: string): Promise<ApiShot[]> {
+  const response = await fetch(`${API_URL}/api/shots/user/${userId}`, {
+    credentials: 'include',
+  });
+
+  const payload = (await response.json()) as
+    | { success: true; data: ApiShot[] }
+    | ApiErrorResponse;
+
+  if (!payload.success) {
+    throw new Error(payload.error.message);
+  }
+
+  if (!response.ok) {
+    throw new Error('Error inesperado del servidor');
+  }
+
+  return payload.data;
+}
+
 export async function createApiShot(
   input: CreateApiShotInput,
 ): Promise<ApiShot> {
