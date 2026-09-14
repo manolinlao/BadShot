@@ -7,7 +7,11 @@ import { DetailsSheet } from '../components/CreateShot/DetailsSheet';
 import { LocationPicker } from '../components/CreateShot/LocationPicker';
 import { PhotoPicker } from '../components/CreateShot/PhotoPicker';
 import { RatingQuick } from '../components/CreateShot/RatingQuick';
-import { reverseGeocode } from '../api/location/nominatim';
+import {
+  reverseGeocode,
+  searchLocations,
+  type LocationSearchResult,
+} from '../api/location/nominatim';
 import {
   mapApiShotToShot,
   serverShotsEffects,
@@ -79,10 +83,22 @@ export function CreateShot() {
   const editingShot = useMemo(
     () => {
       const localShot = createdShots.find((shot) => shot.id === shotId);
-      if (localShot) return localShot;
+      const serverShot = serverShots.find(
+        (shot) => shot.id === shotId || shot.id === localShot?.serverId,
+      );
 
-      const serverShot = serverShots.find((shot) => shot.id === shotId);
-      return serverShot ? mapApiShotToShot(serverShot) : undefined;
+      if (!localShot) {
+        return serverShot ? mapApiShotToShot(serverShot) : undefined;
+      }
+
+      if (!serverShot) return localShot;
+
+      // Keep local edits, but use the server image as the source of truth.
+      return {
+        ...localShot,
+        photoUrl: mapApiShotToShot(serverShot).photoUrl ?? localShot.photoUrl,
+        serverId: serverShot.id,
+      };
     },
     [createdShots, serverShots, shotId],
   );
@@ -103,6 +119,11 @@ export function CreateShot() {
   >({});
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
+  const [locationQuery, setLocationQuery] = useState('');
+  const [locationResults, setLocationResults] = useState<LocationSearchResult[]>(
+    [],
+  );
+  const [searchingLocation, setSearchingLocation] = useState(false);
 
   const [coffeeName, setCoffeeName] = useState('');
   const [origin, setOrigin] = useState('');
@@ -126,20 +147,27 @@ export function CreateShot() {
     if (!editingShot || editLoaded) return;
 
     const loadShot = async () => {
-      if (editingShot.photoId) {
+      // Prefer the server image when both local and remote copies exist.
+      // A stale IndexedDB photoId must not shadow the current shot image.
+      if (editingShot.photoUrl) {
+        setImageUrl(editingShot.photoUrl);
+      } else if (editingShot.photoId) {
         const previewUrl = await getPhotoPreviewUrl(editingShot.photoId);
 
         if (previewUrl) {
           setImageUrl(previewUrl);
         }
-      } else if (editingShot.photoUrl) {
-        setImageUrl(editingShot.photoUrl);
       }
 
       setRating(editingShot.rating ?? 3);
       setLocationName(editingShot.location?.name ?? '');
       setLocationCity(editingShot.location?.city ?? '');
       setLocationCountry(editingShot.location?.country ?? '');
+      setLocationQuery(
+        [editingShot.location?.name, editingShot.location?.city]
+          .filter(Boolean)
+          .join(', '),
+      );
       setLocationCoordinates({
         lat: editingShot.location?.lat,
         lng: editingShot.location?.lng,
@@ -244,6 +272,7 @@ export function CreateShot() {
       setter(value);
       setLocationCoordinates({});
       setLocationError('');
+      setLocationResults([]);
     };
 
   const handleClearLocation = () => {
@@ -251,6 +280,43 @@ export function CreateShot() {
     setLocationCity('');
     setLocationCountry('');
     setLocationCoordinates({});
+    setLocationError('');
+    setLocationQuery('');
+    setLocationResults([]);
+  };
+
+  const handleSearchLocation = async () => {
+    const query = locationQuery.trim();
+    if (query.length < 3) {
+      setLocationError('Enter at least 3 characters to search for a place.');
+      return;
+    }
+
+    setSearchingLocation(true);
+    setLocationError('');
+    setLocationResults([]);
+
+    try {
+      const results = await searchLocations(query);
+      setLocationResults(results);
+      if (results.length === 0) {
+        setLocationError('No places found. Try adding the city or country.');
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      setLocationError('We could not search for that place. Try again later.');
+    } finally {
+      setSearchingLocation(false);
+    }
+  };
+
+  const handleSelectSearchResult = (result: LocationSearchResult) => {
+    setLocationName(result.name);
+    setLocationCity(result.city ?? '');
+    setLocationCountry(result.country ?? '');
+    setLocationCoordinates({ lat: result.lat, lng: result.lng });
+    setLocationQuery(result.displayName);
+    setLocationResults([]);
     setLocationError('');
   };
 
@@ -520,6 +586,12 @@ export function CreateShot() {
         setCity={handleManualLocationChange(setLocationCity)}
         country={locationCountry}
         setCountry={handleManualLocationChange(setLocationCountry)}
+        searchQuery={locationQuery}
+        setSearchQuery={setLocationQuery}
+        searchResults={locationResults}
+        searching={searchingLocation}
+        onSearch={handleSearchLocation}
+        onSelectSearchResult={handleSelectSearchResult}
         hasCoordinates={
           locationCoordinates.lat !== undefined &&
           locationCoordinates.lng !== undefined

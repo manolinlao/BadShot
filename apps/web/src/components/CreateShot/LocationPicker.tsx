@@ -1,4 +1,5 @@
-import { MapPin, X } from 'lucide-react';
+import { MapPin, Search, X } from 'lucide-react';
+import type { LocationSearchResult } from '../../api/location/nominatim';
 
 interface LocationPickerProps {
   name: string;
@@ -7,6 +8,12 @@ interface LocationPickerProps {
   setCity: (value: string) => void;
   country: string;
   setCountry: (value: string) => void;
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+  searchResults: LocationSearchResult[];
+  searching: boolean;
+  onSearch: () => void;
+  onSelectSearchResult: (result: LocationSearchResult) => void;
   hasCoordinates: boolean;
   locating: boolean;
   locationError: string;
@@ -21,6 +28,12 @@ export function LocationPicker({
   setCity,
   country,
   setCountry,
+  searchQuery,
+  setSearchQuery,
+  searchResults,
+  searching,
+  onSearch,
+  onSelectSearchResult,
   hasCoordinates,
   locating,
   locationError,
@@ -42,6 +55,48 @@ export function LocationPicker({
           </p>
         </div>
       </div>
+
+      <form onSubmit={(event) => { event.preventDefault(); onSearch(); }} className="space-y-2">
+        <label className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6f5b50]">
+          Search a place or address
+        </label>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input
+            placeholder="Café, street or address"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="min-w-0 flex-1 rounded-xl border border-[#e2d6ca] px-3 py-3 text-base outline-none transition focus:border-[#211a16]"
+          />
+          <button
+            type="submit"
+            disabled={searching || searchQuery.trim().length < 3}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#211a16] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#4b382d] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Search className="h-4 w-4" aria-hidden="true" />
+            {searching ? 'Searching…' : 'Search'}
+          </button>
+        </div>
+      </form>
+
+      {searchResults.length > 0 && (
+        <div className="space-y-2" aria-label="Search results">
+          {searchResults.map((result) => (
+            <button
+              key={`${result.osmType ?? 'place'}-${result.osmId ?? result.displayName}`}
+              type="button"
+              onClick={() => onSelectSearchResult(result)}
+              className="block w-full rounded-xl border border-[#e2d6ca] bg-[#fffaf5] px-3 py-3 text-left transition hover:border-[#7a4d2a] hover:bg-[#f3ebe3]"
+            >
+              <span className="block text-sm font-semibold text-[#211a16]">
+                {result.name}
+              </span>
+              <span className="mt-1 block text-xs leading-5 text-[#6f5b50]">
+                {result.displayName}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="grid gap-2 sm:grid-cols-2">
         <input
